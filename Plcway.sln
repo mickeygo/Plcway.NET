@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31624.102
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{FBD8A4C9-ED02-4B8B-91BB-9B58EA81FF3D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{DB84F4CB-A2DC-41CC-9DC0-C6E6BBF751F4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{8E98A817-C717-4A96-A8D2-3906C1DD9FEF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plcway.Infrastructure", "src\Plcway.Infrastructure\Plcway.Infrastructure.csproj", "{8FA215A7-6A02-442D-9E47-6E79423A40A3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plcway.Communication", "src\Plcway.Communication\Plcway.Communication.csproj", "{40631912-BD93-4ABC-8B63-110DD7276D09}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plcway.Infrastructure.Tests", "tests\Plcway.Infrastructure.Tests\Plcway.Infrastructure.Tests.csproj", "{F7DBAACC-8F2B-4B27-854D-65D8521C6A90}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plcway.Communication.Tests", "tests\Plcway.Communication.Tests\Plcway.Communication.Tests.csproj", "{CCD439E6-B577-4EE0-939E-12D4D0C322CE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8FA215A7-6A02-442D-9E47-6E79423A40A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FA215A7-6A02-442D-9E47-6E79423A40A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FA215A7-6A02-442D-9E47-6E79423A40A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FA215A7-6A02-442D-9E47-6E79423A40A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40631912-BD93-4ABC-8B63-110DD7276D09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40631912-BD93-4ABC-8B63-110DD7276D09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40631912-BD93-4ABC-8B63-110DD7276D09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40631912-BD93-4ABC-8B63-110DD7276D09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7DBAACC-8F2B-4B27-854D-65D8521C6A90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7DBAACC-8F2B-4B27-854D-65D8521C6A90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7DBAACC-8F2B-4B27-854D-65D8521C6A90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7DBAACC-8F2B-4B27-854D-65D8521C6A90}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCD439E6-B577-4EE0-939E-12D4D0C322CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCD439E6-B577-4EE0-939E-12D4D0C322CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCD439E6-B577-4EE0-939E-12D4D0C322CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCD439E6-B577-4EE0-939E-12D4D0C322CE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8FA215A7-6A02-442D-9E47-6E79423A40A3} = {FBD8A4C9-ED02-4B8B-91BB-9B58EA81FF3D}
+		{40631912-BD93-4ABC-8B63-110DD7276D09} = {FBD8A4C9-ED02-4B8B-91BB-9B58EA81FF3D}
+		{F7DBAACC-8F2B-4B27-854D-65D8521C6A90} = {DB84F4CB-A2DC-41CC-9DC0-C6E6BBF751F4}
+		{CCD439E6-B577-4EE0-939E-12D4D0C322CE} = {DB84F4CB-A2DC-41CC-9DC0-C6E6BBF751F4}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {ED47786F-9F3E-439F-A1AA-E1757B65F89D}
+	EndGlobalSection
+EndGlobal
