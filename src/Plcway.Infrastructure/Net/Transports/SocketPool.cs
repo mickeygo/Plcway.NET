@@ -1,4 +1,6 @@
-﻿using System.Net.Sockets;
+﻿using System.Diagnostics.Contracts;
+using System.Net.Sockets;
+using Microsoft.Extensions.ObjectPool;
 
 namespace Plcway.Infrastructure.Net.Transports
 {
@@ -7,28 +9,41 @@ namespace Plcway.Infrastructure.Net.Transports
     /// </summary>
     public class SocketPool
     {
+        public const int MaxSize = 64;
+
+        private readonly ObjectPool<Socket> _objectPool;
+
+        public static SocketPool Default => new();
+
         public SocketPool()
         {
-            
+            var policy = new SocketPooledObjectPolicy();
+            _objectPool = new DefaultObjectPool<Socket>(policy, MaxSize);
         }
 
-        public Socket? Get()
+        public Socket Get()
         {
-            return default;
+            return _objectPool.Get();
         }
 
-        public void Push()
+        public void Push(Socket socket)
         {
-
+            Contract.Requires(socket != null);
+            _objectPool.Return(socket);
         }
     }
 
-    internal class SocketEntry
+    public class SocketPooledObjectPolicy : PooledObjectPolicy<Socket>
     {
-        public Socket Socket { get; set; }
+        public override Socket Create()
+        {
 
-        public int Status { get; set; }
+            throw new System.NotImplementedException();
+        }
 
-        public long Version { get; set; }
+        public override bool Return(Socket obj)
+        {
+            return true;
+        }
     }
 }

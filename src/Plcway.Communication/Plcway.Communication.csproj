@@ -1,12 +1,32 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <Nullable>enable</Nullable>
+    <Authors>Plcway</Authors>
+    <RepositoryUrl>https://github.com/mickeygo/Plcway.NET</RepositoryUrl>
+    <Company>Plcway</Company>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Description>IoT, PLC</Description>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Plcway.Infrastructure\Plcway.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Codecs\" />
+    <Folder Include="lib\" />
+    <Folder Include="Protocols\Modbus\" />
+    <Folder Include="Protocols\Mitsubishi\" />
+    <Folder Include="Protocols\Omron\" />
+    <Folder Include="Transport\Channels\QoS\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="libnodave.net">
+      <HintPath>lib\libnodave.net.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
