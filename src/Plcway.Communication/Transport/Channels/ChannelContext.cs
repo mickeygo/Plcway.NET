@@ -42,7 +42,7 @@ namespace Plcway.Communication.Transport.Channels
         public Schema Schema { get; }
 
         /// <summary>
-        /// 触发请求的信号
+        /// 触发请求的标签
         /// </summary>
         public ChannalData Signal { get; }
 

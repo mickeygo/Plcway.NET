@@ -15,18 +15,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Codecs\" />
-    <Folder Include="lib\" />
+    <Folder Include="Codecs\Http\" />
+    <Folder Include="Codecs\Mqtt\" />
+    <Folder Include="Codecs\Protobuf\" />
     <Folder Include="Protocols\Modbus\" />
-    <Folder Include="Protocols\Mitsubishi\" />
-    <Folder Include="Protocols\Omron\" />
-    <Folder Include="Transport\Channels\QoS\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="libnodave.net">
-      <HintPath>lib\libnodave.net.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>

@@ -9,7 +9,7 @@ namespace Plcway.Communication.Handlers
     public interface IChannelHandler
     {
         /// <summary>
-        /// 执行数据
+        /// 处理数据
         /// </summary>
         /// <param name="context">数据上下文</param>
         /// <returns></returns>

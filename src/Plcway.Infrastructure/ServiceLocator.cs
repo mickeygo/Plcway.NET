@@ -5,7 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Plcway.Infrastructure
 {
     /// <summary>
-    /// 服务定位器模式。基于 Microsoft.Extensions.DependencyInjection 框架。
+    /// 服务定位器模式。基于 Microsoft.Extensions.DependencyInjection 框架。<br/>
+    /// 注：在绝大部分场合下都不建议使用，建议使用 DI 框架构造器注入。
     /// </summary>
     public class ServiceLocator
     {

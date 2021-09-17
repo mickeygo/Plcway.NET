@@ -1,7 +1,9 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Plcway.Communication.Handlers;
+using Plcway.Communication.Internal;
 
 namespace Plcway.Communication.Transport.Channels
 {
@@ -38,9 +40,9 @@ namespace Plcway.Communication.Transport.Channels
             {
                 try
                 {
-                    // TODO: 要执行的任务
-                    var route = RouteTable.Shared.Routes[""];
-                    var handler = (IChannelHandler)Infrastructure.ServiceLocator.ServiceProvider.GetRequiredService(route.HandlerType);
+                    // 要执行的任务
+                    var route = RouteTable.Shared.Routes[ctx.Request.Signal.Tag];
+                    var handler = (IChannelHandler)InternalServiceProvider.Shared.ServiceProvider.GetRequiredService(route.HandlerType);  // 思考，如何避免使用 Service Locator 模式？
                     await handler.ExecuteAsync(ctx);
                 }
                 finally

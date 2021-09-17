@@ -1,158 +1,216 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
+﻿using System.Collections.Generic;
 
 namespace Plcway.Communication.Protocols
 {
+    /// <summary>
+    /// PLC 数据读写
+    /// </summary>
     public interface IReaderWriter
     {
-        byte[] ReadBytes(DeviceAddress address, ushort size);
-        ItemData<uint> ReadUInt32(DeviceAddress address);
-        ItemData<int> ReadInt32(DeviceAddress address);
-        ItemData<ushort> ReadUInt16(DeviceAddress address);
-        ItemData<short> ReadInt16(DeviceAddress address);
-        ItemData<byte> ReadByte(DeviceAddress address);
-        ItemData<string> ReadString(DeviceAddress address, ushort size);
-        ItemData<float> ReadFloat(DeviceAddress address);
-        ItemData<bool> ReadBit(DeviceAddress address);
-        ItemData<object> ReadValue(DeviceAddress address);
+        #region Reader
 
-        int WriteBytes(DeviceAddress address, byte[] bit);
-        int WriteBit(DeviceAddress address, bool bit);
-        int WriteBits(DeviceAddress address, byte bits);
-        int WriteInt16(DeviceAddress address, short value);
-        int WriteUInt16(DeviceAddress address, ushort value);
-        int WriteInt32(DeviceAddress address, int value);
-        int WriteUInt32(DeviceAddress address, uint value);
-        int WriteFloat(DeviceAddress address, float value);
-        int WriteString(DeviceAddress address, string str);
-        int WriteValue(DeviceAddress address, object value);
-    }
+        /// <summary>
+        /// 分批读取
+        /// </summary>
+        /// <param name="addresses">地址集合</param>
+        /// <param name="batchNumber">批量读取数量</param>
+        /// <returns></returns>
+        Result<Dictionary<string, object>> BatchRead(Dictionary<string, DataTypeEnum> addresses, int batchNumber);
 
-    public interface IDriver : IDisposable
-    {
-        short ID { get; }
-        string Name { get; }
-        string ServerName { get; set; }//可以考虑增加一个附加参数，Sever只定义本机名
-        bool IsClosed { get; }
-        int TimeOut { get; set; }
-        //IEnumerable<IGroup> Groups { get; }
-        //IDataServer Parent { get; }
-        //bool Connect();
-        //IGroup AddGroup(string name, short id, int updateRate, float deadBand = 0f, bool active = false);
-        //bool RemoveGroup(IGroup group);
-        //event IOErrorEventHandler OnError;
-    }
+        /// <summary>
+        /// 读取Byte
+        /// </summary>
+        /// <param name="address"></param>
+        /// <returns></returns>
+        Result<byte> ReadByte(string address);
 
-    public interface IPLCDriver : IDriver, IReaderWriter
-    {
-        int PDU { get; }
-        DeviceAddress GetDeviceAddress(string address);
-        string GetAddress(DeviceAddress address);
-    }
+        /// <summary>
+        /// 读取Boolean
+        /// </summary>
+        /// <param name="address">地址</param>
+        /// <returns></returns>
+        Result<bool> ReadBoolean(string address);
 
-    [StructLayout(LayoutKind.Sequential)]
-    public struct DeviceAddress : IComparable<DeviceAddress>
-    {
-        public int Area;
-        public int Start;
-        public ushort DBNumber;
-        public ushort DataSize;
-        public ushort CacheIndex;
-        public byte Bit;
-        public DataType VarType;
-        public ByteOrder ByteOrder;
+        /// <summary>
+        /// 读取UInt16
+        /// </summary>
+        /// <param name="address">地址</param>
+        /// <returns></returns>
+        Result<ushort> ReadUInt16(string address);
 
-        public DeviceAddress(int area, ushort dbnumber, ushort cIndex, int start, ushort size, byte bit, DataType type, ByteOrder order = ByteOrder.None)
-        {
-            Area = area;
-            DBNumber = dbnumber;
-            CacheIndex = cIndex;
-            Start = start;
-            DataSize = size;
-            Bit = bit;
-            VarType = type;
-            ByteOrder = order;
-        }
+        /// <summary>
+        /// 读取Int16
+        /// </summary>
+        /// <param name="address">地址</param>
+        /// <returns></returns>
+        Result<short> ReadInt16(string address);
 
-        public static readonly DeviceAddress Empty = new DeviceAddress(0, 0, 0, 0, 0, 0, DataType.NONE);
+        /// <summary>
+        /// 读取UInt32
+        /// </summary>
+        /// <param name="address">地址</param>
+        /// <returns></returns>
+        Result<uint> ReadUInt32(string address);
 
-        public int CompareTo(DeviceAddress other)
-        {
-            return this.Area > other.Area ? 1 :
-                this.Area < other.Area ? -1 :
-                this.DBNumber > other.DBNumber ? 1 :
-                this.DBNumber < other.DBNumber ? -1 :
-                this.Start > other.Start ? 1 :
-                this.Start < other.Start ? -1 :
-                this.Bit > other.Bit ? 1 :
-                this.Bit < other.Bit ? -1 : 0;
-        }
-    }
+        /// <summary>
+        /// 读取Int32
+        /// </summary>
+        /// <param name="address">地址</param>
+        /// <returns></returns>
+        Result<int> ReadInt32(string address);
 
-    public enum DataType : byte
-    {
-        NONE = 0,
-        BOOL = 1,
-        BYTE = 3,
-        SHORT = 4,
-        WORD = 5,
-        DWORD = 6,
-        INT = 7,
-        FLOAT = 8,
-        SYS = 9,
-        STR = 11
-    }
+        /// <summary>
+        /// 读取UInt64
+        /// </summary>
+        /// <param name="address">地址</param>
+        /// <returns></returns>
+        Result<ulong> ReadUInt64(string address);
 
-    [Flags]
-    public enum ByteOrder : byte
-    {
-        None = 0,
-        BigEndian = 1,
-        LittleEndian = 2,
-        Network = 4,
-        Host = 8
-    }
+        /// <summary>
+        /// 读取Int64
+        /// </summary>
+        /// <param name="address">地址</param>
+        /// <returns></returns>
+        Result<long> ReadInt64(string address);
 
-    public struct ItemData<T>
-    {
-        public T Value;
-        public long TimeStamp;
-        public QUALITIES Quality;
+        /// <summary>
+        /// 读取Float
+        /// </summary>
+        /// <param name="address">地址</param>
+        /// <returns></returns>
+        Result<float> ReadFloat(string address);
 
-        public ItemData(T value, long timeStamp, QUALITIES quality)
-        {
-            Value = value;
-            TimeStamp = timeStamp;
-            Quality = quality;
-        }
-    }
+        /// <summary>
+        /// 读取Double
+        /// </summary>
+        /// <param name="address">地址</param>
+        /// <returns></returns>
+        Result<double> ReadDouble(string address);
 
-    public enum QUALITIES : short
-    {
-        // Fields
-        LIMIT_CONST = 3,
-        LIMIT_HIGH = 2,
-        LIMIT_LOW = 1,
-        //LIMIT_MASK = 3,
-        //LIMIT_OK = 0,
-        QUALITY_BAD = 0,
-        QUALITY_COMM_FAILURE = 0x18,
-        QUALITY_CONFIG_ERROR = 4,
-        QUALITY_DEVICE_FAILURE = 12,
-        QUALITY_EGU_EXCEEDED = 0x54,
-        QUALITY_GOOD = 0xc0,
-        QUALITY_LAST_KNOWN = 20,
-        QUALITY_LAST_USABLE = 0x44,
-        QUALITY_LOCAL_OVERRIDE = 0xd8,
-        QUALITY_MASK = 0xc0,
-        QUALITY_NOT_CONNECTED = 8,
-        QUALITY_OUT_OF_SERVICE = 0x1c,
-        QUALITY_SENSOR_CAL = 80,
-        QUALITY_SENSOR_FAILURE = 0x10,
-        QUALITY_SUB_NORMAL = 0x58,
-        QUALITY_UNCERTAIN = 0x40,
-        QUALITY_WAITING_FOR_INITIAL_DATA = 0x20,
-        STATUS_MASK = 0xfc,
+        /// <summary>
+        /// 读取String
+        /// </summary>
+        /// <param name="address">地址</param>
+        /// <returns></returns>
+        Result<string> ReadString(string address);
+
+        #endregion
+
+        #region Writer
+
+        /// <summary>
+        /// 分批写入 
+        /// </summary>
+        /// <param name="addresses">地址集合</param>
+        /// <param name="batchNumber">批量读取数量</param>
+        /// <returns></returns>
+        Result BatchWrite(Dictionary<string, object> addresses, int batchNumber);
+
+        /// <summary>
+        /// 写入数据
+        /// </summary>
+        /// <param name="address">地址</param>
+        /// <param name="value">值</param>
+        /// <returns></returns>
+        Result Write(string address, byte value);
+
+        /// <summary>
+        /// 写入数据
+        /// </summary>
+        /// <param name="address">地址</param>
+        /// <param name="value">值</param>
+        /// <returns></returns>
+        Result Write(string address, bool value);
+
+        /// <summary>
+        /// 写入数据
+        /// </summary>
+        /// <param name="address">地址</param>
+        /// <param name="value">值</param>
+        /// <returns></returns>
+        Result Write(string address, sbyte value);
+
+        /// <summary>
+        /// 写入数据
+        /// </summary>
+        /// <param name="address">地址</param>
+        /// <param name="value">值</param>
+        /// <returns></returns>
+        Result Write(string address, ushort value);
+
+        /// <summary>
+        /// 写入数据
+        /// </summary>
+        /// <param name="address">地址</param>
+        /// <param name="value">值</param>
+        /// <returns></returns>
+        Result Write(string address, short value);
+
+        /// <summary>
+        /// 写入数据
+        /// </summary>
+        /// <param name="address">地址</param>
+        /// <param name="value">值</param>
+        /// <returns></returns>
+        Result Write(string address, uint value);
+
+        /// <summary>
+        /// 写入数据
+        /// </summary>
+        /// <param name="address">地址</param>
+        /// <param name="value">值</param>
+        /// <returns></returns>
+        Result Write(string address, int value);
+
+        /// <summary>
+        /// 写入数据
+        /// </summary>
+        /// <param name="address">地址</param>
+        /// <param name="value">值</param>
+        /// <returns></returns>
+        Result Write(string address, ulong value);
+
+        /// <summary>
+        /// 写入数据
+        /// </summary>
+        /// <param name="address">地址</param>
+        /// <param name="value">值</param>
+        /// <returns></returns>
+        Result Write(string address, long value);
+
+        /// <summary>
+        /// 写入数据
+        /// </summary>
+        /// <param name="address">地址</param>
+        /// <param name="value">值</param>
+        /// <returns></returns>
+        Result Write(string address, float value);
+
+        /// <summary>
+        /// 写入数据
+        /// </summary>
+        /// <param name="address">地址</param>
+        /// <param name="value">值</param>
+        /// <returns></returns>
+        Result Write(string address, double value);
+
+        /// <summary>
+        /// 写入数据
+        /// </summary>
+        /// <param name="address">地址</param>
+        /// <param name="value">值</param>
+        /// <returns></returns>
+        Result Write(string address, string value);
+
+        /// <summary>
+        /// 写入数据
+        /// </summary>
+        /// <param name="address">地址</param>
+        /// <param name="value">值</param>
+        /// <param name="type">数据类型</param>
+        /// <returns></returns>
+        Result Write(string address, object value, DataTypeEnum type);
+
+        #endregion
     }
 }
