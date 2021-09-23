@@ -35,11 +35,11 @@ namespace Plcway.Communication
 
             if (options.QoS.MaxCapacity == 0)
             {
-                services.AddSingleton<IPipelineChannel, DefaultPipelineChannel>();
+                services.AddSingleton<IPipeChannel, DefaultPipeChannel>();
             }
             else
             {
-                services.AddSingleton<IPipelineChannel, DefaultPipelineChannel>(sp => new DefaultPipelineChannel(options.QoS.MaxCapacity));
+                services.AddSingleton<IPipeChannel, DefaultPipeChannel>(sp => new DefaultPipeChannel(options.QoS.MaxCapacity));
             }
 
             return services;

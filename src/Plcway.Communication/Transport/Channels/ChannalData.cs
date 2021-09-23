@@ -8,9 +8,14 @@
         /// <summary>
         /// 渠道标签
         /// </summary>
-        public string Tag { get; set; }
+        public string Tag { get; }
 
         // 地址
         // 值
+
+        public ChannalData(string tag)
+        {
+            Tag = tag;
+        }
     }
 }

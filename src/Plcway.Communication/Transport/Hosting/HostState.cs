@@ -1,4 +1,4 @@
-﻿namespace Plcway.Communication.Transport.Host
+﻿namespace Plcway.Communication.Transport.Hosting
 {
     /// <summary>
     /// 主机状态

@@ -10,16 +10,16 @@ namespace Plcway.Communication.Transport.BootStrapping
     /// <summary>
     /// 启动项基础类
     /// </summary>
-    public abstract class AbstractBootStarp
+    public abstract class AbstractBootStrap
     {
         public IServiceCollection ServiceCollection { get; private set; }
 
-        public AbstractBootStarp()
+        public AbstractBootStrap()
         {
             
         }
 
-        public AbstractBootStarp CreateBuilder()
+        public AbstractBootStrap CreateBuilder()
         {
             var builder = new ConfigurationBuilder()
              .SetBasePath(AppContext.BaseDirectory)
@@ -32,18 +32,18 @@ namespace Plcway.Communication.Transport.BootStrapping
             return this;
         }
 
-        public AbstractBootStarp UseBuilder(IServiceCollection serviceCollection)
+        public AbstractBootStrap UseBuilder(IServiceCollection serviceCollection)
         {
             ServiceCollection = serviceCollection;
             return this;
         }
 
-        public AbstractBootStarp ConfigureAppConfiguration()
+        public AbstractBootStrap ConfigureAppConfiguration()
         {
             return this;
         }
 
-        public AbstractBootStarp ConfigurServices(Action<IServiceCollection> action)
+        public AbstractBootStrap ConfigurServices(Action<IServiceCollection> action)
         {
             Contract.Requires(action != null);
             action(ServiceCollection);
@@ -51,7 +51,7 @@ namespace Plcway.Communication.Transport.BootStrapping
             return this;
         }
 
-        public AbstractBootStarp ConfigureHandler(Action<HandlerEndpoint> action)
+        public AbstractBootStrap ConfigureHandler(Action<HandlerEndpoint> action)
         {
             Contract.Requires(action != null);
             action(new HandlerEndpoint());

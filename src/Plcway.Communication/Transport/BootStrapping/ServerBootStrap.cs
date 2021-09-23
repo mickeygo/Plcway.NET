@@ -1,6 +1,6 @@
 ﻿namespace Plcway.Communication.Transport.BootStrapping
 {
-    public class ServerBootStarp
+    public class ServerBootStrap
     {
     }
 }

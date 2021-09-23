@@ -5,7 +5,7 @@ namespace Plcway.Communication.Transport.Channels
     /// <summary>
     /// 管道
     /// </summary>
-    public interface IPipelineChannel
+    public interface IPipeChannel
     {
         /// <summary>
         /// 数据拉取通道

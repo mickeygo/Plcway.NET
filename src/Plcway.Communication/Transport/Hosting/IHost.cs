@@ -1,12 +1,13 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
-namespace Plcway.Communication.Transport.Host
+namespace Plcway.Communication.Transport.Hosting
 {
     /// <summary>
     /// 主机
     /// </summary>
-    public interface IHost
+    public interface IHost : IDisposable
     {
         /// <summary>
         /// 主机状态

@@ -3,6 +3,10 @@ using System.Collections.Concurrent;
 
 namespace Plcway.Communication.Transport.Channels
 {
+    /// <summary>
+    /// 数据触发器状态机 <br/>
+    /// 记录读取标识位的状态，用于比对当前与上一状态，判断当前标识是否需要处理。
+    /// </summary>
     public class TriggerState : TriggerState<bool>
     {
 

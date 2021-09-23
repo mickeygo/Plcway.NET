@@ -23,10 +23,10 @@ namespace Plcway.Communication.Transport.Channels
         /// </summary>
         public ResponseContext Response { get; }
 
-        public ChannelContext(long transactionId, Schema schema, IEnumerable<ChannalData> request)
+        public ChannelContext(long transactionId, Schema schema, ChannalData signal, IEnumerable<ChannalData> request)
         {
             TransactionId = transactionId;
-            Request = new RequestContext(schema, request);
+            Request = new RequestContext(schema, signal, request);
             Response = new ResponseContext(schema);
         }
     }
@@ -51,9 +51,10 @@ namespace Plcway.Communication.Transport.Channels
         /// </summary>
         public IReadOnlyList<ChannalData> Values { get; }
 
-        public RequestContext(Schema schema, IEnumerable<ChannalData> values)
+        public RequestContext(Schema schema, ChannalData signal, IEnumerable<ChannalData> values)
         {
             Schema = schema;
+            Signal = signal;
             Values = values.ToList();
         }
     }

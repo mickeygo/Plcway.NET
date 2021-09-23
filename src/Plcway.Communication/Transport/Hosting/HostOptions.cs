@@ -1,4 +1,4 @@
-﻿namespace Plcway.Communication.Transport.Host
+﻿namespace Plcway.Communication.Transport.Hosting
 {
     public class HostOptions
     {
