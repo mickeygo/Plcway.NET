@@ -9,7 +9,7 @@ namespace Plcway.Communication.Protocols
     /// </summary>
     /// <param name="name"></param>
     /// <param name="ex"></param>
-    public delegate void LoggerDelegate(string name, Exception ex = null);
+    public delegate void LoggerDelegate(string name, Exception? ex = null);
 
     /// <summary>
     /// Socket基类
@@ -30,12 +30,12 @@ namespace Plcway.Communication.Protocols
         /// <summary>
         /// Socket实例
         /// </summary>
-        protected Socket socket;
+        protected Socket? socket;
 
         /// <summary>
-        /// 是否自动打开关闭
+        /// 是否自动打开关闭（没有直接调用 Open() 方法）
         /// </summary>
-        protected bool isAutoOpen = true;
+        protected bool IsAutoOpen = true;
 
         /// <summary>
         /// 连接（如果已经是连接状态会先关闭再打开）
@@ -49,7 +49,7 @@ namespace Plcway.Communication.Protocols
         /// <returns></returns>
         public Result Open()
         {
-            isAutoOpen = false;
+            IsAutoOpen = false;
             return Connect();
         }
 
@@ -80,7 +80,7 @@ namespace Plcway.Communication.Protocols
         /// <returns></returns>
         public Result Close()
         {
-            isAutoOpen = true;
+            IsAutoOpen = true;
             return Dispose();
         }
 

@@ -19,4 +19,9 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Plcway.Infrastructure\Plcway.Infrastructure.csproj" />
+    <ProjectReference Include="..\Plcway.Abstract.Tests\Plcway.Abstract.Tests.csproj" />
+  </ItemGroup>
+
 </Project>

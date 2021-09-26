@@ -18,7 +18,6 @@
     <Folder Include="Codecs\Http\" />
     <Folder Include="Codecs\Mqtt\" />
     <Folder Include="Codecs\Protobuf\" />
-    <Folder Include="Protocols\Modbus\" />
   </ItemGroup>
 
 </Project>

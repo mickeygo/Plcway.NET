@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -27,6 +28,9 @@ namespace Plcway.Communication.Transport.Channels
 
         public Task DispatchAsync(ChannelContext ctx)
         {
+            // 要执行的任务
+            // TODO: 记录触发任务
+
             // 阻塞，直到有可用的任务
             if (_countdownEvent.CurrentCount == 0)
             {
@@ -40,13 +44,19 @@ namespace Plcway.Communication.Transport.Channels
             {
                 try
                 {
-                    // 要执行的任务
                     var route = RouteTable.Shared.Routes[ctx.Request.Signal.Tag];
                     var handler = (IChannelHandler)InternalServiceProvider.Shared.ServiceProvider.GetRequiredService(route.HandlerType);  // 思考，如何避免使用 Service Locator 模式？
+                    // TODO: 记录任务执行的开始时间
                     await handler.ExecuteAsync(ctx);
+                }
+                catch (Exception ex)
+                { 
+                    // TODO: 捕获异常，并记录
                 }
                 finally
                 {
+                    // TODO: 记录任务执行的结束时间
+
                     // 执行完后，当前可添加的任务数加1
                     _countdownEvent.AddCount();
                 }

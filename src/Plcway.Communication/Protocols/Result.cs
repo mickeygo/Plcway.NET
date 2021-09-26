@@ -8,24 +8,22 @@ namespace Plcway.Communication.Protocols
     /// </summary>
     public class Result
     {
+        private string? _err;
+
         /// <summary>
         /// 是否成功
         /// </summary>
         public bool IsSucceed { get; set; } = true;
 
-        private string _Err;
         /// <summary>
         /// 异常消息
         /// </summary>
-        public string Err
+        public string? Err
         {
-            get
-            {
-                return _Err;
-            }
+            get => _err;
             set
             {
-                _Err = value;
+                _err = value;
                 AddErr2List();
             }
         }
@@ -39,44 +37,44 @@ namespace Plcway.Communication.Protocols
         /// <summary>
         /// 详细异常
         /// </summary>
-        public Exception Exception { get; set; }
+        public Exception? Exception { get; set; }
 
         /// <summary>
         /// 异常集合
         /// </summary>
-        public List<string> ErrList { get; private set; } = new List<string>();
+        public List<string> ErrList { get; private set; } = new();
 
         /// <summary>
         /// 请求报文
         /// </summary>
-        public string Requst { get; set; }
+        public string? Requst { get; set; }
 
         /// <summary>
         /// 响应报文
         /// </summary>
-        public string Response { get; set; }
+        public string? Response { get; set; }
 
         /// <summary>
         /// 请求报文2
         /// </summary>
-        public string Requst2 { get; set; }
+        public string? Requst2 { get; set; }
 
         /// <summary>
         /// 响应报文2
         /// </summary>
-        public string Response2 { get; set; }
+        public string? Response2 { get; set; }
 
         /// <summary>
         /// 耗时（毫秒）
         /// </summary>
-        public double? TimeConsuming { get; private set; }
+        public double? Elapsed { get; private set; }
 
         /// <summary>
         /// 结束时间统计
         /// </summary>
         internal Result EndTime()
         {
-            TimeConsuming = (DateTime.Now - InitialTime).TotalMilliseconds;
+            Elapsed = (DateTime.Now - InitialTime).TotalMilliseconds;
             return this;
         }
 
@@ -101,6 +99,7 @@ namespace Plcway.Communication.Protocols
                 if (!ErrList.Contains(err))
                     ErrList.Add(err);
             }
+
             return this;
         }
 

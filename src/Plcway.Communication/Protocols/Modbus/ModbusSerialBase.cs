@@ -1,134 +1,105 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
+using System.IO.Ports;
 using System.Linq;
-using System.Net;
-using System.Net.Sockets;
 using System.Text;
 using Plcway.Communication.Protocols.Util;
 
 namespace Plcway.Communication.Protocols.Modbus
 {
-    /// <summary>
-    /// ModbusTcp协议客户端
-    /// </summary>
-    public class ModbusTcpClient : SocketBase, IModbusClient
+    public abstract class ModbusSerialBase : SerialPortBase, IModbusClient
     {
-        private readonly IPEndPoint _ipEndPoint;
-        private readonly int _timeout = -1;
-        private readonly EndianFormat _format;
+        protected EndianFormat _format;
         private readonly bool _plcAddresses;
 
         /// <summary>
-        /// 初始化一个新的<see cref="ModbusTcpClient"/>实例
+        /// 警告日志委托        
         /// </summary>
-        /// <param name="ipEndPoint">IP EndPoint</param>
+        public LoggerDelegate WarningLog { get; set; }
+
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="portName">COM端口名称</param>
+        /// <param name="baudRate">波特率</param>
+        /// <param name="dataBits">数据位</param>
+        /// <param name="stopBits">停止位</param>
+        /// <param name="parity">奇偶校验</param>
         /// <param name="timeout">超时时间（毫秒）</param>
         /// <param name="format">大小端设置</param>
-        /// <param name="format">字节格式</param>
         /// <param name="plcAddresses">PLC地址</param>
-        public ModbusTcpClient(IPEndPoint ipEndPoint, int timeout = 1500, EndianFormat format = EndianFormat.ABCD, bool plcAddresses = false)
+        public ModbusSerialBase(string portName, int baudRate, int dataBits, StopBits stopBits, Parity parity, int timeout = 1500, EndianFormat format = EndianFormat.ABCD, bool plcAddresses = false)
         {
-            Contract.Requires(ipEndPoint != null);
+            if (serialPort == null)
+            {
+                serialPort = new SerialPort();
+            }
 
-            _ipEndPoint = ipEndPoint;
-            _timeout = timeout;
+            serialPort.PortName = portName;
+            serialPort.BaudRate = baudRate;
+            serialPort.DataBits = dataBits;
+            serialPort.StopBits = stopBits;
+            serialPort.Encoding = Encoding.ASCII;
+            serialPort.Parity = parity;
+
+            serialPort.ReadTimeout = timeout;
+            serialPort.WriteTimeout = timeout;
+
             _format = format;
             _plcAddresses = plcAddresses;
         }
 
-        /// <summary>
-        /// 初始化一个新的<see cref="ModbusTcpClient"/>实例
-        /// </summary>
-        /// <param name="ip"></param>
-        /// <param name="port"></param>
-        /// <param name="timeout">超时时间（毫秒）</param>
-        /// <param name="format">大小端设置</param>
-        /// <param name="plcAddresses">PLC地址</param>
-        public ModbusTcpClient(string ip, int port, int timeout = 1500, EndianFormat format = EndianFormat.ABCD, bool plcAddresses = false)
-        {
-            if (!IPAddress.TryParse(ip, out var address))
-            {
-                address = Dns.GetHostEntry(ip).AddressList?.FirstOrDefault();
-            }
-
-            _ipEndPoint = new IPEndPoint(address, port);
-            _timeout = timeout;
-            _format = format;
-            _plcAddresses = plcAddresses;
-        }
+        #region 发送报文，并获取响应报文
 
         /// <summary>
-        /// 连接
-        /// </summary>
-        /// <returns></returns>
-        protected override Result Connect()
-        {
-            var result = new Result();
-            socket?.SafeClose();
-            socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
-            try
-            {
-                //超时时间设置
-                socket.ReceiveTimeout = _timeout;
-                socket.SendTimeout = _timeout;
-
-                //连接
-                socket.Connect(_ipEndPoint);
-            }
-            catch (Exception ex)
-            {
-                socket?.SafeClose();
-                result.IsSucceed = false;
-                result.Err = ex.Message;
-                result.ErrCode = 408;
-                result.Exception = ex;
-            }
-            return result.EndTime();
-        }
-
-        /// <summary>
-        /// 发送报文，并获取响应报文（建议使用SendPackageReliable，如果异常会自动重试一次）
+        /// 发送报文，并获取响应报文
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
-        public override Result<byte[]> SendPackageSingle(byte[] command)
+        public Result<byte[]> SendPackageReliable(byte[] command)
         {
-            //从发送命令到读取响应为最小单元，避免多线程执行串数据（可线程安全执行）
-            lock (this)
+            Result<byte[]> _sendPackage()
             {
-                var result = new Result<byte[]>();
-                try
+                //从发送命令到读取响应为最小单元，避免多线程执行串数据（可线程安全执行）
+                lock (this)
                 {
-                    socket.Send(command);
-                    var socketReadResul = SocketRead(socket, 8);
-                    if (!socketReadResul.IsSucceed)
-                    {
-                        return socketReadResul;
-                    }
-
-                    var headPackage = socketReadResul.Value;
-                    int length = headPackage[4] * 256 + headPackage[5] - 2;
-                    socketReadResul = SocketRead(socket, length);
-                    if (!socketReadResul.IsSucceed)
-                    {
-                        return socketReadResul;
-                    }
-
-                    var dataPackage = socketReadResul.Value;
-                    result.Value = headPackage.Concat(dataPackage).ToArray();
-                    return result.EndTime();
-                }
-                catch (Exception ex)
-                {
-                    result.IsSucceed = false;
-                    result.Err = ex.Message;
-                    result.AddErr2List();
-                    return result.EndTime();
+                    //发送命令
+                    serialPort.Write(command, 0, command.Length);
+                    //获取响应报文
+                    return SerialPortRead(serialPort);
                 }
             }
+
+            try
+            {
+                var result = _sendPackage();
+                if (!result.IsSucceed)
+                {
+                    WarningLog?.Invoke(result.Err, result.Exception);
+                    //如果出现异常，则进行一次重试         
+                    var conentResult = Connect();
+                    if (!conentResult.IsSucceed)
+                        return new Result<byte[]>(conentResult);
+
+                    return _sendPackage();
+                }
+                else
+                    return result;
+            }
+            catch (Exception ex)
+            {
+                WarningLog?.Invoke(ex.Message, ex);
+                //如果出现异常，则进行一次重试
+                //重新打开连接
+                var conentResult = Connect();
+                if (!conentResult.IsSucceed)
+                    return new Result<byte[]>(conentResult);
+
+                return _sendPackage();
+            }
         }
+
+        #endregion
 
         #region Read 读取
 
@@ -139,83 +110,11 @@ namespace Plcway.Communication.Protocols.Modbus
         /// <param name="stationNumber">站号</param>
         /// <param name="functionCode">功能码</param>
         /// <param name="readLength">读取长度</param>
-        /// <param name="byteFormatting">大小端转换</param>
         /// <returns></returns>
-        public Result<byte[]> Read(string address, byte stationNumber = 1, byte functionCode = 3, ushort readLength = 1, bool byteFormatting = true)
-        {
-            var result = new Result<byte[]>();
-
-            if (!socket?.Connected ?? true)
-            {
-                var conentResult = Connect();
-                if (!conentResult.IsSucceed)
-                {
-                    conentResult.Err = $"读取 地址:{address} 站号:{stationNumber} 功能码:{functionCode} 失败。{ conentResult.Err}";
-                    return result.SetErrInfo(conentResult);
-                }
-            }
-
-            try
-            {
-                var checkHead = GetCheckHead(functionCode);
-                //1 获取命令（组装报文）
-                byte[] command = GetReadCommand(address, stationNumber, functionCode, readLength, checkHead);
-                result.Requst = string.Join(" ", command.Select(t => t.ToString("X2")));
-                //获取响应报文
-                var sendResult = SendPackageReliable(command);
-                if (!sendResult.IsSucceed)
-                {
-                    sendResult.Err = $"读取 地址:{address} 站号:{stationNumber} 功能码:{functionCode} 失败。{ sendResult.Err}";
-                    return result.SetErrInfo(sendResult).EndTime();
-                }
-
-                var dataPackage = sendResult.Value;
-                byte[] resultBuffer = new byte[dataPackage.Length - 9];
-                Array.Copy(dataPackage, 9, resultBuffer, 0, resultBuffer.Length);
-                result.Response = string.Join(" ", dataPackage.Select(t => t.ToString("X2")));
-                //4 获取响应报文数据（字节数组形式）             
-                if (byteFormatting)
-                {
-                    result.Value = resultBuffer.Reverse().ToArray().ByteFormatting(_format);
-                }
-                else
-                {
-                    result.Value = resultBuffer.Reverse().ToArray();
-                }
-
-                if (checkHead[0] != dataPackage[0] || checkHead[1] != dataPackage[1])
-                {
-                    result.IsSucceed = false;
-                    result.Err = $"读取 地址:{address} 站号:{stationNumber} 功能码:{functionCode} 失败。响应结果校验失败";
-                    socket?.SafeClose();
-                }
-            }
-            catch (SocketException ex)
-            {
-                result.IsSucceed = false;
-                if (ex.SocketErrorCode == SocketError.TimedOut)
-                {
-                    result.Err = $"读取 地址:{address} 站号:{stationNumber} 功能码:{functionCode} 失败。连接超时";
-                    socket?.SafeClose();
-                }
-                else
-                {
-                    result.Err = $"读取 地址:{address} 站号:{stationNumber} 功能码:{functionCode} 失败。{ ex.Message}";
-                }
-            }
-            finally
-            {
-                if (IsAutoOpen)
-                {
-                    Dispose();
-                }
-            }
-
-            return result.EndTime();
-        }
+        public abstract Result<byte[]> Read(string address, byte stationNumber = 1, byte functionCode = 3, ushort readLength = 1, bool byteFormatting = true);
 
         /// <summary>
-        /// 读取Int16类型数据
+        /// 读取Int16
         /// </summary>
         /// <param name="address">寄存器起始地址</param>
         /// <param name="stationNumber">站号</param>
@@ -226,25 +125,12 @@ namespace Plcway.Communication.Protocols.Modbus
             var readResut = Read(address, stationNumber, functionCode);
             var result = new Result<short>(readResut);
             if (result.IsSucceed)
-            {
                 result.Value = BitConverter.ToInt16(readResut.Value, 0);
-            }
             return result.EndTime();
         }
 
         /// <summary>
-        /// 读取Int16类型数据
-        /// </summary>
-        /// <param name="address">寄存器起始地址</param>
-        /// <param name="stationNumber">站号</param>
-        /// <param name="functionCode">功能码</param
-        public Result<short> ReadInt16(int address, byte stationNumber = 1, byte functionCode = 3)
-        {
-            return ReadInt16(address.ToString(), stationNumber, functionCode);
-        }
-
-        /// <summary>
-        /// 读取UInt16类型数据
+        /// 读取UInt16
         /// </summary>
         /// <param name="address">寄存器起始地址</param>
         /// <param name="stationNumber">站号</param>
@@ -255,26 +141,12 @@ namespace Plcway.Communication.Protocols.Modbus
             var readResut = Read(address, stationNumber, functionCode);
             var result = new Result<ushort>(readResut);
             if (result.IsSucceed)
-            {
                 result.Value = BitConverter.ToUInt16(readResut.Value, 0);
-            }
             return result.EndTime();
         }
 
         /// <summary>
-        /// 读取UInt16类型数据
-        /// </summary>
-        /// <param name="address">寄存器起始地址</param>
-        /// <param name="stationNumber">站号</param>
-        /// <param name="functionCode">功能码</param>
-        /// <returns></returns>
-        public Result<ushort> ReadUInt16(int address, byte stationNumber = 1, byte functionCode = 3)
-        {
-            return ReadUInt16(address.ToString(), stationNumber, functionCode);
-        }
-
-        /// <summary>
-        /// 读取Int32类型数据
+        /// 读取Int32
         /// </summary>
         /// <param name="address">寄存器起始地址</param>
         /// <param name="stationNumber">站号</param>
@@ -285,27 +157,12 @@ namespace Plcway.Communication.Protocols.Modbus
             var readResut = Read(address, stationNumber, functionCode, readLength: 2);
             var result = new Result<int>(readResut);
             if (result.IsSucceed)
-            {
                 result.Value = BitConverter.ToInt32(readResut.Value, 0);
-            }
             return result.EndTime();
         }
 
         /// <summary>
-        /// 读取Int32类型数据
-        /// </summary>
-        /// <param name="address">寄存器起始地址</param>
-        /// <param name="stationNumber">站号</param>
-        /// <param name="functionCode">功能码</param>
-        /// <returns></returns>
-        public Result<int> ReadInt32(int address, byte stationNumber = 1, byte functionCode = 3)
-        {
-            return ReadInt32(address.ToString(), stationNumber, functionCode);
-        }
-
-
-        /// <summary>
-        /// 读取UInt32类型数据
+        /// 读取UInt32
         /// </summary>
         /// <param name="address">寄存器起始地址</param>
         /// <param name="stationNumber">站号</param>
@@ -316,26 +173,12 @@ namespace Plcway.Communication.Protocols.Modbus
             var readResut = Read(address, stationNumber, functionCode, readLength: 2);
             var result = new Result<uint>(readResut);
             if (result.IsSucceed)
-            {
                 result.Value = BitConverter.ToUInt32(readResut.Value, 0);
-            }
             return result.EndTime();
         }
 
         /// <summary>
-        /// 读取UInt32类型数据
-        /// </summary>
-        /// <param name="address">寄存器起始地址</param>
-        /// <param name="stationNumber">站号</param>
-        /// <param name="functionCode">功能码</param>
-        /// <returns></returns>
-        public Result<uint> ReadUInt32(int address, byte stationNumber = 1, byte functionCode = 3)
-        {
-            return ReadUInt32(address.ToString(), stationNumber, functionCode);
-        }
-
-        /// <summary>
-        /// 读取Int64类型数据
+        /// 读取Int64
         /// </summary>
         /// <param name="address">寄存器起始地址</param>
         /// <param name="stationNumber">站号</param>
@@ -346,26 +189,12 @@ namespace Plcway.Communication.Protocols.Modbus
             var readResut = Read(address, stationNumber, functionCode, readLength: 4);
             var result = new Result<long>(readResut);
             if (result.IsSucceed)
-            {
                 result.Value = BitConverter.ToInt64(readResut.Value, 0);
-            }
             return result.EndTime();
         }
 
         /// <summary>
-        /// 读取Int64类型数据
-        /// </summary>
-        /// <param name="address">寄存器起始地址</param>
-        /// <param name="stationNumber">站号</param>
-        /// <param name="functionCode">功能码</param>
-        /// <returns></returns>
-        public Result<long> ReadInt64(int address, byte stationNumber = 1, byte functionCode = 3)
-        {
-            return ReadInt64(address.ToString(), stationNumber, functionCode);
-        }
-
-        /// <summary>
-        /// 读取UInt64类型数据
+        /// 读取UInt64
         /// </summary>
         /// <param name="address">寄存器起始地址</param>
         /// <param name="stationNumber">站号</param>
@@ -376,26 +205,12 @@ namespace Plcway.Communication.Protocols.Modbus
             var readResut = Read(address, stationNumber, functionCode, readLength: 4);
             var result = new Result<ulong>(readResut);
             if (result.IsSucceed)
-            {
                 result.Value = BitConverter.ToUInt64(readResut.Value, 0);
-            }
             return result.EndTime();
         }
 
         /// <summary>
-        /// 读取UInt64类型数据
-        /// </summary>
-        /// <param name="address">寄存器起始地址</param>
-        /// <param name="stationNumber">站号</param>
-        /// <param name="functionCode">功能码</param>
-        /// <returns></returns>
-        public Result<ulong> ReadUInt64(int address, byte stationNumber = 1, byte functionCode = 3)
-        {
-            return ReadUInt64(address.ToString(), stationNumber, functionCode);
-        }
-
-        /// <summary>
-        /// 读取Float类型数据
+        /// 读取Float
         /// </summary>
         /// <param name="address">寄存器起始地址</param>
         /// <param name="stationNumber">站号</param>
@@ -406,26 +221,12 @@ namespace Plcway.Communication.Protocols.Modbus
             var readResut = Read(address, stationNumber, functionCode, readLength: 2);
             var result = new Result<float>(readResut);
             if (result.IsSucceed)
-            { 
                 result.Value = BitConverter.ToSingle(readResut.Value, 0);
-                }
             return result.EndTime();
         }
 
         /// <summary>
-        /// 读取Float类型数据
-        /// </summary>
-        /// <param name="address">寄存器起始地址</param>
-        /// <param name="stationNumber">站号</param>
-        /// <param name="functionCode">功能码</param>
-        /// <returns></returns>
-        public Result<float> ReadFloat(int address, byte stationNumber = 1, byte functionCode = 3)
-        {
-            return ReadFloat(address.ToString(), stationNumber, functionCode);
-        }
-
-        /// <summary>
-        /// 读取Double类型数据
+        /// 读取Double
         /// </summary>
         /// <param name="address">寄存器起始地址</param>
         /// <param name="stationNumber">站号</param>
@@ -436,52 +237,12 @@ namespace Plcway.Communication.Protocols.Modbus
             var readResut = Read(address, stationNumber, functionCode, readLength: 4);
             var result = new Result<double>(readResut);
             if (result.IsSucceed)
-            {
                 result.Value = BitConverter.ToDouble(readResut.Value, 0);
-            }
             return result.EndTime();
         }
 
         /// <summary>
-        /// 读取Double类型数据
-        /// </summary>
-        /// <param name="address">寄存器起始地址</param>
-        /// <param name="stationNumber">站号</param>
-        /// <param name="functionCode">功能码</param>
-        /// <returns></returns>
-        public Result<double> ReadDouble(int address, byte stationNumber = 1, byte functionCode = 3)
-        {
-            return ReadDouble(address.ToString(), stationNumber, functionCode);
-        }
-
-        /// <summary>
-        /// 读取字符串
-        /// </summary>
-        /// <param name="address">地址</param>
-        /// <param name="stationNumber">站号</param>
-        /// <param name="functionCode">功能码</param>
-        /// <param name="encoding">编码</param>
-        /// <param name="readLength">读取长度</param>
-        /// <returns></returns>
-        public Result<string> ReadString(string address, byte stationNumber = 1, byte functionCode = 3, Encoding encoding = null, ushort readLength = 10)
-        {
-            if (encoding == null)
-            {
-                encoding = Encoding.ASCII;
-            }
-
-            readLength = (ushort)Math.Ceiling((float)readLength / 2);
-            var readResut = Read(address, stationNumber, functionCode, readLength: readLength, byteFormatting: false);
-            var result = new Result<string>(readResut);
-            if (result.IsSucceed)
-            {
-                result.Value = encoding.GetString(readResut.Value.Reverse().ToArray())?.Replace("\0", "");  // TODO: 使用 Span
-            }
-            return result.EndTime();
-        }
-
-        /// <summary>
-        /// 读取线圈类型数据
+        /// 读取线圈
         /// </summary>
         /// <param name="address">寄存器起始地址</param>
         /// <param name="stationNumber">站号</param>
@@ -492,52 +253,24 @@ namespace Plcway.Communication.Protocols.Modbus
             var readResut = Read(address, stationNumber, functionCode);
             var result = new Result<bool>(readResut);
             if (result.IsSucceed)
-            {
                 result.Value = BitConverter.ToBoolean(readResut.Value, 0);
-            }
             return result.EndTime();
         }
 
         /// <summary>
-        /// 读取线圈类型数据
+        /// 读取离散
         /// </summary>
-        /// <param name="address">寄存器起始地址</param>
-        /// <param name="stationNumber">站号</param>
-        /// <param name="functionCode">功能码</param>
-        /// <returns></returns>
-        public Result<bool> ReadCoil(int address, byte stationNumber = 1, byte functionCode = 1)
-        {
-            return ReadCoil(address.ToString(), stationNumber, functionCode);
-        }
-
-        /// <summary>
-        /// 读取离散类型数据
-        /// </summary>
-        /// <param name="address">读取地址</param>
-        /// <param name="stationNumber">站号</param>
-        /// <param name="functionCode">功能码</param>
+        /// <param name="address"></param>
+        /// <param name="stationNumber"></param>
+        /// <param name="functionCode"></param>
         /// <returns></returns>
         public Result<bool> ReadDiscrete(string address, byte stationNumber = 1, byte functionCode = 2)
         {
             var readResut = Read(address, stationNumber, functionCode);
             var result = new Result<bool>(readResut);
             if (result.IsSucceed)
-            {
                 result.Value = BitConverter.ToBoolean(readResut.Value, 0);
-            }
             return result.EndTime();
-        }
-
-        /// <summary>
-        /// 读取离散类型数据
-        /// </summary>
-        /// <param name="address">读取地址</param>
-        /// <param name="stationNumber">站号</param>
-        /// <param name="functionCode">功能码</param>
-        /// <returns></returns>
-        public Result<bool> ReadDiscrete(int address, byte stationNumber = 1, byte functionCode = 2)
-        {
-            return ReadDiscrete(address.ToString(), stationNumber, functionCode);
         }
 
         /// <summary>
@@ -550,9 +283,7 @@ namespace Plcway.Communication.Protocols.Modbus
         public Result<short> ReadInt16(string beginAddress, string address, byte[] values)
         {
             if (!int.TryParse(address?.Trim(), out int addressInt) || !int.TryParse(beginAddress?.Trim(), out int beginAddressInt))
-            {
                 throw new Exception($"只能是数字，参数address：{address}  beginAddress：{beginAddress}");
-            }
 
             try
             {
@@ -573,13 +304,6 @@ namespace Plcway.Communication.Protocols.Modbus
             }
         }
 
-        /// <summary>
-        /// 从批量读取的数据字节提取对应的地址数据
-        /// </summary>
-        /// <param name="beginAddress">批量读取的起始地址</param>
-        /// <param name="address">读取地址</param>
-        /// <param name="values">批量读取的值</param>
-        /// <returns></returns>
         public Result<short> ReadInt16(int beginAddress, int address, byte[] values)
         {
             return ReadInt16(beginAddress.ToString(), address.ToString(), values);
@@ -595,9 +319,7 @@ namespace Plcway.Communication.Protocols.Modbus
         public Result<ushort> ReadUInt16(string beginAddress, string address, byte[] values)
         {
             if (!int.TryParse(address?.Trim(), out int addressInt) || !int.TryParse(beginAddress?.Trim(), out int beginAddressInt))
-            {
                 throw new Exception($"只能是数字，参数address：{address}  beginAddress：{beginAddress}");
-            }
 
             try
             {
@@ -618,13 +340,6 @@ namespace Plcway.Communication.Protocols.Modbus
             }
         }
 
-        /// <summary>
-        /// 从批量读取的数据字节提取对应的地址数据
-        /// </summary>
-        /// <param name="beginAddress">批量读取的起始地址</param>
-        /// <param name="address">读取地址</param>
-        /// <param name="values">批量读取的值</param>
-        /// <returns></returns>
         public Result<ushort> ReadUInt16(int beginAddress, int address, byte[] values)
         {
             return ReadUInt16(beginAddress.ToString(), address.ToString(), values);
@@ -640,9 +355,7 @@ namespace Plcway.Communication.Protocols.Modbus
         public Result<int> ReadInt32(string beginAddress, string address, byte[] values)
         {
             if (!int.TryParse(address?.Trim(), out int addressInt) || !int.TryParse(beginAddress?.Trim(), out int beginAddressInt))
-            {
                 throw new Exception($"只能是数字，参数address：{address}  beginAddress：{beginAddress}");
-            }
 
             try
             {
@@ -664,13 +377,6 @@ namespace Plcway.Communication.Protocols.Modbus
             }
         }
 
-        /// <summary>
-        /// 从批量读取的数据字节提取对应的地址数据
-        /// </summary>
-        /// <param name="beginAddress">批量读取的起始地址</param>
-        /// <param name="address">读取地址</param>
-        /// <param name="values">批量读取的值</param>
-        /// <returns></returns>
         public Result<int> ReadInt32(int beginAddress, int address, byte[] values)
         {
             return ReadInt32(beginAddress.ToString(), address.ToString(), values);
@@ -686,10 +392,7 @@ namespace Plcway.Communication.Protocols.Modbus
         public Result<uint> ReadUInt32(string beginAddress, string address, byte[] values)
         {
             if (!int.TryParse(address?.Trim(), out int addressInt) || !int.TryParse(beginAddress?.Trim(), out int beginAddressInt))
-            {
                 throw new Exception($"只能是数字，参数address：{address}  beginAddress：{beginAddress}");
-            }
-
             try
             {
                 var interval = (addressInt - beginAddressInt) / 2;
@@ -710,13 +413,6 @@ namespace Plcway.Communication.Protocols.Modbus
             }
         }
 
-        /// <summary>
-        /// 从批量读取的数据字节提取对应的地址数据
-        /// </summary>
-        /// <param name="beginAddress">批量读取的起始地址</param>
-        /// <param name="address">读取地址</param>
-        /// <param name="values">批量读取的值</param>
-        /// <returns></returns>
         public Result<uint> ReadUInt32(int beginAddress, int address, byte[] values)
         {
             return ReadUInt32(beginAddress.ToString(), address.ToString(), values);
@@ -732,9 +428,7 @@ namespace Plcway.Communication.Protocols.Modbus
         public Result<long> ReadInt64(string beginAddress, string address, byte[] values)
         {
             if (!int.TryParse(address?.Trim(), out int addressInt) || !int.TryParse(beginAddress?.Trim(), out int beginAddressInt))
-            {
                 throw new Exception($"只能是数字，参数address：{address}  beginAddress：{beginAddress}");
-            }
 
             try
             {
@@ -756,13 +450,6 @@ namespace Plcway.Communication.Protocols.Modbus
             }
         }
 
-        /// <summary>
-        /// 从批量读取的数据字节提取对应的地址数据
-        /// </summary>
-        /// <param name="beginAddress">批量读取的起始地址</param>
-        /// <param name="address">读取地址</param>
-        /// <param name="values">批量读取的值</param>
-        /// <returns></returns>
         public Result<long> ReadInt64(int beginAddress, int address, byte[] values)
         {
             return ReadInt64(beginAddress.ToString(), address.ToString(), values);
@@ -778,9 +465,7 @@ namespace Plcway.Communication.Protocols.Modbus
         public Result<ulong> ReadUInt64(string beginAddress, string address, byte[] values)
         {
             if (!int.TryParse(address?.Trim(), out int addressInt) || !int.TryParse(beginAddress?.Trim(), out int beginAddressInt))
-            {
                 throw new Exception($"只能是数字，参数address：{address}  beginAddress：{beginAddress}");
-            }
 
             try
             {
@@ -802,13 +487,6 @@ namespace Plcway.Communication.Protocols.Modbus
             }
         }
 
-        /// <summary>
-        /// 从批量读取的数据字节提取对应的地址数据
-        /// </summary>
-        /// <param name="beginAddress">批量读取的起始地址</param>
-        /// <param name="address">读取地址</param>
-        /// <param name="values">批量读取的值</param>
-        /// <returns></returns>
         public Result<ulong> ReadUInt64(int beginAddress, int address, byte[] values)
         {
             return ReadUInt64(beginAddress.ToString(), address.ToString(), values);
@@ -824,9 +502,7 @@ namespace Plcway.Communication.Protocols.Modbus
         public Result<float> ReadFloat(string beginAddress, string address, byte[] values)
         {
             if (!int.TryParse(address?.Trim(), out int addressInt) || !int.TryParse(beginAddress?.Trim(), out int beginAddressInt))
-            {
                 throw new Exception($"只能是数字，参数address：{address}  beginAddress：{beginAddress}");
-            }
 
             try
             {
@@ -848,13 +524,6 @@ namespace Plcway.Communication.Protocols.Modbus
             }
         }
 
-        /// <summary>
-        /// 从批量读取的数据字节提取对应的地址数据
-        /// </summary>
-        /// <param name="beginAddress">批量读取的起始地址</param>
-        /// <param name="address">读取地址</param>
-        /// <param name="values">批量读取的值</param>
-        /// <returns></returns>
         public Result<float> ReadFloat(int beginAddress, int address, byte[] values)
         {
             return ReadFloat(beginAddress.ToString(), address.ToString(), values);
@@ -870,9 +539,7 @@ namespace Plcway.Communication.Protocols.Modbus
         public Result<double> ReadDouble(string beginAddress, string address, byte[] values)
         {
             if (!int.TryParse(address?.Trim(), out int addressInt) || !int.TryParse(beginAddress?.Trim(), out int beginAddressInt))
-            {
                 throw new Exception($"只能是数字，参数address：{address}  beginAddress：{beginAddress}");
-            }
 
             try
             {
@@ -894,13 +561,6 @@ namespace Plcway.Communication.Protocols.Modbus
             }
         }
 
-        /// <summary>
-        /// 从批量读取的数据字节提取对应的地址数据
-        /// </summary>
-        /// <param name="beginAddress">批量读取的起始地址</param>
-        /// <param name="address">读取地址</param>
-        /// <param name="values">批量读取的值</param>
-        /// <returns></returns>
         public Result<double> ReadDouble(int beginAddress, int address, byte[] values)
         {
             return ReadDouble(beginAddress.ToString(), address.ToString(), values);
@@ -927,14 +587,9 @@ namespace Plcway.Communication.Protocols.Modbus
                 var binaryArray = Convert.ToInt32(values[index - 1]).IntToBinaryArray().ToArray().Reverse().ToArray();
                 var isBit = false;
                 if ((index - 1) * 8 + binaryArray.Length > interval)
-                {
                     isBit = binaryArray[interval - (index - 1) * 8].ToString() == 1.ToString();
-                }
 
-                return new Result<bool>
-                {
-                    Value = isBit
-                };
+                return new Result<bool>(isBit);
             }
             catch (Exception ex)
             {
@@ -946,13 +601,6 @@ namespace Plcway.Communication.Protocols.Modbus
             }
         }
 
-        /// <summary>
-        /// 从批量读取的数据字节提取对应的地址数据
-        /// </summary>
-        /// <param name="beginAddress">批量读取的起始地址</param>
-        /// <param name="address">读取地址</param>
-        /// <param name="values">批量读取的值</param>
-        /// <returns></returns>
         public Result<bool> ReadCoil(int beginAddress, int address, byte[] values)
         {
             return ReadCoil(beginAddress.ToString(), address.ToString(), values);
@@ -995,13 +643,6 @@ namespace Plcway.Communication.Protocols.Modbus
             }
         }
 
-        /// <summary>
-        /// 从批量读取的数据字节提取对应的地址数据
-        /// </summary>
-        /// <param name="beginAddress">批量读取的起始地址</param>
-        /// <param name="address">读取地址</param>
-        /// <param name="values">批量读取的值</param>
-        /// <returns></returns>
         public Result<bool> ReadDiscrete(int beginAddress, int address, byte[] values)
         {
             return ReadDiscrete(beginAddress.ToString(), address.ToString(), values);
@@ -1014,10 +655,7 @@ namespace Plcway.Communication.Protocols.Modbus
         /// <returns></returns>
         private Result<List<ModbusOutput>> BatchRead(List<ModbusInput> addresses)
         {
-            var result = new Result<List<ModbusOutput>>
-            {
-                Value = new List<ModbusOutput>()
-            };
+            var result = new Result<List<ModbusOutput>>(new List<ModbusOutput>());
             var functionCodes = addresses.Select(t => t.FunctionCode).Distinct();
             foreach (var functionCode in functionCodes)
             {
@@ -1045,6 +683,83 @@ namespace Plcway.Communication.Protocols.Modbus
                     {
                         result.SetErrInfo(tempResult);
                     }
+                    result.Requst = tempResult.Requst;
+                    result.Response = tempResult.Response;
+                }
+            }
+
+            return result.EndTime();
+        }
+
+        private Result<Dictionary<string, object>> BatchRead(Dictionary<string, DataTypeEnum> addressList, byte stationNumber, byte functionCode)
+        {
+            var result = new Result<Dictionary<string, object>>(new Dictionary<string, object>());
+
+            var addresses = addressList.Select(t => new KeyValuePair<int, DataTypeEnum>(int.Parse(t.Key), t.Value)).ToList();
+
+            var minAddress = addresses.Select(t => t.Key).Min();
+            var maxAddress = addresses.Select(t => t.Key).Max();
+            while (maxAddress >= minAddress)
+            {
+                int readLength = 121;//125 - 4 = 121
+
+                var tempAddress = addresses.Where(t => t.Key >= minAddress && t.Key <= minAddress + readLength).ToList();
+                //如果范围内没有数据。按正确逻辑不存在这种情况。
+                if (!tempAddress.Any())
+                {
+                    minAddress = minAddress + readLength;
+                    continue;
+                }
+
+                var tempMax = tempAddress.OrderByDescending(t => t.Key).FirstOrDefault();
+                readLength = tempMax.Value switch
+                {
+                    DataTypeEnum.Bool or DataTypeEnum.Byte or DataTypeEnum.Int16 or DataTypeEnum.UInt16 => tempMax.Key + 1 - minAddress,
+                    DataTypeEnum.Int32 or DataTypeEnum.UInt32 or DataTypeEnum.Float => tempMax.Key + 2 - minAddress,
+                    DataTypeEnum.Int64 or DataTypeEnum.UInt64 or DataTypeEnum.Double => tempMax.Key + 4 - minAddress,
+                    _ => throw new Exception("Err BatchRead 未定义类型 -1"),
+                };
+                var tempResult = Read(minAddress.ToString(), stationNumber, functionCode, Convert.ToUInt16(readLength), false);
+
+                result.Requst = tempResult.Requst;
+                result.Response = tempResult.Response;
+                if (!tempResult.IsSucceed)
+                {
+                    result.IsSucceed = tempResult.IsSucceed;
+                    result.Exception = tempResult.Exception;
+                    result.Err = $"读取 地址:{minAddress} 站号:{stationNumber} 功能码:{functionCode} 失败。{tempResult.Err}";
+                    result.AddErr2List();
+                    return result.EndTime();
+                }
+
+                var rValue = tempResult.Value.Reverse().ToArray();
+                foreach (var item in tempAddress)
+                {
+                    object tempVaue = item.Value switch
+                    {
+                        DataTypeEnum.Bool => ReadCoil(minAddress.ToString(), item.Key.ToString(), rValue).Value,
+                        DataTypeEnum.Byte => throw new Exception("Err BatchRead 未定义类型 -2"),
+                        DataTypeEnum.Int16 => ReadInt16(minAddress.ToString(), item.Key.ToString(), rValue).Value,
+                        DataTypeEnum.UInt16 => ReadUInt16(minAddress.ToString(), item.Key.ToString(), rValue).Value,
+                        DataTypeEnum.Int32 => ReadInt32(minAddress.ToString(), item.Key.ToString(), rValue).Value,
+                        DataTypeEnum.UInt32 => ReadUInt32(minAddress.ToString(), item.Key.ToString(), rValue).Value,
+                        DataTypeEnum.Int64 => ReadInt64(minAddress.ToString(), item.Key.ToString(), rValue).Value,
+                        DataTypeEnum.UInt64 => ReadUInt64(minAddress.ToString(), item.Key.ToString(), rValue).Value,
+                        DataTypeEnum.Float => ReadFloat(minAddress.ToString(), item.Key.ToString(), rValue).Value,
+                        DataTypeEnum.Double => ReadDouble(minAddress.ToString(), item.Key.ToString(), rValue).Value,
+                        _ => throw new Exception("Err BatchRead 未定义类型 -3"),
+                    };
+                    result.Value.Add(item.Key.ToString(), tempVaue);
+                }
+                minAddress += readLength;
+
+                if (addresses.Any(t => t.Key >= minAddress))
+                {
+                    minAddress = addresses.Where(t => t.Key >= minAddress).OrderBy(t => t.Key).FirstOrDefault().Key;
+                }
+                else
+                {
+                    return result.EndTime();
                 }
             }
 
@@ -1062,90 +777,15 @@ namespace Plcway.Communication.Protocols.Modbus
             var result = BatchRead(addresses);
             for (int i = 0; i < retryCount; i++)
             {
-                if (result.IsSucceed)
+                if (!result.IsSucceed)
                 {
-                    break;
+                    WarningLog?.Invoke(result.Err, result.Exception);
+                    result = BatchRead(addresses);
                 }
-
-                WarningLog?.Invoke(result.Err, result.Exception);
-                result = BatchRead(addresses);
-            }
-
-            return result;
-        }
-
-        private Result<Dictionary<string, object>> BatchRead(Dictionary<string, DataTypeEnum> addressList, byte stationNumber, byte functionCode)
-        {
-            var result = new Result<Dictionary<string, object>>
-            {
-                Value = new Dictionary<string, object>()
-            };
-
-            var addresses = addressList.Select(t => new KeyValuePair<int, DataTypeEnum>(int.Parse(t.Key), t.Value)).ToList();
-
-            var minAddress = addresses.Select(t => t.Key).Min();
-            var maxAddress = addresses.Select(t => t.Key).Max();
-            while (maxAddress >= minAddress)
-            {
-                int readLength = 121;//125 - 4 = 121
-
-                var tempAddress = addresses.Where(t => t.Key >= minAddress && t.Key <= minAddress + readLength).ToList();
-                //如果范围内没有数据。按正确逻辑不存在这种情况。
-                if (!tempAddress.Any())
-                {
-                    minAddress += readLength;
-                    continue;
-                }
-
-                var tempMax = tempAddress.OrderByDescending(t => t.Key).FirstOrDefault();
-                readLength = tempMax.Value switch
-                {
-                    DataTypeEnum.Bool or DataTypeEnum.Byte or DataTypeEnum.Int16 or DataTypeEnum.UInt16 => tempMax.Key + 1 - minAddress,
-                    DataTypeEnum.Int32 or DataTypeEnum.UInt32 or DataTypeEnum.Float => tempMax.Key + 2 - minAddress,
-                    DataTypeEnum.Int64 or DataTypeEnum.UInt64 or DataTypeEnum.Double => tempMax.Key + 4 - minAddress,
-                    _ => throw new Exception("Err BatchRead 未定义类型 -1"),
-                };
-
-                var tempResult = Read(minAddress.ToString(), stationNumber, functionCode, Convert.ToUInt16(readLength), false);
-                if (!tempResult.IsSucceed)
-                {
-                    result.IsSucceed = tempResult.IsSucceed;
-                    result.Exception = tempResult.Exception;
-                    result.Err = $"读取 地址:{minAddress} 站号:{stationNumber} 功能码:{functionCode} 失败。{tempResult.Err}";
-                    result.AddErr2List();
-                    return result.EndTime();
-                }
-
-                var rValue = tempResult.Value.Reverse().ToArray();
-                foreach (var item in tempAddress)
-                {
-                    object tempVaue = item.Value switch
-                    {
-                        DataTypeEnum.Bool => ReadCoil(minAddress, item.Key, rValue).Value,
-                        DataTypeEnum.Byte => throw new Exception("Err BatchRead 未定义类型 -2"),
-                        DataTypeEnum.Int16 => ReadInt16(minAddress, item.Key, rValue).Value,
-                        DataTypeEnum.UInt16 => ReadUInt16(minAddress, item.Key, rValue).Value,
-                        DataTypeEnum.Int32 => ReadInt32(minAddress, item.Key, rValue).Value,
-                        DataTypeEnum.UInt32 => ReadUInt32(minAddress, item.Key, rValue).Value,
-                        DataTypeEnum.Int64 => ReadInt64(minAddress, item.Key, rValue).Value,
-                        DataTypeEnum.UInt64 => ReadUInt64(minAddress, item.Key, rValue).Value,
-                        DataTypeEnum.Float => ReadFloat(minAddress, item.Key, rValue).Value,
-                        DataTypeEnum.Double => ReadDouble(minAddress, item.Key, rValue).Value,
-                        _ => throw new Exception("Err BatchRead 未定义类型 -3"),
-                    };
-
-                    result.Value.Add(item.Key.ToString(), tempVaue);
-                }
-
-                minAddress += readLength;
-
-                if (addresses.Any(t => t.Key >= minAddress))
-                    minAddress = addresses.Where(t => t.Key >= minAddress).OrderBy(t => t.Key).FirstOrDefault().Key;
                 else
-                    return result.EndTime();
+                    break;
             }
-
-            return result.EndTime();
+            return result;
         }
 
         #endregion
@@ -1155,135 +795,21 @@ namespace Plcway.Communication.Protocols.Modbus
         /// <summary>
         /// 线圈写入
         /// </summary>
-        /// <param name="address">读取地址</param>
+        /// <param name="address"></param>
         /// <param name="value"></param>
-        /// <param name="stationNumber">站号</param>
-        /// <param name="functionCode">功能码</param>
-        public Result Write(string address, bool value, byte stationNumber = 1, byte functionCode = 5)
-        {
-            var result = new Result();
-            if (!socket?.Connected ?? true)
-            {
-                var conentResult = Connect();
-                if (!conentResult.IsSucceed)
-                {
-                    return result.SetErrInfo(conentResult);
-                }
-            }
-
-            try
-            {
-                var checkHead = GetCheckHead(functionCode);
-                var command = GetWriteCoilCommand(address, value, stationNumber, functionCode, checkHead);
-                result.Requst = string.Join(" ", command.Select(t => t.ToString("X2")));
-                var sendResult = SendPackageReliable(command);
-                if (!sendResult.IsSucceed)
-                {
-                    return result.SetErrInfo(sendResult).EndTime();
-                }
-
-                var dataPackage = sendResult.Value;
-                result.Response = string.Join(" ", dataPackage.Select(t => t.ToString("X2")));
-                if (checkHead[0] != dataPackage[0] || checkHead[1] != dataPackage[1])
-                {
-                    result.IsSucceed = false;
-                    result.Err = "响应结果校验失败";
-                    socket?.SafeClose();
-                }
-            }
-            catch (SocketException ex)
-            {
-                result.IsSucceed = false;
-                if (ex.SocketErrorCode == SocketError.TimedOut)
-                {
-                    result.Err = "连接超时";
-                    socket?.SafeClose();
-                }
-                else
-                {
-                    result.Err = ex.Message;
-                }
-            }
-            finally
-            {
-                if (IsAutoOpen)
-                {
-                    Dispose();
-                }
-            }
-
-            return result.EndTime();
-        }
+        /// <param name="stationNumber"></param>
+        /// <param name="functionCode"></param>
+        public abstract Result Write(string address, bool value, byte stationNumber = 1, byte functionCode = 5);
 
         /// <summary>
         /// 写入
         /// </summary>
-        /// <param name="address">读取地址</param>
-        /// <param name="values">批量读取的值</param>
-        /// <param name="stationNumber">站号</param>
-        /// <param name="functionCode">功能码</param>
-        /// <param name="byteFormatting">大小端设置</param>
+        /// <param name="address"></param>
+        /// <param name="values"></param>
+        /// <param name="stationNumber"></param>
+        /// <param name="functionCode"></param>
         /// <returns></returns>
-        public Result Write(string address, byte[] values, byte stationNumber = 1, byte functionCode = 16, bool byteFormatting = true)
-        {
-            var result = new Result();
-            if (!socket?.Connected ?? true)
-            {
-                var conentResult = Connect();
-                if (!conentResult.IsSucceed)
-                {
-                    return result.SetErrInfo(conentResult);
-                }
-            }
-
-            try
-            {
-                if (byteFormatting)
-                {
-                    values = values.ByteFormatting(_format);
-                }
-
-                var checkHead = GetCheckHead(functionCode);
-                var command = GetWriteCommand(address, values, stationNumber, functionCode, checkHead);
-                result.Requst = string.Join(" ", command.Select(t => t.ToString("X2")));
-                var sendResult = SendPackageReliable(command);
-                if (!sendResult.IsSucceed)
-                {
-                    return result.SetErrInfo(sendResult).EndTime();
-                }
-
-                var dataPackage = sendResult.Value;
-                result.Response = string.Join(" ", dataPackage.Select(t => t.ToString("X2")));
-                if (checkHead[0] != dataPackage[0] || checkHead[1] != dataPackage[1])
-                {
-                    result.IsSucceed = false;
-                    result.Err = "响应结果校验失败";
-                    socket?.SafeClose();
-                }
-            }
-            catch (SocketException ex)
-            {
-                result.IsSucceed = false;
-                if (ex.SocketErrorCode == SocketError.TimedOut)
-                {
-                    result.Err = "连接超时";
-                    socket?.SafeClose();
-                }
-                else
-                {
-                    result.Err = ex.Message;
-                }
-            }
-            finally
-            {
-                if (IsAutoOpen)
-                {
-                    Dispose();
-                }
-            }
-
-            return result.EndTime();
-        }
+        public abstract Result Write(string address, byte[] values, byte stationNumber = 1, byte functionCode = 16, bool byteFormatting = true);
 
         /// <summary>
         /// 写入
@@ -1389,44 +915,9 @@ namespace Plcway.Communication.Protocols.Modbus
             return Write(address, values, stationNumber, functionCode);
         }
 
-        /// <summary>
-        /// 写字符串
-        /// </summary>
-        /// <param name="address">地址</param>
-        /// <param name="value">字符串值</param>
-        /// <param name="stationNumber">站号</param>
-        /// <param name="functionCode">功能码</param>
-        /// <param name="encoding">编码</param>
-        /// <returns></returns>
-        public Result Write(string address, string value, byte stationNumber = 1, byte functionCode = 16, Encoding? encoding = null)
-        {
-            if (encoding == null)
-            {
-                encoding = Encoding.ASCII;
-            }
-
-            if (value.Length % 2 == 1)
-            {
-                value += "\0";
-            }
-
-            var values = encoding.GetBytes(value);
-            return Write(address, values, stationNumber, functionCode, false);
-        }
-
         #endregion
 
         #region 获取命令
-
-        /// <summary>
-        /// 获取随机校验头
-        /// </summary>
-        /// <returns></returns>
-        private static byte[] GetCheckHead(int seed)
-        {
-            var random = new Random(DateTime.Now.Millisecond + seed);
-            return new byte[] { (byte)random.Next(255), (byte)random.Next(255) };
-        }
 
         /// <summary>
         /// 获取读取命令
@@ -1436,7 +927,7 @@ namespace Plcway.Communication.Protocols.Modbus
         /// <param name="functionCode">功能码</param>
         /// <param name="length">读取长度</param>
         /// <returns></returns>
-        private byte[] GetReadCommand(string address, byte stationNumber, byte functionCode, ushort length, byte[]? check = null)
+        protected byte[] GetReadCommand(string address, byte stationNumber, byte functionCode, ushort length)
         {
             var readAddress = ushort.Parse(address.AsSpan().Trim());
             if (_plcAddresses)
@@ -1444,21 +935,14 @@ namespace Plcway.Communication.Protocols.Modbus
                 readAddress = Convert.ToUInt16(readAddress % 10000 - 1);
             }
 
-            byte[] buffer = new byte[12];
-            buffer[0] = check?[0] ?? 0x19;
-            buffer[1] = check?[1] ?? 0xB2;//Client发出的检验信息
-            buffer[2] = 0x00;
-            buffer[3] = 0x00;//表示tcp/ip 的协议的Modbus的协议
-            buffer[4] = 0x00;
-            buffer[5] = 0x06;//表示的是该字节以后的字节长度
-
-            buffer[6] = stationNumber;  //站号
-            buffer[7] = functionCode;   //功能码
-            buffer[8] = BitConverter.GetBytes(readAddress)[1];
-            buffer[9] = BitConverter.GetBytes(readAddress)[0];//寄存器地址
-            buffer[10] = BitConverter.GetBytes(length)[1];
-            buffer[11] = BitConverter.GetBytes(length)[0];//表示request 寄存器的长度(寄存器个数)
-
+            byte[] buffer = new byte[6];
+            buffer[0] = stationNumber;  // 站号
+            buffer[1] = functionCode;   // 功能码
+            buffer[2] = BitConverter.GetBytes(readAddress)[1];
+            buffer[3] = BitConverter.GetBytes(readAddress)[0];  // 寄存器地址
+            buffer[4] = BitConverter.GetBytes(length)[1];
+            buffer[5] = BitConverter.GetBytes(length)[0];   // 表示request 寄存器的长度(寄存器个数)
+            
             return buffer;
         }
 
@@ -1466,11 +950,11 @@ namespace Plcway.Communication.Protocols.Modbus
         /// 获取写入命令
         /// </summary>
         /// <param name="address">寄存器地址</param>
-        /// <param name="values">批量读取的值</param>
+        /// <param name="values"></param>
         /// <param name="stationNumber">站号</param>
         /// <param name="functionCode">功能码</param>
         /// <returns></returns>
-        private byte[] GetWriteCommand(string address, byte[] values, byte stationNumber, byte functionCode, byte[]? check = null)
+        protected byte[] GetWriteCommand(string address, byte[] values, byte stationNumber, byte functionCode)
         {
             var writeAddress = ushort.Parse(address.AsSpan().Trim());
             if (_plcAddresses)
@@ -1478,21 +962,16 @@ namespace Plcway.Communication.Protocols.Modbus
                 writeAddress = Convert.ToUInt16(writeAddress % 10000 - 1);
             }
 
-            byte[] buffer = new byte[13 + values.Length];
-            buffer[0] = check?[0] ?? 0x19;
-            buffer[1] = check?[1] ?? 0xB2; //检验信息，用来验证response是否串数据了           
-            buffer[4] = BitConverter.GetBytes(7 + values.Length)[1];
-            buffer[5] = BitConverter.GetBytes(7 + values.Length)[0]; //表示的是header handle后面还有多长的字节
-
-            buffer[6] = stationNumber; //站号
-            buffer[7] = functionCode;  //功能码
-            buffer[8] = BitConverter.GetBytes(writeAddress)[1];
-            buffer[9] = BitConverter.GetBytes(writeAddress)[0]; //寄存器地址
-            buffer[10] = (byte)(values.Length / 2 / 256);
-            buffer[11] = (byte)(values.Length / 2 % 256); //写寄存器数量(除2是两个字节一个寄存器，寄存器16位。除以256是byte最大存储255。)              
-            buffer[12] = (byte)(values.Length);           //写字节的个数
-            values.CopyTo(buffer, 13);                    //把目标值附加到数组后面
-
+            byte[] buffer = new byte[7 + values.Length];
+            buffer[0] = stationNumber; // 站号
+            buffer[1] = functionCode;  // 功能码
+            buffer[2] = BitConverter.GetBytes(writeAddress)[1];
+            buffer[3] = BitConverter.GetBytes(writeAddress)[0]; // 寄存器地址
+            buffer[4] = (byte)(values.Length / 2 / 256);
+            buffer[5] = (byte)(values.Length / 2 % 256);    // 写寄存器数量(除2是两个字节一个寄存器，寄存器16位。除以256是byte最大存储255。)              
+            buffer[6] = (byte)(values.Length);              // 写字节的个数
+            values.CopyTo(buffer, 7);                       // 把目标值附加到数组后面
+            
             return buffer;
         }
 
@@ -1504,7 +983,7 @@ namespace Plcway.Communication.Protocols.Modbus
         /// <param name="stationNumber">站号</param>
         /// <param name="functionCode">功能码</param>
         /// <returns></returns>
-        private byte[] GetWriteCoilCommand(string address, bool value, byte stationNumber, byte functionCode, byte[] check = null)
+        protected byte[] GetWriteCoilCommand(string address, bool value, byte stationNumber, byte functionCode)
         {
             var writeAddress = ushort.Parse(address.AsSpan().Trim());
             if (_plcAddresses)
@@ -1512,22 +991,17 @@ namespace Plcway.Communication.Protocols.Modbus
                 writeAddress = Convert.ToUInt16(writeAddress % 10000 - 1);
             }
 
-            byte[] buffer = new byte[12];
-            buffer[0] = check?[0] ?? 0x19;
-            buffer[1] = check?[1] ?? 0xB2; //Client发出的检验信息     
-            buffer[4] = 0x00;
-            buffer[5] = 0x06; //表示的是该字节以后的字节长度
-
-            buffer[6] = stationNumber; //站号
-            buffer[7] = functionCode; //功能码
-            buffer[8] = BitConverter.GetBytes(writeAddress)[1];
-            buffer[9] = BitConverter.GetBytes(writeAddress)[0]; //寄存器地址
-            buffer[10] = (byte)(value ? 0xFF : 0x00);     //此处只可以是FF表示闭合00表示断开，其他数值非法
-            buffer[11] = 0x00;
-
+            byte[] buffer = new byte[6];
+            buffer[0] = stationNumber;//站号
+            buffer[1] = functionCode; //功能码
+            buffer[2] = BitConverter.GetBytes(writeAddress)[1];
+            buffer[3] = BitConverter.GetBytes(writeAddress)[0]; // 寄存器地址
+            buffer[4] = (byte)(value ? 0xFF : 0x00);            // 此处只可以是FF表示闭合00表示断开，其他数值非法
+            buffer[5] = 0x00;
+            
             return buffer;
         }
 
-        #endregion      
+        #endregion
     }
 }

@@ -3,7 +3,7 @@ using System.Diagnostics.Contracts;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Plcway.Communication.Handlers;
-using Plcway.Communication.Transport.Host;
+using Plcway.Communication.Transport.Hosting;
 
 namespace Plcway.Communication.Transport.BootStrapping
 {

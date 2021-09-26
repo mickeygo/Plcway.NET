@@ -21,6 +21,7 @@
     </PackageReference>
     <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="5.0.1" />
     <PackageReference Include="System.Threading.Channels" Version="5.0.0" />
+	<PackageReference Include="System.IO.Ports" Version="5.0.1" />
   </ItemGroup>
 
 </Project>
