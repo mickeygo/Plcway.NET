@@ -3,7 +3,7 @@
 namespace Plcway.Communication.Protocols
 {
     /// <summary>
-    /// 以太网形式
+    /// 以太网形式的数据读写接口
     /// </summary>
     public interface IEthernetClient : IIoTClient
     {

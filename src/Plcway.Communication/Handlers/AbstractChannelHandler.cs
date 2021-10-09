@@ -11,22 +11,24 @@ namespace Plcway.Communication.Handlers
     /// </summary>
     public abstract class AbstractChannelHandler : IChannelHandler
     {
-        public IServiceProvider Provider { get; private set; }
+        //public IServiceProvider Provider { get; private set; }
 
         /// <summary>
         /// 配置信息
         /// </summary>
-        protected IConfiguration Configuration => GetRequiredService<IConfiguration>();
+        //protected IConfiguration Configuration => GetRequiredService<IConfiguration>();
 
         /// <summary>
         /// 获取指定的注入服务
         /// </summary>
         /// <returns></returns>
-        protected T GetRequiredService<T>() where T : notnull => Provider.GetRequiredService<T>();
+        //protected T GetRequiredService<T>() where T : notnull => Provider.GetRequiredService<T>();
 
-        public virtual Task ExecuteAsync(ChannelContext context)
-        {
-            return Task.CompletedTask;
-        }
+        /// <summary>
+        /// 执行上下文任务
+        /// </summary>
+        /// <param name="context">上下文对象</param>
+        /// <returns></returns>
+        public abstract Task ExecuteAsync(ChannelContext context);
     }
 }

@@ -6,12 +6,12 @@
     public class PlcSchema
     {
         /// <summary>
-        /// IP 地址
+        /// PLC IP 地址
         /// </summary>
         public string Ip { get; set; }
 
         /// <summary>
-        /// 
+        /// 生产线号
         /// </summary>
         public string Line { get; set; }
 

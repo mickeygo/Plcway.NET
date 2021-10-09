@@ -194,7 +194,8 @@ namespace Plcway.Communication.Protocols.PLC.Siemens
         /// <returns></returns>
         public override Result<byte[]> SendPackageSingle(byte[] command)
         {
-            //从发送命令到读取响应为最小单元，避免多线程执行串数据（可线程安全执行）
+            // 从发送命令到读取响应为最小单元，避免多线程执行串数据（可线程安全执行）
+            // TODO: 如何不使用 lock ？
             lock (this)
             {
                 var result = new Result<byte[]>();
@@ -224,7 +225,8 @@ namespace Plcway.Communication.Protocols.PLC.Siemens
             }
         }
 
-        #region Read 
+        #region Read
+
         /// <summary>
         /// 读取字节数组
         /// </summary>

@@ -18,7 +18,7 @@
 		/// <summary>
 		/// 当以ASCII格式通讯时的类型描述
 		/// </summary>
-		public string AsciiCode { get; private set; }
+		public string ASCIICode { get; private set; }
 
 		/// <summary>
 		/// 指示地址是10进制，还是16进制的

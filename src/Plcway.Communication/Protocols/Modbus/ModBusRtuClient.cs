@@ -75,7 +75,7 @@ namespace Plcway.Communication.Protocols.Modbus
                 //4 获取响应报文数据（字节数组形式）                
                 if (byteFormatting)
                 {
-                    result.Value = resultData.Reverse().ToArray().ByteFormatting(_format);
+                    result.Value = resultData.Reverse().ToArray().ByteFormatting(_endianFormat);
                 }
                 else
                 {
@@ -180,7 +180,7 @@ namespace Plcway.Communication.Protocols.Modbus
             var result = new Result();
             try
             {
-                values = values.ByteFormatting(_format);
+                values = values.ByteFormatting(_endianFormat);
                 var command = GetWriteCommand(address, values, stationNumber, functionCode);
 
                 var commandCRC16 = CRC16.GetCRC16(command);

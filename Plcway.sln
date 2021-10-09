@@ -21,7 +21,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plcway.Console.Example", "e
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plcway.AspNetCore.Example", "examples\Plcway.AspNetCore.Example\Plcway.AspNetCore.Example.csproj", "{79B73876-0FD1-4B56-BE3A-68D8074351A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plcway.Abstract.Tests", "tests\Plcway.Abstract.Tests\Plcway.Abstract.Tests.csproj", "{72230BDE-23E5-42E2-A56A-1798D8D0A7F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plcway.Abstract.Tests", "tests\Plcway.Abstract.Tests\Plcway.Abstract.Tests.csproj", "{72230BDE-23E5-42E2-A56A-1798D8D0A7F8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plcway.Profinet.S7", "src\Plcway.Profinet.S7\Plcway.Profinet.S7.csproj", "{AA9781D4-A309-4604-8601-2ECAE313F072}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plcway.Profinet.Modbus", "src\Plcway.Profinet.Modbus\Plcway.Profinet.Modbus.csproj", "{422AD83B-5F62-4A61-BF72-A4392EFEC2C3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plcway.Profinet.OPC", "src\Plcway.Profinet.OPC\Plcway.Profinet.OPC.csproj", "{9A9C22DA-8DB8-4561-B57C-8388C2E5D18B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +63,18 @@ Global
 		{72230BDE-23E5-42E2-A56A-1798D8D0A7F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72230BDE-23E5-42E2-A56A-1798D8D0A7F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72230BDE-23E5-42E2-A56A-1798D8D0A7F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA9781D4-A309-4604-8601-2ECAE313F072}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA9781D4-A309-4604-8601-2ECAE313F072}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA9781D4-A309-4604-8601-2ECAE313F072}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA9781D4-A309-4604-8601-2ECAE313F072}.Release|Any CPU.Build.0 = Release|Any CPU
+		{422AD83B-5F62-4A61-BF72-A4392EFEC2C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{422AD83B-5F62-4A61-BF72-A4392EFEC2C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{422AD83B-5F62-4A61-BF72-A4392EFEC2C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{422AD83B-5F62-4A61-BF72-A4392EFEC2C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A9C22DA-8DB8-4561-B57C-8388C2E5D18B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A9C22DA-8DB8-4561-B57C-8388C2E5D18B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A9C22DA-8DB8-4561-B57C-8388C2E5D18B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A9C22DA-8DB8-4561-B57C-8388C2E5D18B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -69,6 +87,9 @@ Global
 		{C88B4A2C-ED45-4FC0-806B-DAE5265951ED} = {8E98A817-C717-4A96-A8D2-3906C1DD9FEF}
 		{79B73876-0FD1-4B56-BE3A-68D8074351A7} = {8E98A817-C717-4A96-A8D2-3906C1DD9FEF}
 		{72230BDE-23E5-42E2-A56A-1798D8D0A7F8} = {DB84F4CB-A2DC-41CC-9DC0-C6E6BBF751F4}
+		{AA9781D4-A309-4604-8601-2ECAE313F072} = {FBD8A4C9-ED02-4B8B-91BB-9B58EA81FF3D}
+		{422AD83B-5F62-4A61-BF72-A4392EFEC2C3} = {FBD8A4C9-ED02-4B8B-91BB-9B58EA81FF3D}
+		{9A9C22DA-8DB8-4561-B57C-8388C2E5D18B} = {FBD8A4C9-ED02-4B8B-91BB-9B58EA81FF3D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {ED47786F-9F3E-439F-A1AA-E1757B65F89D}

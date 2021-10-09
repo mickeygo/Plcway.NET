@@ -10,7 +10,7 @@ namespace Plcway.Communication.Protocols
         /// <summary>
         /// 未定义
         /// </summary>
-        [Description("未定义")]
+        [Description("Undefined")]
         None = 0,
 
         /// <summary>

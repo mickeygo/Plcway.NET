@@ -1032,12 +1032,12 @@ namespace Plcway.Communication.Protocols.Modbus
                     {
                         foreach (var item in tempResult.Value)
                         {
-                            result.Value.Add(new ModbusOutput()
+                            result.Value.Add(new ModbusOutput
                             {
                                 Address = item.Key,
                                 FunctionCode = functionCode,
                                 StationNumber = stationNumber,
-                                Value = item.Value
+                                Value = item.Value,
                             });
                         }
                     }
@@ -1082,15 +1082,14 @@ namespace Plcway.Communication.Protocols.Modbus
             };
 
             var addresses = addressList.Select(t => new KeyValuePair<int, DataTypeEnum>(int.Parse(t.Key), t.Value)).ToList();
-
             var minAddress = addresses.Select(t => t.Key).Min();
             var maxAddress = addresses.Select(t => t.Key).Max();
             while (maxAddress >= minAddress)
             {
-                int readLength = 121;//125 - 4 = 121
+                int readLength = 121; // 125 - 4 = 121
 
                 var tempAddress = addresses.Where(t => t.Key >= minAddress && t.Key <= minAddress + readLength).ToList();
-                //如果范围内没有数据。按正确逻辑不存在这种情况。
+                // 如果范围内没有数据。按正确逻辑不存在这种情况。
                 if (!tempAddress.Any())
                 {
                     minAddress += readLength;

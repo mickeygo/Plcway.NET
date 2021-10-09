@@ -9,8 +9,9 @@ namespace Plcway.Communication.Protocols.Modbus
 {
     public abstract class ModbusSerialBase : SerialPortBase, IModbusClient
     {
-        protected EndianFormat _format;
         private readonly bool _plcAddresses;
+
+        protected readonly EndianFormat _endianFormat;
 
         /// <summary>
         /// 警告日志委托        
@@ -45,7 +46,7 @@ namespace Plcway.Communication.Protocols.Modbus
             serialPort.ReadTimeout = timeout;
             serialPort.WriteTimeout = timeout;
 
-            _format = format;
+            _endianFormat = format;
             _plcAddresses = plcAddresses;
         }
 
@@ -361,7 +362,7 @@ namespace Plcway.Communication.Protocols.Modbus
             {
                 var interval = (addressInt - beginAddressInt) / 2;
                 var offset = (addressInt - beginAddressInt) % 2 * 2;//取余 乘以2（每个地址16位，占两个字节）
-                var byteArry = values.Skip(interval * 2 * 2 + offset).Take(2 * 2).Reverse().ToArray().ByteFormatting(_format);
+                var byteArry = values.Skip(interval * 2 * 2 + offset).Take(2 * 2).Reverse().ToArray().ByteFormatting(_endianFormat);
                 return new Result<int>
                 {
                     Value = BitConverter.ToInt32(byteArry, 0)
@@ -397,7 +398,7 @@ namespace Plcway.Communication.Protocols.Modbus
             {
                 var interval = (addressInt - beginAddressInt) / 2;
                 var offset = (addressInt - beginAddressInt) % 2 * 2;//取余 乘以2（每个地址16位，占两个字节）
-                var byteArry = values.Skip(interval * 2 * 2 + offset).Take(2 * 2).Reverse().ToArray().ByteFormatting(_format);
+                var byteArry = values.Skip(interval * 2 * 2 + offset).Take(2 * 2).Reverse().ToArray().ByteFormatting(_endianFormat);
                 return new Result<uint>
                 {
                     Value = BitConverter.ToUInt32(byteArry, 0)
@@ -434,7 +435,7 @@ namespace Plcway.Communication.Protocols.Modbus
             {
                 var interval = (addressInt - beginAddressInt) / 4;
                 var offset = (addressInt - beginAddressInt) % 4 * 2;//取余 乘以2（每个地址16位，占两个字节）
-                var byteArry = values.Skip(interval * 2 * 4 + offset).Take(2 * 4).Reverse().ToArray().ByteFormatting(_format);
+                var byteArry = values.Skip(interval * 2 * 4 + offset).Take(2 * 4).Reverse().ToArray().ByteFormatting(_endianFormat);
                 return new Result<long>
                 {
                     Value = BitConverter.ToInt64(byteArry, 0)
@@ -471,7 +472,7 @@ namespace Plcway.Communication.Protocols.Modbus
             {
                 var interval = (addressInt - beginAddressInt) / 4;
                 var offset = (addressInt - beginAddressInt) % 4 * 2;//取余 乘以2（每个地址16位，占两个字节）
-                var byteArry = values.Skip(interval * 2 * 4 + offset).Take(2 * 4).Reverse().ToArray().ByteFormatting(_format);
+                var byteArry = values.Skip(interval * 2 * 4 + offset).Take(2 * 4).Reverse().ToArray().ByteFormatting(_endianFormat);
                 return new Result<ulong>
                 {
                     Value = BitConverter.ToUInt64(byteArry, 0)
@@ -508,7 +509,7 @@ namespace Plcway.Communication.Protocols.Modbus
             {
                 var interval = (addressInt - beginAddressInt) / 2;
                 var offset = (addressInt - beginAddressInt) % 2 * 2;//取余 乘以2（每个地址16位，占两个字节）
-                var byteArry = values.Skip(interval * 2 * 2 + offset).Take(2 * 2).Reverse().ToArray().ByteFormatting(_format);
+                var byteArry = values.Skip(interval * 2 * 2 + offset).Take(2 * 2).Reverse().ToArray().ByteFormatting(_endianFormat);
                 return new Result<float>
                 {
                     Value = BitConverter.ToSingle(byteArry, 0)
@@ -545,7 +546,7 @@ namespace Plcway.Communication.Protocols.Modbus
             {
                 var interval = (addressInt - beginAddressInt) / 4;
                 var offset = (addressInt - beginAddressInt) % 4 * 2;//取余 乘以2（每个地址16位，占两个字节）
-                var byteArry = values.Skip(interval * 2 * 4 + offset).Take(2 * 4).Reverse().ToArray().ByteFormatting(_format);
+                var byteArry = values.Skip(interval * 2 * 4 + offset).Take(2 * 4).Reverse().ToArray().ByteFormatting(_endianFormat);
                 return new Result<double>
                 {
                     Value = BitConverter.ToDouble(byteArry, 0)

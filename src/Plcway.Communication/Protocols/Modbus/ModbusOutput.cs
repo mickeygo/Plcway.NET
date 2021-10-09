@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Plcway.Communication.Protocols.Modbus
+﻿namespace Plcway.Communication.Protocols.Modbus
 {
+    /// <summary>
+    /// Modbus 读取数据输出
+    /// </summary>
     public class ModbusOutput
     {
         /// <summary>
@@ -21,6 +18,9 @@ namespace Plcway.Communication.Protocols.Modbus
         /// </summary>
         public byte FunctionCode { get; set; }
 
+        /// <summary>
+        /// 数据读取结果
+        /// </summary>
         public object Value { get; set; }
     }
 }

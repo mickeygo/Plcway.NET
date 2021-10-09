@@ -1,5 +1,8 @@
 ﻿namespace Plcway.Communication.Protocols.Modbus
 {
+    /// <summary>
+    /// Modbus 参数输入
+    /// </summary>
     public class ModbusInput
     {
         /// <summary>
