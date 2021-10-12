@@ -13,8 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Plcway.Communication\Plcway.Communication.csproj" />
-    <ProjectReference Include="..\..\src\Plcway.Infrastructure\Plcway.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\Plcway.Framework\Plcway.Framework.csproj" />
   </ItemGroup>
 
 </Project>

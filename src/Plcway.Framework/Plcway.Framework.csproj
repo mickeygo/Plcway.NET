@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+	<Nullable>enable</Nullable>
+	<Authors>Plcway</Authors>
+	<RepositoryUrl>https://github.com/mickeygo/Plcway.NET</RepositoryUrl>
+	<Company>Plcway</Company>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	<Description>IoT, PLC</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Plcway.Communication\Plcway.Communication.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Codecs\Http\" />
+    <Folder Include="Codecs\Mqtt\" />
+    <Folder Include="Codecs\Protobuf\" />
+    <Folder Include="DependencyInjection\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Threading.Channels" Version="5.0.0" />
+  </ItemGroup>
+
+</Project>
