@@ -1075,10 +1075,10 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 				{
 					return new OperateResult<string>("String length is too long than plc defined");
 				}
-				return Write(address, SoftBasic.SpliceArray<byte>(new byte[2]
+				return Write(address, SoftBasic.SpliceArray(new byte[2]
 				{
 					operateResult.Content[0],
-					(byte)value.Length
+					(byte)value.Length,
 				}, array));
 			}
 			return Write(address, SoftBasic.SpliceArray<byte>(new byte[1] { (byte)value.Length }, array));
@@ -1676,7 +1676,7 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 
 		private static OperateResult AnalysisWrite(byte[] content)
 		{
-			byte b = content[content.Length - 1];
+			byte b = content[^1];
 			if (b != byte.MaxValue)
 			{
 				return new OperateResult(b, $"SiemensWriteError {b} Msg: {SoftBasic.ByteToHexString(content, ' ')}");

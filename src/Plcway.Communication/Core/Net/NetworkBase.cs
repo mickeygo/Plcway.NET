@@ -13,12 +13,11 @@ using Plcway.Communication.Core.Message;
 namespace Plcway.Communication.Core.Net
 {
 	/// <summary>
-	/// 本系统所有网络类的基类，该类为抽象类，无法进行实例化，如果想使用里面的方法来实现自定义的网络通信，请通过继承使用。<br />
-	/// The base class of all network classes in this system. This class is an abstract class and cannot be instantiated. 
-	/// If you want to use the methods inside to implement custom network communication, please use it through inheritance.
+	/// 本系统所有网络类的基类，该类为抽象类，无法进行实例化，如果想使用里面的方法来实现自定义的网络通信，请通过继承使用。
 	/// </summary>
 	/// <remarks>
-	/// 本类提供了丰富的底层数据的收发支持，包含<see cref="T:HslCommunication.Core.IMessage.INetMessage" />消息的接收，<c>MQTT</c>以及<c>Redis</c>,<c>websocket</c>协议的实现
+	/// 本类提供了丰富的底层数据的收发支持，包含<see cref="INetMessage" />消息的接收，
+	/// <c>MQTT</c>以及<c>Redis</c>,<c>websocket</c>协议的实现
 	/// </remarks>
 	public abstract class NetworkBase
 	{
@@ -36,15 +35,16 @@ namespace Plcway.Communication.Core.Net
 		private int connectErrorCount = 0;
 
 		/// <summary>
-		/// 组件的日志工具，支持日志记录，只要实例化后，当前网络的基本信息，就以<see cref="F:HslCommunication.LogNet.HslMessageDegree.DEBUG" />等级进行输出<br />
+		/// 组件的日志工具，支持日志记录，只要实例化后，当前网络的基本信息，就以DEBUG等级进行输出<br />
 		/// </summary>
 		/// <remarks>
-		/// 只要实例化即可以记录日志，实例化的对象需要实现接口 <see cref="T:HslCommunication.LogNet.ILogNet" /> ，本组件提供了三个日志记录类，你可以实现基于 <see cref="T:HslCommunication.LogNet.ILogNet" />  的对象。</remarks>
+		/// 只要实例化即可以记录日志，实例化的对象需要实现接口 <see cref="ILogger" /> ，本组件提供了三个日志记录类，
+		/// 你可以实现基于 <see cref="ILogger" />  的对象。
+		/// </remarks>
 		public ILogger Logger { get; set; }
 
 		/// <summary>
-		/// 网络类的身份令牌，在hsl协议的模式下会有效，在和设备进行通信的时候是无效的<br />
-		/// Network-type identity tokens will be valid in the hsl protocol mode and will not be valid when communicating with the device
+		/// 网络类的身份令牌，在hsl协议的模式下会有效，在和设备进行通信的时候是无效的
 		/// </summary>
 		/// <remarks>
 		/// 适用于Hsl协议相关的网络通信类，不适用于设备交互类。
@@ -52,8 +52,7 @@ namespace Plcway.Communication.Core.Net
 		public Guid Token { get; set; }
 
 		/// <summary>
-		/// 实例化一个NetworkBase对象，令牌的默认值为空，都是0x00<br />
-		/// Instantiate a NetworkBase object, the default value of the token is empty, both are 0x00
+		/// 实例化一个NetworkBase对象，令牌的默认值为空，都是0x00
 		/// </summary>
 		public NetworkBase()
 		{
@@ -61,11 +60,9 @@ namespace Plcway.Communication.Core.Net
 		}
 
 		/// <summary>
-		/// 接收固定长度的字节数组，允许指定超时时间，默认为60秒，当length大于0时，接收固定长度的数据内容，当length小于0时，接收不大于2048长度的随机数据信息<br />
-		/// Receiving a fixed-length byte array, allowing a specified timeout time. The default is 60 seconds. When length is greater than 0, 
-		/// fixed-length data content is received. When length is less than 0, random data information of a length not greater than 2048 is received.
+		/// 接收固定长度的字节数组，允许指定超时时间，默认为60秒，当length大于0时，接收固定长度的数据内容，当length小于0时，接收不大于2048长度的随机数据信息
 		/// </summary>
-		/// <param name="socket">网络通讯的套接字<br />Network communication socket</param>
+		/// <param name="socket">网络通讯的套接字</param>
 		/// <param name="length">准备接收的数据长度，当length大于0时，接收固定长度的数据内容，当length小于0时，接收不大于1024长度的随机数据信息</param>
 		/// <param name="timeOut">单位：毫秒，超时时间，默认为60秒，如果设置小于0，则不检查超时时间</param>
 		/// <param name="reportProgress">当前接收数据的进度报告，有些协议支持传输非常大的数据内容，可以给与进度提示的功能</param>
@@ -114,8 +111,7 @@ namespace Plcway.Communication.Core.Net
 		}
 
 		/// <summary>
-		/// 接收一行命令数据，需要自己指定这个结束符，默认超时时间为60秒，也即是60000，单位是毫秒<br />
-		/// To receive a line of command data, you need to specify the terminator yourself. The default timeout is 60 seconds, which is 60,000, in milliseconds.
+		/// 接收一行命令数据，需要自己指定这个结束符，默认超时时间为60秒，也即是60000，单位是毫秒
 		/// </summary>
 		/// <param name="socket">网络套接字</param>
 		/// <param name="endCode">结束符信息</param>
@@ -159,8 +155,7 @@ namespace Plcway.Communication.Core.Net
 		}
 
 		/// <summary>
-		/// 接收一行命令数据，需要自己指定这个结束符，默认超时时间为60秒，也即是60000，单位是毫秒<br />
-		/// To receive a line of command data, you need to specify the terminator yourself. The default timeout is 60 seconds, which is 60,000, in milliseconds.
+		/// 接收一行命令数据，需要自己指定这个结束符，默认超时时间为60秒，也即是60000，单位是毫秒
 		/// </summary>
 		/// <param name="socket">网络套接字</param>
 		/// <param name="endCode1">结束符1信息</param>
@@ -183,6 +178,7 @@ namespace Plcway.Communication.Core.Net
 						{
 							return operateResult;
 						}
+
 						list.AddRange(operateResult.Content);
 						if (operateResult.Content[0] == endCode2 && list.Count > 1 && list[list.Count - 2] == endCode1)
 						{
@@ -206,8 +202,7 @@ namespace Plcway.Communication.Core.Net
 		}
 
 		/// <summary>
-		/// 接收一条完整的 <seealso cref="T:HslCommunication.Core.IMessage.INetMessage" /> 数据内容，需要指定超时时间，单位为毫秒。 <br />
-		/// Receive a complete <seealso cref="T:HslCommunication.Core.IMessage.INetMessage" /> data content, Need to specify a timeout period in milliseconds
+		/// 接收一条完整的 <seealso cref="INetMessage" /> 数据内容，需要指定超时时间，单位为毫秒。
 		/// </summary>
 		/// <param name="socket">网络的套接字</param>
 		/// <param name="timeOut">超时时间，单位：毫秒</param>
@@ -236,12 +231,11 @@ namespace Plcway.Communication.Core.Net
 			}
 
 			netMessage.ContentBytes = operateResult2.Content;
-			return OperateResult.CreateSuccessResult(SoftBasic.SpliceArray<byte>(operateResult.Content, operateResult2.Content));
+			return OperateResult.CreateSuccessResult(SoftBasic.SpliceArray(operateResult.Content, operateResult2.Content));
 		}
 
 		/// <summary>
-		/// 发送消息给套接字，直到完成的时候返回，经过测试，本方法是线程安全的。<br />
-		/// Send a message to the socket until it returns when completed. After testing, this method is thread-safe.
+		/// 发送消息给套接字，直到完成的时候返回，经过测试，本方法是线程安全的。
 		/// </summary>
 		/// <param name="socket">网络套接字</param>
 		/// <param name="data">字节数据</param>
@@ -257,8 +251,7 @@ namespace Plcway.Communication.Core.Net
 		}
 
 		/// <summary>
-		/// 发送消息给套接字，直到完成的时候返回，经过测试，本方法是线程安全的。<br />
-		/// Send a message to the socket until it returns when completed. After testing, this method is thread-safe.
+		/// 发送消息给套接字，直到完成的时候返回，经过测试，本方法是线程安全的。
 		/// </summary>
 		/// <param name="socket">网络套接字</param>
 		/// <param name="data">字节数据</param>
@@ -297,38 +290,30 @@ namespace Plcway.Communication.Core.Net
 		}
 
 		/// <summary>
-		/// 创建一个新的socket对象并连接到远程的地址，默认超时时间为10秒钟，需要指定ip地址以及端口号信息<br />
-		/// Create a new socket object and connect to the remote address. The default timeout is 10 seconds. You need to specify the IP address and port number.
+		/// 创建一个新的socket对象并连接到远程的地址，默认超时时间为10秒钟，需要指定ip地址以及端口号信息。
 		/// </summary>
 		/// <param name="ipAddress">Ip地址</param>
 		/// <param name="port">端口号</param>
 		/// <returns>返回套接字的封装结果对象</returns>
-		/// <example>
-		/// <code lang="cs" source="HslCommunication_Net45.Test\Documentation\Samples\Core\NetworkBase.cs" region="CreateSocketAndConnectExample" title="创建连接示例" />
-		/// </example>
 		protected OperateResult<Socket> CreateSocketAndConnect(string ipAddress, int port)
 		{
 			return CreateSocketAndConnect(new IPEndPoint(IPAddress.Parse(ipAddress), port), 10000);
 		}
 
 		/// <summary>
-		/// 创建一个新的socket对象并连接到远程的地址，需要指定ip地址以及端口号信息，还有超时时间，单位是毫秒<br />
-		/// To create a new socket object and connect to a remote address, you need to specify the IP address and port number information, and the timeout period in milliseconds
+		/// 创建一个新的socket对象并连接到远程的地址，需要指定ip地址以及端口号信息，还有超时时间，单位是毫秒。
 		/// </summary>
 		/// <param name="ipAddress">Ip地址</param>
 		/// <param name="port">端口号</param>
 		/// <param name="timeOut">连接的超时时间</param>
 		/// <returns>返回套接字的封装结果对象</returns>
-		/// <example>
-		/// <code lang="cs" source="HslCommunication_Net45.Test\Documentation\Samples\Core\NetworkBase.cs" region="CreateSocketAndConnectExample" title="创建连接示例" />
-		/// </example>
 		protected OperateResult<Socket> CreateSocketAndConnect(string ipAddress, int port, int timeOut)
 		{
 			return CreateSocketAndConnect(new IPEndPoint(IPAddress.Parse(ipAddress), port), timeOut);
 		}
 
 		/// <summary>
-		/// 创建一个新的socket对象并连接到远程的地址，需要指定远程终结点，超时时间（单位是毫秒），如果需要绑定本地的IP或是端口，传入 local对象
+		/// 创建一个新的socket对象并连接到远程的地址，需要指定远程终结点，超时时间（单位是毫秒），如果需要绑定本地的IP或是端口，传入 local对象。
 		/// </summary>
 		/// <param name="endPoint">连接的目标终结点</param>
 		/// <param name="timeOut">连接的超时时间</param>
@@ -494,8 +479,7 @@ namespace Plcway.Communication.Core.Net
 		}
 
 		/// <summary>
-		/// 检查当前的头子节信息的令牌是否是正确的，仅用于某些特殊的协议实现<br />
-		/// Check whether the token of the current header subsection information is correct, only for some special protocol implementations
+		/// 检查当前的头子节信息的令牌是否是正确的，仅用于某些特殊的协议实现
 		/// </summary>
 		/// <param name="headBytes">头子节数据</param>
 		/// <returns>令牌是验证成功</returns>
@@ -505,8 +489,7 @@ namespace Plcway.Communication.Core.Net
 		}
 
 		/// <summary>
-		/// [自校验] 发送字节数据并确认对方接收完成数据，如果结果异常，则结束通讯<br />
-		/// [Self-check] Send the byte data and confirm that the other party has received the completed data. If the result is abnormal, the communication ends.
+		/// [自校验] 发送字节数据并确认对方接收完成数据，如果结果异常，则结束通讯。
 		/// </summary>
 		/// <param name="socket">网络套接字</param>
 		/// <param name="headCode">头指令</param>
@@ -537,8 +520,7 @@ namespace Plcway.Communication.Core.Net
 		}
 
 		/// <summary>
-		/// [自校验] 发送字节数据并确认对方接收完成数据，如果结果异常，则结束通讯<br />
-		/// [Self-check] Send the byte data and confirm that the other party has received the completed data. If the result is abnormal, the communication ends.
+		/// [自校验] 发送字节数据并确认对方接收完成数据，如果结果异常，则结束通讯。
 		/// </summary>
 		/// <param name="socket">网络套接字</param>
 		/// <param name="customer">用户指令</param>
@@ -550,8 +532,7 @@ namespace Plcway.Communication.Core.Net
 		}
 
 		/// <summary>
-		/// [自校验] 直接发送字符串数据并确认对方接收完成数据，如果结果异常，则结束通讯<br />
-		/// [Self-checking] Send string data directly and confirm that the other party has received the completed data. If the result is abnormal, the communication ends.
+		/// [自校验] 直接发送字符串数据并确认对方接收完成数据，如果结果异常，则结束通讯。
 		/// </summary>
 		/// <param name="socket">网络套接字</param>
 		/// <param name="customer">用户指令</param>
@@ -564,8 +545,7 @@ namespace Plcway.Communication.Core.Net
 		}
 
 		/// <summary>
-		/// [自校验] 直接发送字符串数组并确认对方接收完成数据，如果结果异常，则结束通讯<br />
-		/// [Self-check] Send string array directly and confirm that the other party has received the completed data. If the result is abnormal, the communication ends.
+		/// [自校验] 直接发送字符串数组并确认对方接收完成数据，如果结果异常，则结束通讯。
 		/// </summary>
 		/// <param name="socket">网络套接字</param>
 		/// <param name="customer">用户指令</param>
@@ -577,8 +557,7 @@ namespace Plcway.Communication.Core.Net
 		}
 
 		/// <summary>
-		/// [自校验] 直接发送字符串数组并确认对方接收完成数据，如果结果异常，则结束通讯<br />
-		/// [Self-check] Send string array directly and confirm that the other party has received the completed data. If the result is abnormal, the communication ends.
+		/// [自校验] 直接发送字符串数组并确认对方接收完成数据，如果结果异常，则结束通讯。
 		/// </summary>
 		/// <param name="socket">网络套接字</param>
 		/// <param name="customer">用户指令</param>
@@ -591,8 +570,7 @@ namespace Plcway.Communication.Core.Net
 		}
 
 		/// <summary>
-		/// [自校验] 接收一条完整的同步数据，包含头子节和内容字节，基础的数据，如果结果异常，则结束通讯<br />
-		/// [Self-checking] Receive a complete synchronization data, including header subsection and content bytes, basic data, if the result is abnormal, the communication ends
+		/// [自校验] 接收一条完整的同步数据，包含头子节和内容字节，基础的数据，如果结果异常，则结束通讯。
 		/// </summary>
 		/// <param name="socket">套接字</param>
 		/// <param name="timeOut">超时时间设置，如果为负数，则不检查超时</param>
@@ -632,8 +610,7 @@ namespace Plcway.Communication.Core.Net
 		}
 
 		/// <summary>
-		/// [自校验] 从网络中接收一个字符串数据，如果结果异常，则结束通讯<br />
-		/// [Self-checking] Receive a string of data from the network. If the result is abnormal, the communication ends.
+		/// [自校验] 从网络中接收一个字符串数据，如果结果异常，则结束通讯
 		/// </summary>
 		/// <param name="socket">套接字</param>
 		/// <param name="timeOut">接收数据的超时时间</param>
@@ -660,8 +637,7 @@ namespace Plcway.Communication.Core.Net
 		}
 
 		/// <summary>
-		/// [自校验] 从网络中接收一个字符串数组，如果结果异常，则结束通讯<br />
-		/// [Self-check] Receive an array of strings from the network. If the result is abnormal, the communication ends.
+		/// [自校验] 从网络中接收一个字符串数组，如果结果异常，则结束通讯。
 		/// </summary>
 		/// <param name="socket">套接字</param>
 		/// <param name="timeOut">接收数据的超时时间</param>
@@ -687,8 +663,7 @@ namespace Plcway.Communication.Core.Net
 		}
 
 		/// <summary>
-		/// [自校验] 从网络中接收一串字节数据，如果结果异常，则结束通讯<br />
-		/// [Self-checking] Receive a string of byte data from the network. If the result is abnormal, the communication ends.
+		/// [自校验] 从网络中接收一串字节数据，如果结果异常，则结束通讯。
 		/// </summary>
 		/// <param name="socket">套接字的网络</param>
 		/// <param name="timeout">超时时间</param>
@@ -710,8 +685,7 @@ namespace Plcway.Communication.Core.Net
 		}
 
 		/// <summary>
-		/// 从网络中接收Long数据<br />
-		/// Receive Long data from the network
+		/// 从网络中接收Long数据。
 		/// </summary>
 		/// <param name="socket">套接字网络</param>
 		/// <returns>long数据结果</returns>
@@ -726,8 +700,7 @@ namespace Plcway.Communication.Core.Net
 		}
 
 		/// <summary>
-		/// 将long数据发送到套接字<br />
-		/// Send long data to the socket
+		/// 将long数据发送到套接字。
 		/// </summary>
 		/// <param name="socket">网络套接字</param>
 		/// <param name="value">long数据</param>
@@ -738,8 +711,7 @@ namespace Plcway.Communication.Core.Net
 		}
 
 		/// <summary>
-		/// 发送一个流的所有数据到指定的网络套接字，需要指定发送的数据长度，支持按照百分比的进度报告<br />
-		/// Send all the data of a stream to the specified network socket. You need to specify the length of the data to be sent. It supports the progress report in percentage.
+		/// 发送一个流的所有数据到指定的网络套接字，需要指定发送的数据长度，支持按照百分比的进度报告。
 		/// </summary>
 		/// <param name="socket">套接字</param>
 		/// <param name="stream">内存流</param>
@@ -790,8 +762,7 @@ namespace Plcway.Communication.Core.Net
 		}
 
 		/// <summary>
-		/// 从套接字中接收所有的数据然后写入到指定的流当中去，需要指定数据的长度，支持按照百分比进行进度报告<br />
-		/// Receives all data from the socket and writes it to the specified stream. The length of the data needs to be specified, and progress reporting is supported in percentage.
+		/// 从套接字中接收所有的数据然后写入到指定的流当中去，需要指定数据的长度，支持按照百分比进行进度报告。
 		/// </summary>
 		/// <param name="socket">套接字</param>
 		/// <param name="stream">数据流</param>
@@ -914,12 +885,13 @@ namespace Plcway.Communication.Core.Net
 						throw new RemoteCloseException();
 					}
 					while (alreadyCount < length);
+
 					hslTimeOut.IsSuccessful = true;
 					return OperateResult.CreateSuccessResult(buffer);
 				}
 
 				byte[] buffer2 = new byte[2048];
-				int count = await Task.Factory.FromAsync(socket.BeginReceive(buffer2, 0, buffer2.Length, SocketFlags.None, null, socket), (Func<IAsyncResult, int>)socket.EndReceive);
+				int count = await Task.Factory.FromAsync(socket.BeginReceive(buffer2, 0, buffer2.Length, SocketFlags.None, null, socket), socket.EndReceive);
 				if (count == 0)
 				{
 					throw new RemoteCloseException();
@@ -1002,7 +974,7 @@ namespace Plcway.Communication.Core.Net
 			{
 				DateTime st = DateTime.Now;
 				bool bOK = false;
-				while ((DateTime.Now - st).TotalMilliseconds < (double)timeout)
+				while ((DateTime.Now - st).TotalMilliseconds < timeout)
 				{
 					if (socket.Poll(timeout, SelectMode.SelectRead))
 					{
@@ -1013,7 +985,7 @@ namespace Plcway.Communication.Core.Net
 						}
 
 						bufferArray.AddRange(headResult.Content);
-						if (headResult.Content[0] == endCode2 && bufferArray.Count > 1 && bufferArray[bufferArray.Count - 2] == endCode1)
+						if (headResult.Content[0] == endCode2 && bufferArray.Count > 1 && bufferArray[^2] == endCode1)
 						{
 							bOK = true;
 							break;
@@ -1027,9 +999,8 @@ namespace Plcway.Communication.Core.Net
 				}
 				return OperateResult.CreateSuccessResult(bufferArray.ToArray());
 			}
-			catch (Exception ex2)
+			catch (Exception ex)
 			{
-				Exception ex = ex2;
 				socket?.Close();
 				return new OperateResult<byte[]>(ex.Message);
 			}
@@ -1056,7 +1027,7 @@ namespace Plcway.Communication.Core.Net
 			{
 				do
 				{
-					int count = await Task.Factory.FromAsync(socket.BeginSend(data, offset, size - alreadyCount, SocketFlags.None, null, socket), (Func<IAsyncResult, int>)socket.EndSend);
+					int count = await Task.Factory.FromAsync(socket.BeginSend(data, offset, size - alreadyCount, SocketFlags.None, null, socket), socket.EndSend);
 					alreadyCount += count;
 					offset += count;
 				}
@@ -1129,7 +1100,7 @@ namespace Plcway.Communication.Core.Net
 
 		private async Task<OperateResult<long>> ReceiveLongAsync(Socket socket)
 		{
-			OperateResult<byte[]> read = await ReceiveAsync(socket, 8, -1);
+			var read = await ReceiveAsync(socket, 8, -1);
 			if (read.IsSuccess)
 			{
 				return OperateResult.CreateSuccessResult(BitConverter.ToInt64(read.Content, 0));
@@ -1242,7 +1213,7 @@ namespace Plcway.Communication.Core.Net
 
 		protected async Task<OperateResult<int, string[]>> ReceiveStringArrayContentFromSocketAsync(Socket socket, int timeOut = 30000)
 		{
-			OperateResult<byte[], byte[]> receive = await ReceiveAndCheckBytesAsync(socket, timeOut);
+			var receive = await ReceiveAndCheckBytesAsync(socket, timeOut);
 			if (!receive.IsSuccess)
 			{
 				return OperateResult.CreateFailedResult<int, string[]>(receive);
@@ -1263,7 +1234,7 @@ namespace Plcway.Communication.Core.Net
 
 		protected async Task<OperateResult<int, byte[]>> ReceiveBytesContentFromSocketAsync(Socket socket, int timeout = 30000)
 		{
-			OperateResult<byte[], byte[]> receive = await ReceiveAndCheckBytesAsync(socket, timeout);
+			var receive = await ReceiveAndCheckBytesAsync(socket, timeout);
 			if (!receive.IsSuccess)
 			{
 				return OperateResult.CreateFailedResult<int, byte[]>(receive);
@@ -1326,7 +1297,7 @@ namespace Plcway.Communication.Core.Net
 			long percent = 0L;
 			while (count_receive < totalLength)
 			{
-				OperateResult<int, byte[]> read = await ReceiveBytesContentFromSocketAsync(socket, 60000);
+				var read = await ReceiveBytesContentFromSocketAsync(socket, 60000);
 				if (!read.IsSuccess)
 				{
 					return read;
@@ -1358,22 +1329,20 @@ namespace Plcway.Communication.Core.Net
 		}
 
 		/// <summary>
-		/// 接收一条hsl协议的数据信息，自动解析，解压，解码操作，获取最后的实际的数据，接收结果依次为暗号，用户码，负载数据<br />
-		/// Receive a piece of hsl protocol data information, automatically parse, decompress, and decode operations to obtain the last actual data. 
-		/// The result is a opCode, user code, and payload data in order.
+		/// 接收一条hsl协议的数据信息，自动解析，解压，解码操作，获取最后的实际的数据，接收结果依次为暗号，用户码，负载数据。
 		/// </summary>
 		/// <param name="socket">网络套接字</param>
 		/// <returns>接收结果，依次为暗号，用户码，负载数据</returns>
 		protected OperateResult<int, int, byte[]> ReceiveHslMessage(Socket socket)
 		{
-			OperateResult<byte[]> operateResult = Receive(socket, 32, 10000);
+			var operateResult = Receive(socket, 32, 10000);
 			if (!operateResult.IsSuccess)
 			{
 				return OperateResult.CreateFailedResult<int, int, byte[]>(operateResult);
 			}
 
 			int length = BitConverter.ToInt32(operateResult.Content, operateResult.Content.Length - 4);
-			OperateResult<byte[]> operateResult2 = Receive(socket, length);
+			var operateResult2 = Receive(socket, length);
 			if (!operateResult2.IsSuccess)
 			{
 				return OperateResult.CreateFailedResult<int, int, byte[]>(operateResult2);
@@ -1385,17 +1354,16 @@ namespace Plcway.Communication.Core.Net
 			return OperateResult.CreateSuccessResult(value2, value3, value);
 		}
 
-		/// <inheritdoc cref="M:HslCommunication.Core.Net.NetworkBase.ReceiveHslMessage(System.Net.Sockets.Socket)" />
 		protected async Task<OperateResult<int, int, byte[]>> ReceiveHslMessageAsync(Socket socket)
 		{
-			OperateResult<byte[]> receiveHead = await ReceiveAsync(socket, 32, 10000);
+			var receiveHead = await ReceiveAsync(socket, 32, 10000);
 			if (!receiveHead.IsSuccess)
 			{
 				return OperateResult.CreateFailedResult<int, int, byte[]>(receiveHead);
 			}
 
 			int receive_length = BitConverter.ToInt32(receiveHead.Content, receiveHead.Content.Length - 4);
-			OperateResult<byte[]> receiveContent = await ReceiveAsync(socket, receive_length);
+			var receiveContent = await ReceiveAsync(socket, receive_length);
 			if (!receiveContent.IsSuccess)
 			{
 				return OperateResult.CreateFailedResult<int, int, byte[]>(receiveContent);
@@ -1408,8 +1376,7 @@ namespace Plcway.Communication.Core.Net
 		}
 
 		/// <summary>
-		/// 删除文件的操作<br />
-		/// Delete file operation
+		/// 删除文件的操作。
 		/// </summary>
 		/// <param name="filename">完整的真实的文件路径</param>
 		/// <returns>是否删除成功</returns>
@@ -1427,20 +1394,19 @@ namespace Plcway.Communication.Core.Net
 			}
 			catch (Exception ex)
 			{
-				Logger.LogError(ex, $"delete file failed:{filename}");
+				Logger?.LogError(ex, $"delete file failed:{filename}");
 				return false;
 			}
 		}
 
 		/// <summary>
-		/// 预处理文件夹的名称，除去文件夹名称最后一个'\'或'/'，如果有的话<br />
-		/// Preprocess the name of the folder, removing the last '\' or '/' in the folder name
+		/// 预处理文件夹的名称，除去文件夹名称最后一个'\'或'/'，如果有的话。
 		/// </summary>
 		/// <param name="folder">文件夹名称</param>
 		/// <returns>返回处理之后的名称</returns>
 		protected string PreprocessFolderName(string folder)
 		{
-			if (folder.EndsWith("\\") || folder.EndsWith("/"))
+			if (folder.EndsWith(Path.DirectorySeparatorChar))
 			{
 				return folder[0..^1];
 			}
@@ -1453,8 +1419,7 @@ namespace Plcway.Communication.Core.Net
 		}
 
 		/// <summary>
-		/// 通过主机名或是IP地址信息，获取到真实的IP地址信息<br />
-		/// Obtain the real IP address information through the host name or IP address information
+		/// 通过主机名或是IP地址信息，获取到真实的IP地址信息。
 		/// </summary>
 		/// <param name="hostName">主机名或是IP地址</param>
 		/// <returns>IP地址信息</returns>

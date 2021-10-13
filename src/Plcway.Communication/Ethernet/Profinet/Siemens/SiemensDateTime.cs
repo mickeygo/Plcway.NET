@@ -8,7 +8,6 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 	/// </summary>
 	/// <remarks>
 	/// 这部分的代码参考了另一个s7的库，感谢原作者，此处贴出出处，遵循 MIT 协议
-	///
 	/// https://github.com/S7NetPlus/s7netplus
 	/// </remarks>
 	public class SiemensDateTime
@@ -16,7 +15,7 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 		/// <summary>
 		/// The minimum <see cref="T:System.DateTime" /> value supported by the specification.
 		/// </summary>
-		public static readonly DateTime SpecMinimumDateTime = new DateTime(1990, 1, 1);
+		public static readonly DateTime SpecMinimumDateTime = new(1990, 1, 1);
 
 		/// <summary>
 		/// The maximum <see cref="T:System.DateTime" /> value supported by the specification.
@@ -48,7 +47,7 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 		{
 			if (bytes.Length % 8 != 0)
 			{
-				throw new ArgumentOutOfRangeException("bytes", bytes.Length, $"Parsing an array of DateTime requires a multiple of 8 bytes of input data, input data is '{bytes.Length}' long.");
+				throw new ArgumentOutOfRangeException(nameof(bytes), bytes.Length, $"Parsing an array of DateTime requires a multiple of 8 bytes of input data, input data is '{bytes.Length}' long.");
 			}
 
 			int num = bytes.Length / 8;
@@ -64,7 +63,7 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 		{
 			if (bytes.Count != 8)
 			{
-				throw new ArgumentOutOfRangeException("bytes", bytes.Count, $"Parsing a DateTime requires exactly 8 bytes of input data, input data is {bytes.Count} bytes long.");
+				throw new ArgumentOutOfRangeException(nameof(bytes), bytes.Count, $"Parsing a DateTime requires exactly 8 bytes of input data, input data is {bytes.Count} bytes long.");
 			}
 
 			int year = ByteToYear(bytes[0]);
@@ -82,11 +81,11 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 			{
 				if (input < min)
 				{
-					throw new ArgumentOutOfRangeException("input", input, $"Value '{input}' is lower than the minimum '{min}' allowed for {field}.");
+					throw new ArgumentOutOfRangeException(nameof(input), input, $"Value '{input}' is lower than the minimum '{min}' allowed for {field}.");
 				}
 				if (input > max)
 				{
-					throw new ArgumentOutOfRangeException("input", input, $"Value '{input}' is higher than the maximum '{max}' allowed for {field}.");
+					throw new ArgumentOutOfRangeException(nameof(input), input, $"Value '{input}' is higher than the maximum '{max}' allowed for {field}.");
 				}
 				return input;
 			}
@@ -100,7 +99,7 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 				}
 				if (num4 >= 100)
 				{
-					throw new ArgumentOutOfRangeException("bcdYear", bcdYear, $"Value '{num4}' is higher than the maximum '99' of S7 date and time representation.");
+					throw new ArgumentOutOfRangeException(nameof(bcdYear), bcdYear, $"Value '{num4}' is higher than the maximum '99' of S7 date and time representation.");
 				}
 				return num4 + 1900;
 			}
@@ -123,11 +122,11 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 		{
 			if (dateTime < SpecMinimumDateTime)
 			{
-				throw new ArgumentOutOfRangeException("dateTime", dateTime, $"Date time '{dateTime}' is before the minimum '{SpecMinimumDateTime}' supported in S7 date time representation.");
+				throw new ArgumentOutOfRangeException(nameof(dateTime), dateTime, $"Date time '{dateTime}' is before the minimum '{SpecMinimumDateTime}' supported in S7 date time representation.");
 			}
 			if (dateTime > SpecMaximumDateTime)
 			{
-				throw new ArgumentOutOfRangeException("dateTime", dateTime, $"Date time '{dateTime}' is after the maximum '{SpecMaximumDateTime}' supported in S7 date time representation.");
+				throw new ArgumentOutOfRangeException(nameof(dateTime), dateTime, $"Date time '{dateTime}' is after the maximum '{SpecMaximumDateTime}' supported in S7 date time representation.");
 			}
 
 			return new byte[8]
@@ -146,10 +145,12 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 			{
 				return (int)(dayOfWeek + 1);
 			}
+
 			static byte EncodeBcd(int value)
 			{
 				return (byte)((value / 10 << 4) | (value % 10));
 			}
+
 			static byte MapYear(int year)
 			{
 				return (byte)((year < 2000) ? (year - 1900) : (year - 2000));

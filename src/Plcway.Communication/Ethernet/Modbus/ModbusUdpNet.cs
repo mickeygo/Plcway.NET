@@ -47,8 +47,7 @@ namespace Plcway.Communication.Ethernet.Modbus
 		public SoftIncrementCount MessageId => softIncrementCount;
 
 		/// <summary>
-		/// 实例化一个MOdbus-Udp协议的客户端对象<br />
-		/// Instantiate a client object of the MOdbus-Udp protocol
+		/// 实例化一个MOdbus-Udp协议的客户端对象。
 		/// </summary>
 		public ModbusUdpNet()
 		{

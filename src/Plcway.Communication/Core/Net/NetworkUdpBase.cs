@@ -10,8 +10,7 @@ using Plcway.Communication.Extensions;
 namespace Plcway.Communication.Core.Net
 {
 	/// <summary>
-	/// 基于Udp的应答式通信类<br />
-	/// Udp - based responsive communication class
+	/// 基于Udp的应答式通信类。
 	/// </summary>
 	public class NetworkUdpBase : NetworkBase
 	{
@@ -40,16 +39,14 @@ namespace Plcway.Communication.Core.Net
 		public string ConnectionId { get; set; }
 
 		/// <summary>
-		/// 获取或设置一次接收时的数据长度，默认2KB数据长度，特殊情况的时候需要调整<br />
-		/// Gets or sets the length of data received at a time. The default length is 2KB
+		/// 获取或设置一次接收时的数据长度，默认2KB数据长度，特殊情况的时候需要调整。
 		/// </summary>
 		public int ReceiveCacheLength { get; set; } = 2048;
 
 		public IPEndPoint LocalBinding { get; set; }
 
 		/// <summary>
-		/// 实例化一个默认的方法<br />
-		/// Instantiate a default method
+		/// 实例化一个默认的方法。
 		/// </summary>
 		public NetworkUdpBase()
 		{
@@ -84,6 +81,7 @@ namespace Plcway.Communication.Core.Net
 		{
 			byte[] array = (usePackAndUnpack ? PackCommandWithHeader(send) : send);
 			Logger.LogDebug($"{ToString()} Send: {SoftBasic.ByteToHexString(array)}");
+
 			hybirdLock.Enter();
 			try
 			{

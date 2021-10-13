@@ -10,7 +10,7 @@ namespace Plcway.Communication.Basic
 		/// <summary>
 		/// 数据的本身面貌
 		/// </summary>
-		private int[] DataArray = null;
+		private int[] DataArray;
 
 		/// <summary>
 		/// 实例化一个数据对象
@@ -23,7 +23,8 @@ namespace Plcway.Communication.Basic
 			{
 				capacity = 10;
 			}
-			base.ArrayLength = capacity;
+
+			ArrayLength = capacity;
 			DataArray = new int[capacity];
 			DataBytes = new byte[capacity * 4];
 			if (defaultValue != 0)
@@ -42,7 +43,7 @@ namespace Plcway.Communication.Basic
 		/// <exception cref="T:System.NullReferenceException"></exception>
 		public override void LoadFromBytes(byte[] dataSave)
 		{
-			int num2 = (base.ArrayLength = dataSave.Length / 4);
+			int num2 = (ArrayLength = dataSave.Length / 4);
 			DataArray = new int[num2];
 			DataBytes = new byte[num2 * 4];
 			for (int i = 0; i < num2; i++)
@@ -58,12 +59,12 @@ namespace Plcway.Communication.Basic
 		public void AddValue(int value)
 		{
 			HybirdLock.Enter();
-			for (int i = 0; i < base.ArrayLength - 1; i++)
+			for (int i = 0; i < ArrayLength - 1; i++)
 			{
 				DataArray[i] = DataArray[i + 1];
 			}
-			DataArray[base.ArrayLength - 1] = value;
-			for (int j = 0; j < base.ArrayLength; j++)
+			DataArray[ArrayLength - 1] = value;
+			for (int j = 0; j < ArrayLength; j++)
 			{
 				BitConverter.GetBytes(DataArray[j]).CopyTo(DataBytes, 4 * j);
 			}
@@ -76,10 +77,10 @@ namespace Plcway.Communication.Basic
 		/// <returns></returns>
 		public int[] GetIntArray()
 		{
-			int[] array = null;
+			int[] array;
 			HybirdLock.Enter();
-			array = new int[base.ArrayLength];
-			for (int i = 0; i < base.ArrayLength; i++)
+			array = new int[ArrayLength];
+			for (int i = 0; i < ArrayLength; i++)
 			{
 				array[i] = DataArray[i];
 			}

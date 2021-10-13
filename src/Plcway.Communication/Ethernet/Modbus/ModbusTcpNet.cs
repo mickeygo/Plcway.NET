@@ -98,20 +98,15 @@ namespace Plcway.Communication.Ethernet.Modbus
 	///     需要Modbus服务器支持，对于不支持该功能码的写入无效。</description>
 	/// </item>
 	/// </list>
-	/// 基本的用法请参照下面的代码示例
-	/// <code lang="cs" source="HslCommunication_Net45.Test\Documentation\Samples\Modbus\Modbus.cs" region="Example1" title="Modbus示例" />
 	/// </example>
 	public class ModbusTcpNet : NetworkDeviceBase, IModbus, IReadWriteDevice, IReadWriteNet
 	{
-		private byte station = 1;
-
-		private readonly SoftIncrementCount softIncrementCount;
+        private readonly SoftIncrementCount softIncrementCount;
 
 		private bool isAddressStartWithZero = true;
 
 		/// <summary>
-		/// 获取或设置起始的地址是否从0开始，默认为True<br />
-		/// Gets or sets whether the starting address starts from 0. The default is True
+		/// 获取或设置起始的地址是否从0开始，默认为True。
 		/// </summary>
 		/// <remarks>
 		/// <note type="warning">因为有些设备的起始地址是从1开始的，就要设置本属性为<c>False</c></note>
@@ -128,27 +123,15 @@ namespace Plcway.Communication.Ethernet.Modbus
 			}
 		}
 
-		/// <summary>
-		/// 获取或者重新修改服务器的默认站号信息，当然，你可以再读写的时候动态指定，参见备注<br />
-		/// Get or modify the default station number information of the server. Of course, you can specify it dynamically when reading and writing, see note
-		/// </summary>
-		/// <remarks>
-		/// 当你调用 ReadCoil("100") 时，对应的站号就是本属性的值，当你调用 ReadCoil("s=2;100") 时，就忽略本属性的值，读写寄存器的时候同理
-		/// </remarks>
-		public byte Station
-		{
-			get
-			{
-				return station;
-			}
-			set
-			{
-				station = value;
-			}
-		}
+        /// <summary>
+        /// 获取或者重新修改服务器的默认站号信息，当然，你可以再读写的时候动态指定，参见备注。
+        /// </summary>
+        /// <remarks>
+        /// 当你调用 ReadCoil("100") 时，对应的站号就是本属性的值，当你调用 ReadCoil("s=2;100") 时，就忽略本属性的值，读写寄存器的时候同理
+        /// </remarks>
+        public byte Station { get; set; } = 1;
 
-		/// <inheritdoc cref="P:HslCommunication.Core.ByteTransformBase.DataFormat" />
-		public DataFormat DataFormat
+        public DataFormat DataFormat
 		{
 			get
 			{
@@ -184,14 +167,13 @@ namespace Plcway.Communication.Ethernet.Modbus
 		public SoftIncrementCount MessageId => softIncrementCount;
 
 		/// <summary>
-		/// 实例化一个Modbus-Tcp协议的客户端对象<br />
-		/// Instantiate a client object of the Modbus-Tcp protocol
+		/// 实例化一个Modbus-Tcp协议的客户端对象。
 		/// </summary>
 		public ModbusTcpNet()
 		{
 			softIncrementCount = new SoftIncrementCount(65535L, 0L);
 			base.WordLength = 1;
-			station = 1;
+			Station = 1;
 			base.ByteTransform = new ReverseWordTransform();
 		}
 
@@ -207,7 +189,7 @@ namespace Plcway.Communication.Ethernet.Modbus
 			IpAddress = ipAddress;
 			Port = port;
 			base.WordLength = 1;
-			this.station = station;
+			this.Station = station;
 			base.ByteTransform = new ReverseWordTransform();
 		}
 

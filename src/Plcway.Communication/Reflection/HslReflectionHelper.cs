@@ -32,7 +32,8 @@ namespace Plcway.Communication.Reflection
 				{
 					continue;
 				}
-				HslDeviceAddressAttribute hslDeviceAddressAttribute = null;
+
+				HslDeviceAddressAttribute? hslDeviceAddressAttribute = null;
 				for (int j = 0; j < customAttributes.Length; j++)
 				{
 					HslDeviceAddressAttribute hslDeviceAddressAttribute2 = (HslDeviceAddressAttribute)customAttributes[j];
@@ -42,6 +43,7 @@ namespace Plcway.Communication.Reflection
 						break;
 					}
 				}
+
 				if (hslDeviceAddressAttribute == null)
 				{
 					for (int k = 0; k < customAttributes.Length; k++)
@@ -54,10 +56,12 @@ namespace Plcway.Communication.Reflection
 						}
 					}
 				}
+
 				if (hslDeviceAddressAttribute == null)
 				{
 					continue;
 				}
+
 				Type propertyType = propertyInfo.PropertyType;
 				if (propertyType == typeof(short))
 				{
@@ -70,7 +74,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(short[]))
 				{
-					OperateResult<short[]> operateResult2 = readWrite.ReadInt16(hslDeviceAddressAttribute.Address, (ushort)((hslDeviceAddressAttribute.Length <= 0) ? 1u : ((uint)hslDeviceAddressAttribute.Length)));
+					var operateResult2 = readWrite.ReadInt16(hslDeviceAddressAttribute.Address, (ushort)((hslDeviceAddressAttribute.Length <= 0) ? 1u : ((uint)hslDeviceAddressAttribute.Length)));
 					if (!operateResult2.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(operateResult2);
@@ -88,7 +92,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(ushort[]))
 				{
-					OperateResult<ushort[]> operateResult4 = readWrite.ReadUInt16(hslDeviceAddressAttribute.Address, (ushort)((hslDeviceAddressAttribute.Length <= 0) ? 1u : ((uint)hslDeviceAddressAttribute.Length)));
+					var operateResult4 = readWrite.ReadUInt16(hslDeviceAddressAttribute.Address, (ushort)((hslDeviceAddressAttribute.Length <= 0) ? 1u : ((uint)hslDeviceAddressAttribute.Length)));
 					if (!operateResult4.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(operateResult4);
@@ -106,7 +110,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(int[]))
 				{
-					OperateResult<int[]> operateResult6 = readWrite.ReadInt32(hslDeviceAddressAttribute.Address, (ushort)((hslDeviceAddressAttribute.Length <= 0) ? 1u : ((uint)hslDeviceAddressAttribute.Length)));
+					var operateResult6 = readWrite.ReadInt32(hslDeviceAddressAttribute.Address, (ushort)((hslDeviceAddressAttribute.Length <= 0) ? 1u : ((uint)hslDeviceAddressAttribute.Length)));
 					if (!operateResult6.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(operateResult6);
@@ -240,11 +244,12 @@ namespace Plcway.Communication.Reflection
 					propertyInfo.SetValue(obj, operateResult20.Content, null);
 				}
 			}
+
 			return OperateResult.CreateSuccessResult((T)obj);
 		}
 
 		/// <summary>
-		/// 从设备里读取支持Hsl特性的数据内容，该特性为<see cref="T:HslCommunication.Reflection.HslDeviceAddressAttribute" />，详细参考论坛的操作说明。
+		/// 从设备里读取支持Hsl特性的数据内容，该特性为<see cref="HslDeviceAddressAttribute" />，详细参考论坛的操作说明。
 		/// </summary>
 		/// <typeparam name="T">自定义的数据类型对象</typeparam>
 		/// <param name="data">自定义的数据对象</param>
@@ -255,44 +260,31 @@ namespace Plcway.Communication.Reflection
 		{
 			if (data == null)
 			{
-				throw new ArgumentNullException("data");
+				throw new ArgumentNullException(nameof(data));
 			}
+
 			Type typeFromHandle = typeof(T);
-			PropertyInfo[] properties = typeFromHandle.GetProperties(BindingFlags.Instance | BindingFlags.Public);
-			PropertyInfo[] array = properties;
+			var properties = typeFromHandle.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+			var array = properties;
 			foreach (PropertyInfo propertyInfo in array)
 			{
-				object[] customAttributes = propertyInfo.GetCustomAttributes(typeof(HslDeviceAddressAttribute), inherit: false);
-				if (customAttributes == null)
+				var customAttributes = propertyInfo.GetCustomAttributes<HslDeviceAddressAttribute>(false);
+				if (!customAttributes.Any())
 				{
 					continue;
 				}
-				HslDeviceAddressAttribute hslDeviceAddressAttribute = null;
-				for (int j = 0; j < customAttributes.Length; j++)
-				{
-					HslDeviceAddressAttribute hslDeviceAddressAttribute2 = (HslDeviceAddressAttribute)customAttributes[j];
-					if (hslDeviceAddressAttribute2.DeviceType != null && hslDeviceAddressAttribute2.DeviceType == readWrite.GetType())
-					{
-						hslDeviceAddressAttribute = hslDeviceAddressAttribute2;
-						break;
-					}
-				}
+
+				var hslDeviceAddressAttribute = customAttributes.FirstOrDefault(s => s.DeviceType == readWrite.GetType());
 				if (hslDeviceAddressAttribute == null)
 				{
-					for (int k = 0; k < customAttributes.Length; k++)
-					{
-						HslDeviceAddressAttribute hslDeviceAddressAttribute3 = (HslDeviceAddressAttribute)customAttributes[k];
-						if (hslDeviceAddressAttribute3.DeviceType == null)
-						{
-							hslDeviceAddressAttribute = hslDeviceAddressAttribute3;
-							break;
-						}
-					}
+					hslDeviceAddressAttribute = customAttributes.FirstOrDefault(s => s.DeviceType == null);
 				}
+
 				if (hslDeviceAddressAttribute == null)
 				{
 					continue;
 				}
+
 				Type propertyType = propertyInfo.PropertyType;
 				if (propertyType == typeof(short))
 				{
@@ -503,41 +495,27 @@ namespace Plcway.Communication.Reflection
 		{
 			Type type = typeof(T);
 			object obj = type.Assembly.CreateInstance(type.FullName);
-			PropertyInfo[] properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
-			PropertyInfo[] array = properties;
+			var properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+			var array = properties;
 			foreach (PropertyInfo property in array)
 			{
-				object[] attribute = property.GetCustomAttributes(typeof(HslDeviceAddressAttribute), inherit: false);
-				if (attribute == null)
+				var attributes = property.GetCustomAttributes<HslDeviceAddressAttribute>(false);
+				if (!attributes.Any())
 				{
 					continue;
 				}
-				HslDeviceAddressAttribute hslAttribute = null;
-				for (int i = 0; i < attribute.Length; i++)
-				{
-					HslDeviceAddressAttribute tmp = (HslDeviceAddressAttribute)attribute[i];
-					if (tmp.DeviceType != null && tmp.DeviceType == readWrite.GetType())
-					{
-						hslAttribute = tmp;
-						break;
-					}
-				}
+
+				var hslAttribute = attributes.FirstOrDefault(s => s.DeviceType == readWrite.GetType()); ;
 				if (hslAttribute == null)
 				{
-					for (int j = 0; j < attribute.Length; j++)
-					{
-						HslDeviceAddressAttribute tmp2 = (HslDeviceAddressAttribute)attribute[j];
-						if (tmp2.DeviceType == null)
-						{
-							hslAttribute = tmp2;
-							break;
-						}
-					}
+					hslAttribute = attributes.FirstOrDefault(s => s.DeviceType == null);
 				}
+
 				if (hslAttribute == null)
 				{
 					continue;
 				}
+
 				Type propertyType = property.PropertyType;
 				if (propertyType == typeof(short))
 				{
@@ -735,44 +713,31 @@ namespace Plcway.Communication.Reflection
 		{
 			if (data == null)
 			{
-				throw new ArgumentNullException("data");
+				throw new ArgumentNullException(nameof(data));
 			}
+
 			Type type = typeof(T);
-			PropertyInfo[] properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
-			PropertyInfo[] array = properties;
+			var properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+			var array = properties;
 			foreach (PropertyInfo property in array)
 			{
-				object[] attribute = property.GetCustomAttributes(typeof(HslDeviceAddressAttribute), inherit: false);
-				if (attribute == null)
+				var attributes = property.GetCustomAttributes<HslDeviceAddressAttribute>(false);
+				if (!attributes.Any())
 				{
 					continue;
 				}
-				HslDeviceAddressAttribute hslAttribute = null;
-				for (int j = 0; j < attribute.Length; j++)
-				{
-					HslDeviceAddressAttribute tmp2 = (HslDeviceAddressAttribute)attribute[j];
-					if (tmp2.DeviceType != null && tmp2.DeviceType == readWrite.GetType())
-					{
-						hslAttribute = tmp2;
-						break;
-					}
-				}
+
+				var hslAttribute = attributes.FirstOrDefault(s => s.DeviceType == readWrite.GetType()); ;
 				if (hslAttribute == null)
 				{
-					for (int i = 0; i < attribute.Length; i++)
-					{
-						HslDeviceAddressAttribute tmp = (HslDeviceAddressAttribute)attribute[i];
-						if (tmp.DeviceType == null)
-						{
-							hslAttribute = tmp;
-							break;
-						}
-					}
+					hslAttribute = attributes.FirstOrDefault(s => s.DeviceType == null);
 				}
+
 				if (hslAttribute == null)
 				{
 					continue;
 				}
+
 				Type propertyType = property.PropertyType;
 				if (propertyType == typeof(short))
 				{

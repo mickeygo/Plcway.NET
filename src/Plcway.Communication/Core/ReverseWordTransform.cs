@@ -1,21 +1,19 @@
+using System;
 using Plcway.Communication.Basic;
 using Plcway.Communication.Extensions;
 
 namespace Plcway.Communication.Core
 {
 	/// <summary>
-	/// 按照字节错位的数据转换类<br />
-	/// Data conversion class according to byte misalignment
+	/// 按照字节错位的数据转换类。
 	/// </summary>
 	public class ReverseWordTransform : ByteTransformBase
 	{
-		/// <inheritdoc cref="M:HslCommunication.Core.ByteTransformBase.#ctor" />
 		public ReverseWordTransform()
 		{
 			base.DataFormat = DataFormat.ABCD;
 		}
 
-		/// <inheritdoc cref="M:HslCommunication.Core.ByteTransformBase.#ctor(HslCommunication.Core.DataFormat)" />
 		public ReverseWordTransform(DataFormat dataFormat)
 			: base(dataFormat)
 		{
@@ -28,11 +26,11 @@ namespace Plcway.Communication.Core
 		/// <param name="index">起始字节位置</param>
 		/// <param name="length">数据长度</param>
 		/// <returns>处理过的数据信息</returns>
-		private byte[] ReverseBytesByWord(byte[]? buffer, int index, int length)
+		private byte[] ReverseBytesByWord(byte[] buffer, int index, int length)
 		{
 			if (buffer == null)
 			{
-				return null;
+				return Array.Empty<byte>();
 			}
 			return SoftBasic.BytesReverseByWord(buffer.SelectMiddle(index, length));
 		}
@@ -63,7 +61,7 @@ namespace Plcway.Communication.Core
 		{
 			return new ReverseWordTransform(dataFormat)
 			{
-				IsStringReverseByteWord = base.IsStringReverseByteWord
+				IsStringReverseByteWord = base.IsStringReverseByteWord,
 			};
 		}
 

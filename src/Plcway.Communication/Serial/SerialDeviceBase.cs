@@ -1,6 +1,5 @@
 using System.Text;
 using System.Threading.Tasks;
-using Plcway.Communication.Ethernet;
 using Plcway.Communication.Basic;
 using Plcway.Communication.Core;
 using Plcway.Communication.Reflection;
@@ -8,39 +7,37 @@ using Plcway.Communication.Reflection;
 namespace Plcway.Communication.Serial
 {
 	/// <summary>
-	/// 串口设备交互类的基类，实现了<see cref="T:HslCommunication.Core.IReadWriteDevice" />接口的基础方法方法，需要使用继承重写来实现字节读写，bool读写操作。<br />
-	/// The base class of the serial device interaction class, which implements the basic methods of the <see cref="T:HslCommunication.Core.IReadWriteDevice" /> interface, 
-	/// requires inheritance rewriting to implement byte read and write, and bool read and write operations.
+	/// 串口设备交互类的基类，实现了<see cref="IReadWriteDevice" />接口的基础方法方法，需要使用继承重写来实现字节读写，bool读写操作。
 	/// </summary>
 	/// <remarks>
 	/// 本类实现了不同的数据类型的读写交互的api，继承自本类，重写下面的四个方法将可以实现你自己的设备通信对象
 	/// <list type="number">
 	/// <item>
-	/// <see cref="M:Serial.SerialDeviceBase.Read(System.String,System.UInt16)" /> 方法，读取字节数组的方法。
+	/// <see cref="Read(string,ushort)" /> 方法，读取字节数组的方法。
 	/// </item>
 	/// <item>
-	/// <see cref="M:Serial.SerialDeviceBase.Write(System.String,System.Byte[])" /> 方法，写入字节数组的方法。
+	/// <see cref="Write(string,byte[])" /> 方法，写入字节数组的方法。
 	/// </item>
 	/// <item>
-	/// <see cref="M:Serial.SerialDeviceBase.ReadBool(System.String,System.UInt16)" /> 方法，读取bool数组的方法。
+	/// <see cref="ReadBool(string,ushort)" /> 方法，读取bool数组的方法。
 	/// </item>
 	/// <item>
-	/// <see cref="M:HslCommunication.Serial.SerialDeviceBase.Write(System.String,System.Boolean[])" /> 方法，写入bool数组的方法。
+	/// <see cref="Write(string,bool[])" /> 方法，写入bool数组的方法。
 	/// </item>
 	/// </list>
 	/// 如果需要实现异步的方法。那就需要重写下面的四个方法。
 	/// <list type="number">
 	/// <item>
-	/// <see cref="M:Serial.SerialDeviceBase.ReadAsync(System.String,System.UInt16)" /> 方法，读取字节数组的方法。
+	/// <see cref="ReadAsync(string,ushort)" /> 方法，读取字节数组的方法。
 	/// </item>
 	/// <item>
-	/// <see cref="M:Serial.SerialDeviceBase.WriteAsync(System.String,System.Byte[])" /> 方法，写入字节数组的方法。
+	/// <see cref="WriteAsync(string,byte[])" /> 方法，写入字节数组的方法。
 	/// </item>
 	/// <item>
-	/// <see cref="M:Serial.SerialDeviceBase.ReadBoolAsync(System.String,System.UInt16)" /> 方法，读取bool数组的方法。
+	/// <see cref="ReadBoolAsync(string,ushort)" /> 方法，读取bool数组的方法。
 	/// </item>
 	/// <item>
-	/// <see cref="M:Serial.SerialDeviceBase.WriteAsync(System.String,System.Boolean[])" /> 方法，写入bool数组的方法。
+	/// <see cref="WriteAsync(string,bool[])" /> 方法，写入bool数组的方法。
 	/// </item>
 	/// </list>
 	/// </remarks>
@@ -97,8 +94,8 @@ namespace Plcway.Communication.Serial
 
 		public OperateResult<T> ReadCustomer<T>(string address) where T : IDataTransfer, new()
 		{
-			OperateResult<T> operateResult = new OperateResult<T>();
-			T content = new T();
+			var operateResult = new OperateResult<T>();
+			T content = new();
 			OperateResult<byte[]> operateResult2 = Read(address, content.ReadCount);
 			if (operateResult2.IsSuccess)
 			{
@@ -136,7 +133,8 @@ namespace Plcway.Communication.Serial
 
 		public virtual OperateResult<short[]> ReadInt16(string address, ushort length)
 		{
-			return ByteTransformHelper.GetResultFromBytes(Read(address, (ushort)(length * WordLength)), (byte[] m) => ByteTransform.TransInt16(m, 0, length));
+			var result = Read(address, (ushort)(length * WordLength));
+			return ByteTransformHelper.GetResultFromBytes(result, (byte[] m) => ByteTransform.TransInt16(m, 0, length));
 		}
 
 		public OperateResult<ushort> ReadUInt16(string address)
@@ -146,7 +144,8 @@ namespace Plcway.Communication.Serial
 
 		public virtual OperateResult<ushort[]> ReadUInt16(string address, ushort length)
 		{
-			return ByteTransformHelper.GetResultFromBytes(Read(address, (ushort)(length * WordLength)), (byte[] m) => ByteTransform.TransUInt16(m, 0, length));
+			var result = Read(address, (ushort)(length * WordLength));
+			return ByteTransformHelper.GetResultFromBytes(result, (byte[] m) => ByteTransform.TransUInt16(m, 0, length));
 		}
 
 		public OperateResult<int> ReadInt32(string address)
@@ -156,7 +155,8 @@ namespace Plcway.Communication.Serial
 
 		public virtual OperateResult<int[]> ReadInt32(string address, ushort length)
 		{
-			return ByteTransformHelper.GetResultFromBytes(Read(address, (ushort)(length * WordLength * 2)), (byte[] m) => ByteTransform.TransInt32(m, 0, length));
+			var result = Read(address, (ushort)(length * WordLength * 2));
+			return ByteTransformHelper.GetResultFromBytes(result, (byte[] m) => ByteTransform.TransInt32(m, 0, length));
 		}
 
 		public OperateResult<uint> ReadUInt32(string address)
@@ -166,7 +166,8 @@ namespace Plcway.Communication.Serial
 
 		public virtual OperateResult<uint[]> ReadUInt32(string address, ushort length)
 		{
-			return ByteTransformHelper.GetResultFromBytes(Read(address, (ushort)(length * WordLength * 2)), (byte[] m) => ByteTransform.TransUInt32(m, 0, length));
+			var result = Read(address, (ushort)(length * WordLength * 2));
+			return ByteTransformHelper.GetResultFromBytes(result, (byte[] m) => ByteTransform.TransUInt32(m, 0, length));
 		}
 
 		public OperateResult<float> ReadFloat(string address)
@@ -176,7 +177,8 @@ namespace Plcway.Communication.Serial
 
 		public virtual OperateResult<float[]> ReadFloat(string address, ushort length)
 		{
-			return ByteTransformHelper.GetResultFromBytes(Read(address, (ushort)(length * WordLength * 2)), (byte[] m) => ByteTransform.TransSingle(m, 0, length));
+			var result = Read(address, (ushort)(length * WordLength * 2));
+			return ByteTransformHelper.GetResultFromBytes(result, (byte[] m) => ByteTransform.TransSingle(m, 0, length));
 		}
 
 		public OperateResult<long> ReadInt64(string address)
@@ -186,7 +188,8 @@ namespace Plcway.Communication.Serial
 
 		public virtual OperateResult<long[]> ReadInt64(string address, ushort length)
 		{
-			return ByteTransformHelper.GetResultFromBytes(Read(address, (ushort)(length * WordLength * 4)), (byte[] m) => ByteTransform.TransInt64(m, 0, length));
+			var result = Read(address, (ushort)(length * WordLength * 4));
+			return ByteTransformHelper.GetResultFromBytes(result, (byte[] m) => ByteTransform.TransInt64(m, 0, length));
 		}
 
 		public OperateResult<ulong> ReadUInt64(string address)
@@ -196,7 +199,8 @@ namespace Plcway.Communication.Serial
 
 		public virtual OperateResult<ulong[]> ReadUInt64(string address, ushort length)
 		{
-			return ByteTransformHelper.GetResultFromBytes(Read(address, (ushort)(length * WordLength * 4)), (byte[] m) => ByteTransform.TransUInt64(m, 0, length));
+			var result = Read(address, (ushort)(length * WordLength * 4));
+			return ByteTransformHelper.GetResultFromBytes(result, (byte[] m) => ByteTransform.TransUInt64(m, 0, length));
 		}
 
 		public OperateResult<double> ReadDouble(string address)
@@ -206,7 +210,8 @@ namespace Plcway.Communication.Serial
 
 		public virtual OperateResult<double[]> ReadDouble(string address, ushort length)
 		{
-			return ByteTransformHelper.GetResultFromBytes(Read(address, (ushort)(length * WordLength * 4)), (byte[] m) => ByteTransform.TransDouble(m, 0, length));
+			var result = Read(address, (ushort)(length * WordLength * 4));
+			return ByteTransformHelper.GetResultFromBytes(result, (byte[] m) => ByteTransform.TransDouble(m, 0, length));
 		}
 
 		public OperateResult<string> ReadString(string address, ushort length)
@@ -214,10 +219,10 @@ namespace Plcway.Communication.Serial
 			return ReadString(address, length, Encoding.ASCII);
 		}
 
-		/// <inheritdoc cref="M:HslCommunication.Core.IReadWriteNet.ReadString(System.String,System.UInt16,System.Text.Encoding)" />
 		public virtual OperateResult<string> ReadString(string address, ushort length, Encoding encoding)
 		{
-			return ByteTransformHelper.GetResultFromBytes(Read(address, length), (byte[] m) => ByteTransform.TransString(m, 0, m.Length, encoding));
+			var result = Read(address, length);
+			return ByteTransformHelper.GetResultFromBytes(result, (byte[] m) => ByteTransform.TransString(m, 0, m.Length, encoding));
 		}
 
 		public virtual OperateResult Write(string address, short[] values)
@@ -363,9 +368,9 @@ namespace Plcway.Communication.Serial
 
 		public async Task<OperateResult<T>> ReadCustomerAsync<T>(string address) where T : IDataTransfer, new()
 		{
-			OperateResult<T> result = new OperateResult<T>();
+			var result = new OperateResult<T>();
 			T Content = new();
-			OperateResult<byte[]> read = await ReadAsync(address, Content.ReadCount);
+			var read = await ReadAsync(address, Content.ReadCount);
 			if (read.IsSuccess)
 			{
 				Content.ParseSource(read.Content);
@@ -402,7 +407,8 @@ namespace Plcway.Communication.Serial
 
 		public virtual async Task<OperateResult<short[]>> ReadInt16Async(string address, ushort length)
 		{
-			return ByteTransformHelper.GetResultFromBytes(await ReadAsync(address, (ushort)(length * WordLength)), (byte[] m) => ByteTransform.TransInt16(m, 0, length));
+			var result = await ReadAsync(address, (ushort)(length * WordLength));
+			return ByteTransformHelper.GetResultFromBytes(result, (byte[] m) => ByteTransform.TransInt16(m, 0, length));
 		}
 
 		public async Task<OperateResult<ushort>> ReadUInt16Async(string address)
@@ -412,7 +418,8 @@ namespace Plcway.Communication.Serial
 
 		public virtual async Task<OperateResult<ushort[]>> ReadUInt16Async(string address, ushort length)
 		{
-			return ByteTransformHelper.GetResultFromBytes(await ReadAsync(address, (ushort)(length * WordLength)), (byte[] m) => ByteTransform.TransUInt16(m, 0, length));
+			var result = await ReadAsync(address, (ushort)(length * WordLength));
+			return ByteTransformHelper.GetResultFromBytes(result, (byte[] m) => ByteTransform.TransUInt16(m, 0, length));
 		}
 
 		public async Task<OperateResult<int>> ReadInt32Async(string address)
@@ -422,7 +429,8 @@ namespace Plcway.Communication.Serial
 
 		public virtual async Task<OperateResult<int[]>> ReadInt32Async(string address, ushort length)
 		{
-			return ByteTransformHelper.GetResultFromBytes(await ReadAsync(address, (ushort)(length * WordLength * 2)), (byte[] m) => ByteTransform.TransInt32(m, 0, length));
+			var result = await ReadAsync(address, (ushort)(length * WordLength * 2));
+			return ByteTransformHelper.GetResultFromBytes(result, (byte[] m) => ByteTransform.TransInt32(m, 0, length));
 		}
 
 		public async Task<OperateResult<uint>> ReadUInt32Async(string address)
@@ -432,7 +440,8 @@ namespace Plcway.Communication.Serial
 
 		public virtual async Task<OperateResult<uint[]>> ReadUInt32Async(string address, ushort length)
 		{
-			return ByteTransformHelper.GetResultFromBytes(await ReadAsync(address, (ushort)(length * WordLength * 2)), (byte[] m) => ByteTransform.TransUInt32(m, 0, length));
+			var result = await ReadAsync(address, (ushort)(length * WordLength * 2));
+			return ByteTransformHelper.GetResultFromBytes(result, (byte[] m) => ByteTransform.TransUInt32(m, 0, length));
 		}
 
 		public async Task<OperateResult<float>> ReadFloatAsync(string address)
@@ -442,7 +451,8 @@ namespace Plcway.Communication.Serial
 
 		public virtual async Task<OperateResult<float[]>> ReadFloatAsync(string address, ushort length)
 		{
-			return ByteTransformHelper.GetResultFromBytes(await ReadAsync(address, (ushort)(length * WordLength * 2)), (byte[] m) => ByteTransform.TransSingle(m, 0, length));
+			var result = await ReadAsync(address, (ushort)(length * WordLength * 2));
+			return ByteTransformHelper.GetResultFromBytes(result, (byte[] m) => ByteTransform.TransSingle(m, 0, length));
 		}
 
 		public async Task<OperateResult<long>> ReadInt64Async(string address)
@@ -452,7 +462,8 @@ namespace Plcway.Communication.Serial
 
 		public virtual async Task<OperateResult<long[]>> ReadInt64Async(string address, ushort length)
 		{
-			return ByteTransformHelper.GetResultFromBytes(await ReadAsync(address, (ushort)(length * WordLength * 4)), (byte[] m) => ByteTransform.TransInt64(m, 0, length));
+			var result = await ReadAsync(address, (ushort)(length * WordLength * 4));
+			return ByteTransformHelper.GetResultFromBytes(result, (byte[] m) => ByteTransform.TransInt64(m, 0, length));
 		}
 
 		public async Task<OperateResult<ulong>> ReadUInt64Async(string address)
@@ -462,7 +473,8 @@ namespace Plcway.Communication.Serial
 
 		public virtual async Task<OperateResult<ulong[]>> ReadUInt64Async(string address, ushort length)
 		{
-			return ByteTransformHelper.GetResultFromBytes(await ReadAsync(address, (ushort)(length * WordLength * 4)), (byte[] m) => ByteTransform.TransUInt64(m, 0, length));
+			var result = await ReadAsync(address, (ushort)(length * WordLength * 4));
+			return ByteTransformHelper.GetResultFromBytes(result, (byte[] m) => ByteTransform.TransUInt64(m, 0, length));
 		}
 
 		public async Task<OperateResult<double>> ReadDoubleAsync(string address)
@@ -472,7 +484,8 @@ namespace Plcway.Communication.Serial
 
 		public virtual async Task<OperateResult<double[]>> ReadDoubleAsync(string address, ushort length)
 		{
-			return ByteTransformHelper.GetResultFromBytes(await ReadAsync(address, (ushort)(length * WordLength * 4)), (byte[] m) => ByteTransform.TransDouble(m, 0, length));
+			var result = await ReadAsync(address, (ushort)(length * WordLength * 4));
+			return ByteTransformHelper.GetResultFromBytes(result, (byte[] m) => ByteTransform.TransDouble(m, 0, length));
 		}
 
 		public async Task<OperateResult<string>> ReadStringAsync(string address, ushort length)
@@ -482,7 +495,8 @@ namespace Plcway.Communication.Serial
 
 		public virtual async Task<OperateResult<string>> ReadStringAsync(string address, ushort length, Encoding encoding)
 		{
-			return ByteTransformHelper.GetResultFromBytes(await ReadAsync(address, length), (byte[] m) => ByteTransform.TransString(m, 0, m.Length, encoding));
+			var result = await ReadAsync(address, length);
+			return ByteTransformHelper.GetResultFromBytes(result, (byte[] m) => ByteTransform.TransString(m, 0, m.Length, encoding));
 		}
 
 		public virtual async Task<OperateResult> WriteAsync(string address, short[] values)

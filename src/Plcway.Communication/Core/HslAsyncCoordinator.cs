@@ -8,7 +8,7 @@ namespace Plcway.Communication.Core
 	/// </summary>
 	public sealed class HslAsyncCoordinator
 	{
-		private Action action = null;
+		private readonly Action action;
 
 		private int OperaterStatus = 0;
 
@@ -35,7 +35,7 @@ namespace Plcway.Communication.Core
 			}
 		}
 
-		private void ThreadPoolOperater(object obj)
+		private void ThreadPoolOperater(object? obj)
 		{
 			long num = Target;
 			long num2 = 0L;
@@ -47,6 +47,7 @@ namespace Plcway.Communication.Core
 				num = Interlocked.CompareExchange(ref Target, num2, num3);
 			}
 			while (num3 != num);
+
 			Interlocked.Exchange(ref OperaterStatus, 0);
 			if (Target != num2)
 			{
@@ -54,7 +55,6 @@ namespace Plcway.Communication.Core
 			}
 		}
 
-		/// <inheritdoc />
 		public override string ToString()
 		{
 			return "HslAsyncCoordinator";

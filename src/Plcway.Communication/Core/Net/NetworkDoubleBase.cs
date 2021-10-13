@@ -186,8 +186,7 @@ namespace Plcway.Communication.Core.Net
 		}
 
 		/// <summary>
-		/// 获取一个新的消息对象的方法，需要在继承类里面进行重写<br />
-		/// The method to get a new message object needs to be overridden in the inheritance class
+		/// 获取一个新的消息对象的方法，需要在继承类里面进行重写。
 		/// </summary>
 		/// <returns>消息类对象</returns>
 		protected virtual INetMessage GetNewNetMessage()
@@ -252,6 +251,7 @@ namespace Plcway.Communication.Core.Net
 				{
 					ConnectionId = session.DTU;
 				}
+
 				if (ConnectionId == session.DTU)
 				{
 					CoreSocket = session.Socket;
@@ -263,6 +263,7 @@ namespace Plcway.Communication.Core.Net
 					}
 					return new OperateResult();
 				}
+
 				IsSocketError = true;
 				return new OperateResult();
 			}
@@ -495,6 +496,7 @@ namespace Plcway.Communication.Core.Net
 		{
 			byte[] sendValue = (usePackAndUnpack ? PackCommandWithHeader(send) : send);
 			Logger?.LogDebug($"{ToString()} Send : {(LogMsgFormatBinary ? sendValue.ToHexString(' ') : Encoding.ASCII.GetString(sendValue))}");
+
 			var netMessage = GetNewNetMessage();
 			if (netMessage != null)
 			{
@@ -521,7 +523,8 @@ namespace Plcway.Communication.Core.Net
 			{
 				Thread.Sleep(SleepTime);
 			}
-			OperateResult<byte[]> resultReceive = await ReceiveByMessageAsync(socket, receiveTimeOut, netMessage);
+
+			var resultReceive = await ReceiveByMessageAsync(socket, receiveTimeOut, netMessage);
 			if (!resultReceive.IsSuccess)
 			{
 				return resultReceive;
@@ -626,6 +629,7 @@ namespace Plcway.Communication.Core.Net
 					}
 					return OperateResult.CreateSuccessResult(CoreSocket);
 				}
+
 				if (IsSocketError || CoreSocket == null)
 				{
 					OperateResult operateResult = ConnectServer();
@@ -677,11 +681,13 @@ namespace Plcway.Communication.Core.Net
 		{
 			byte[] array = (usePackAndUnpack ? PackCommandWithHeader(send) : send);
 			Logger?.LogDebug($"{ToString()} Send: {(LogMsgFormatBinary ? array.ToHexString(' ') : Encoding.ASCII.GetString(array))}");
+
 			INetMessage newNetMessage = GetNewNetMessage();
 			if (newNetMessage != null)
 			{
 				newNetMessage.SendBytes = array;
 			}
+
 			OperateResult operateResult = Send(socket, array);
 			if (!operateResult.IsSuccess)
 			{
@@ -695,15 +701,18 @@ namespace Plcway.Communication.Core.Net
 			{
 				return OperateResult.CreateSuccessResult(new byte[0]);
 			}
+
 			if (SleepTime > 0)
 			{
 				Thread.Sleep(SleepTime);
 			}
-			OperateResult<byte[]> operateResult2 = ReceiveByMessage(socket, receiveTimeOut, newNetMessage);
+
+			var operateResult2 = ReceiveByMessage(socket, receiveTimeOut, newNetMessage);
 			if (!operateResult2.IsSuccess)
 			{
 				return operateResult2;
 			}
+
 			Logger?.LogDebug($"{ToString()} Receive : {(LogMsgFormatBinary ? operateResult2.Content.ToHexString(' ') : Encoding.ASCII.GetString(operateResult2.Content))}");
 			if (newNetMessage != null && !newNetMessage.CheckHeadBytesLegal(base.Token.ToByteArray()))
 			{
@@ -732,7 +741,7 @@ namespace Plcway.Communication.Core.Net
 		public OperateResult<byte[]> ReadFromCoreServer(byte[] send, bool hasResponseData, bool usePackAndUnpack = true)
 		{
 			var operateResult = new OperateResult<byte[]>();
-			OperateResult<Socket> operateResult2 = null;
+			OperateResult<Socket> operateResult2;
 			InteractiveLock.Enter();
 			try
 			{

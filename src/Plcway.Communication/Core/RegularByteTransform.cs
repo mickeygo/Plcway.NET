@@ -1,8 +1,7 @@
 namespace Plcway.Communication.Core
 {
 	/// <summary>
-	/// 常规的字节转换类<br />
-	/// Regular byte conversion class
+	/// 常规的字节转换类。
 	/// </summary>
 	public class RegularByteTransform : ByteTransformBase
 	{

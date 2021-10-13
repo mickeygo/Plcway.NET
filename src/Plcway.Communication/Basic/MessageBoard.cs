@@ -12,24 +12,20 @@ namespace Plcway.Communication.Basic
 		/// </summary>
 		public string NameSend { get; set; } = "";
 
-
 		/// <summary>
 		/// 接收方名称
 		/// </summary>
 		public string NameReceive { get; set; } = "";
-
 
 		/// <summary>
 		/// 发送时间
 		/// </summary>
 		public DateTime SendTime { get; set; } = DateTime.Now;
 
-
 		/// <summary>
 		/// 发送的消息内容
 		/// </summary>
 		public string Content { get; set; } = "";
-
 
 		/// <summary>
 		/// 消息是否已经被查看

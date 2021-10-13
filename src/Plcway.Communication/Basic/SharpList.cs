@@ -12,23 +12,21 @@ namespace Plcway.Communication.Basic
 	{
 		private T[] array;
 
-		private int capacity = 2048;
+		private readonly int capacity = 2048;
 
-		private int count = 0;
+		private readonly int count;
 
-		private int lastIndex = 0;
+        private int lastIndex;
 
-		private SimpleHybirdLock hybirdLock;
+        private readonly SimpleHybirdLock hybirdLock;
 
 		/// <summary>
-		/// 获取数组的个数<br />
-		/// Get the number of arrays
+		/// 获取数组的个数
 		/// </summary>
 		public int Count => count;
 
 		/// <summary>
-		/// 获取或设置指定索引的位置的数据<br />
-		/// Gets or sets the data at the specified index
+		/// 获取或设置指定索引的位置的数据
 		/// </summary>
 		/// <param name="index">索引位置</param>
 		/// <returns>数据值</returns>
@@ -45,7 +43,7 @@ namespace Plcway.Communication.Basic
 					throw new IndexOutOfRangeException("Index must smaller than array length");
 				}
 
-				T val = default;
+				T val;
 				hybirdLock.Enter();
 				val = (lastIndex >= count) ? array[index + lastIndex - count] : array[index];
 				hybirdLock.Leave();
@@ -96,8 +94,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 新增一个数据值<br />
-		/// Add a data value
+		/// 新增一个数据值
 		/// </summary>
 		/// <param name="value">数据值</param>
 		public void Add(T value)
@@ -118,8 +115,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 批量的增加数据<br />
-		/// Increase data in batches
+		/// 批量的增加数据
 		/// </summary>
 		/// <param name="values">批量数据信息</param>
 		public void Add(IEnumerable<T> values)
@@ -136,7 +132,7 @@ namespace Plcway.Communication.Basic
 		/// <returns>数组值</returns>
 		public T[] ToArray()
 		{
-			T[] array = null;
+			T[] array;
 			hybirdLock.Enter();
 			if (lastIndex < count)
 			{

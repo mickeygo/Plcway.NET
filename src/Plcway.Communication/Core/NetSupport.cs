@@ -9,11 +9,10 @@ namespace Plcway.Communication.Core
 	/// <remarks>
 	/// 在接收指定数量的字节数据的时候，如果一直接收不到，就会发生假死的状态。接收的数据时保存在内存里的，不适合大数据块的接收。
 	/// </remarks>
-	public static class NetSupport
+	internal static class NetSupport
 	{
 		/// <summary>
-		/// Socket传输中的缓冲池大小<br />
-		/// Buffer pool size in socket transmission
+		/// Socket传输中的缓冲池大小
 		/// </summary>
 		internal const int SocketBufferSize = 16384;
 
@@ -30,7 +29,7 @@ namespace Plcway.Communication.Core
 			int num = 0;
 			while (num < receive)
 			{
-				int size = Math.Min(receive - num, 16384);
+				int size = Math.Min(receive - num, SocketBufferSize);
 				int num2 = socket.Receive(array, num, size, SocketFlags.None);
 				if (num2 == 0)
 				{

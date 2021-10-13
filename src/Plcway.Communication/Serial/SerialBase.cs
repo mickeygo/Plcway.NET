@@ -17,23 +17,17 @@ namespace Plcway.Communication.Serial
 	public class SerialBase : IDisposable
 	{
 		protected bool LogMsgFormatBinary = true;
-
 		private bool disposedValue = false;
+		private readonly SimpleHybirdLock hybirdLock;
+		private int receiveTimeout = 5000;
+		private int sleepTime = 20;
+		private bool isClearCacheBeforeRead = false;
+		private int connectErrorCount = 0;
 
 		/// <summary>
 		/// 串口交互的核心
 		/// </summary>
-		protected SerialPort sP_ReadData = null;
-
-		private SimpleHybirdLock hybirdLock;
-
-		private int receiveTimeout = 5000;
-
-		private int sleepTime = 20;
-
-		private bool isClearCacheBeforeRead = false;
-
-		private int connectErrorCount = 0;
+		protected SerialPort m_ReadData = null;
 
 		public ILogger Logger { get; set; }
 
@@ -44,11 +38,11 @@ namespace Plcway.Communication.Serial
 		{
 			get
 			{
-				return sP_ReadData.RtsEnable;
+				return m_ReadData.RtsEnable;
 			}
 			set
 			{
-				sP_ReadData.RtsEnable = value;
+				m_ReadData.RtsEnable = value;
 			}
 		}
 
@@ -115,7 +109,7 @@ namespace Plcway.Communication.Serial
 		/// </summary>
 		public SerialBase()
 		{
-			sP_ReadData = new SerialPort();
+			m_ReadData = new SerialPort();
 			hybirdLock = new SimpleHybirdLock();
 		}
 
@@ -135,7 +129,7 @@ namespace Plcway.Communication.Serial
 		/// <param name="baudRate">波特率</param>
 		public virtual void SerialPortInni(string portName, int baudRate)
 		{
-			SerialPortInni(portName, baudRate, 8, (StopBits)1, (Parity)0);
+			SerialPortInni(portName, baudRate, 8, (StopBits)1, 0);
 		}
 
 		/// <summary>
@@ -148,15 +142,15 @@ namespace Plcway.Communication.Serial
 		/// <param name="parity">奇偶校验</param>
 		public virtual void SerialPortInni(string portName, int baudRate, int dataBits, StopBits stopBits, Parity parity)
 		{
-			if (!sP_ReadData.IsOpen)
+			if (!m_ReadData.IsOpen)
 			{
-				sP_ReadData.PortName = portName;
-				sP_ReadData.BaudRate = baudRate;
-				sP_ReadData.DataBits = dataBits;
-				sP_ReadData.StopBits = stopBits;
-				sP_ReadData.Parity = parity;
-				PortName = sP_ReadData.PortName;
-				BaudRate = sP_ReadData.BaudRate;
+				m_ReadData.PortName = portName;
+				m_ReadData.BaudRate = baudRate;
+				m_ReadData.DataBits = dataBits;
+				m_ReadData.StopBits = stopBits;
+				m_ReadData.Parity = parity;
+				PortName = m_ReadData.PortName;
+				BaudRate = m_ReadData.BaudRate;
 			}
 		}
 
@@ -166,12 +160,12 @@ namespace Plcway.Communication.Serial
 		/// <param name="initi">初始化的委托方法</param>
 		public void SerialPortInni(Action<SerialPort> initi)
 		{
-			if (!sP_ReadData.IsOpen)
+			if (!m_ReadData.IsOpen)
 			{
 				SerialPortInni("COM1");
-				initi(sP_ReadData);
-				PortName = sP_ReadData.PortName;
-				BaudRate = sP_ReadData.BaudRate;
+				initi(m_ReadData);
+				PortName = m_ReadData.PortName;
+				BaudRate = m_ReadData.BaudRate;
 			}
 		}
 
@@ -183,9 +177,9 @@ namespace Plcway.Communication.Serial
 		{
 			try
 			{
-				if (!sP_ReadData.IsOpen)
+				if (!m_ReadData.IsOpen)
 				{
-					sP_ReadData.Open();
+					m_ReadData.Open();
 					return InitializationOnOpen();
 				}
 				return OperateResult.CreateSuccessResult();
@@ -206,7 +200,7 @@ namespace Plcway.Communication.Serial
 		/// <returns>是或否</returns>
 		public bool IsOpen()
 		{
-			return sP_ReadData.IsOpen;
+			return m_ReadData.IsOpen;
 		}
 
 		/// <summary>
@@ -214,10 +208,10 @@ namespace Plcway.Communication.Serial
 		/// </summary>
 		public void Close()
 		{
-			if (sP_ReadData.IsOpen)
+			if (m_ReadData.IsOpen)
 			{
 				ExtraOnClose();
-				sP_ReadData.Close();
+				m_ReadData.Close();
 			}
 		}
 
@@ -260,22 +254,26 @@ namespace Plcway.Communication.Serial
 				hybirdLock.Leave();
 				return OperateResult.CreateFailedResult<byte[]>(operateResult);
 			}
+
 			if (IsClearCacheBeforeRead)
 			{
 				ClearSerialCache();
 			}
-			OperateResult operateResult2 = SPSend(sP_ReadData, array);
+
+			OperateResult operateResult2 = SPSend(m_ReadData, array);
 			if (!operateResult2.IsSuccess)
 			{
 				hybirdLock.Leave();
 				return OperateResult.CreateFailedResult<byte[]>(operateResult2);
 			}
+
 			if (!hasResponseData)
 			{
 				hybirdLock.Leave();
 				return OperateResult.CreateSuccessResult(new byte[0]);
 			}
-			OperateResult<byte[]> operateResult3 = SPReceived(sP_ReadData, awaitData: true);
+
+			OperateResult<byte[]> operateResult3 = SPReceived(m_ReadData, awaitData: true);
 			hybirdLock.Leave();
 			if (!operateResult3.IsSuccess)
 			{
@@ -292,7 +290,7 @@ namespace Plcway.Communication.Serial
 		/// <returns>是否操作成功的方法</returns>
 		public OperateResult<byte[]> ClearSerialCache()
 		{
-			return SPReceived(sP_ReadData, awaitData: false);
+			return SPReceived(m_ReadData, awaitData: false);
 		}
 
 		public async Task<OperateResult<byte[]>> ReadFromCoreServerAsync(byte[] value)
@@ -355,7 +353,7 @@ namespace Plcway.Communication.Serial
 				{
 					if (serialPort.BytesToRead < 1)
 					{
-						if ((DateTime.Now - now).TotalMilliseconds > (double)ReceiveTimeout)
+						if ((DateTime.Now - now).TotalMilliseconds > ReceiveTimeout)
 						{
 							if (connectErrorCount < 100000000)
 							{
@@ -363,12 +361,14 @@ namespace Plcway.Communication.Serial
 							}
 							return new OperateResult<byte[]>(-connectErrorCount, $"Time out: {ReceiveTimeout}");
 						}
+
 						if (memoryStream.Length > 0 || !awaitData)
 						{
 							break;
 						}
 						continue;
 					}
+
 					int count = serialPort.Read(array, 0, array.Length);
 					memoryStream.Write(array, 0, count);
 					continue;
@@ -382,6 +382,7 @@ namespace Plcway.Communication.Serial
 					return new OperateResult<byte[]>(-connectErrorCount, ex.Message);
 				}
 			}
+
 			byte[] value = memoryStream.ToArray();
 			connectErrorCount = 0;
 			return OperateResult.CreateSuccessResult(value);
@@ -398,7 +399,7 @@ namespace Plcway.Communication.Serial
 				if (disposing)
 				{
 					hybirdLock?.Dispose();
-					((Component)(object)sP_ReadData)?.Dispose();
+					((Component)(object)m_ReadData)?.Dispose();
 				}
 				disposedValue = true;
 			}
@@ -414,7 +415,7 @@ namespace Plcway.Communication.Serial
 
 		public override string ToString()
 		{
-			return $"SerialBase[{sP_ReadData.PortName},{sP_ReadData.BaudRate},{sP_ReadData.DataBits},{sP_ReadData.StopBits},{sP_ReadData.Parity}]";
+			return $"SerialBase[{m_ReadData.PortName},{m_ReadData.BaudRate},{m_ReadData.DataBits},{m_ReadData.StopBits},{m_ReadData.Parity}]";
 		}
 	}
 }

@@ -3,23 +3,15 @@ using System;
 namespace Plcway.Communication.Serial
 {
 	/// <summary>
-	/// 用于CRC16验证的类，提供了标准的验证方法，可以方便快速的对数据进行CRC校验<br />
-	/// The class for CRC16 validation provides a standard validation method that makes it easy to CRC data quickly
+	/// 用于CRC16验证的类，提供了标准的验证方法，可以方便快速的对数据进行CRC校验
 	/// </summary>
 	/// <remarks>
 	/// 本类提供了几个静态的方法，用来进行CRC16码的计算和验证的，多项式码可以自己指定配置，但是预置的寄存器为0xFF 0xFF
 	/// </remarks>
-	/// <example>
-	/// 先演示如何校验一串数据的CRC码
-	/// <code lang="cs" source="HslCommunication_Net45.Test\Documentation\Samples\Serial\SoftCRC16.cs" region="Example1" title="SoftCRC16示例" />
-	/// 然后下面是如何生成你自己的CRC校验码
-	/// <code lang="cs" source="HslCommunication_Net45.Test\Documentation\Samples\Serial\SoftCRC16.cs" region="Example2" title="SoftCRC16示例" />
-	/// </example>
 	public class SoftCRC16
 	{
 		/// <summary>
-		/// 来校验对应的接收数据的CRC校验码，默认多项式码为0xA001<br />
-		/// To verify the CRC check code corresponding to the received data, the default polynomial code is 0xA001
+		/// 来校验对应的接收数据的CRC校验码，默认多项式码为0xA001
 		/// </summary>
 		/// <param name="value">需要校验的数据，带CRC校验码</param>
 		/// <returns>返回校验成功与否</returns>
@@ -29,8 +21,7 @@ namespace Plcway.Communication.Serial
 		}
 
 		/// <summary>
-		/// 指定多项式码来校验对应的接收数据的CRC校验码<br />
-		/// Specifies a polynomial code to validate the corresponding CRC check code for the received data
+		/// 指定多项式码来校验对应的接收数据的CRC校验码
 		/// </summary>
 		/// <param name="value">需要校验的数据，带CRC校验码</param>
 		/// <param name="CH">多项式码高位</param>
@@ -38,14 +29,11 @@ namespace Plcway.Communication.Serial
 		/// <returns>返回校验成功与否</returns>
 		public static bool CheckCRC16(byte[] value, byte CH, byte CL)
 		{
-			if (value == null)
+			if (value == null || value.Length < 2)
 			{
 				return false;
 			}
-			if (value.Length < 2)
-			{
-				return false;
-			}
+
 			int num = value.Length;
 			byte[] array = new byte[num - 2];
 			Array.Copy(value, 0, array, 0, array.Length);
@@ -58,8 +46,7 @@ namespace Plcway.Communication.Serial
 		}
 
 		/// <summary>
-		/// 获取对应的数据的CRC校验码，默认多项式码为0xA001<br />
-		/// Get the CRC check code of the corresponding data, the default polynomial code is 0xA001
+		/// 获取对应的数据的CRC校验码，默认多项式码为0xA001
 		/// </summary>
 		/// <param name="value">需要校验的数据，不包含CRC字节</param>
 		/// <returns>返回带CRC校验码的字节数组，可用于串口发送</returns>
@@ -69,8 +56,7 @@ namespace Plcway.Communication.Serial
 		}
 
 		/// <summary>
-		/// 通过指定多项式码来获取对应的数据的CRC校验码<br />
-		/// The CRC check code of the corresponding data is obtained by specifying the polynomial code
+		/// 通过指定多项式码来获取对应的数据的CRC校验码
 		/// </summary>
 		/// <param name="value">需要校验的数据，不包含CRC字节</param>
 		/// <param name="CL">多项式码地位</param>
@@ -104,8 +90,8 @@ namespace Plcway.Communication.Serial
 					}
 				}
 			}
-			array[array.Length - 2] = b;
-			array[array.Length - 1] = b2;
+			array[^2] = b;
+			array[^1] = b2;
 			return array;
 		}
 	}

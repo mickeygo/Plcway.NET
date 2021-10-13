@@ -72,7 +72,7 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 		{
 			while (true)
 			{
-				var operateResult = SPReceived(sP_ReadData, awaitData: true);
+				var operateResult = SPReceived(m_ReadData, awaitData: true);
 				if (!operateResult.IsSuccess)
 				{
 					return OperateResult.CreateFailedResult<byte[]>(operateResult);
@@ -80,7 +80,7 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 
 				if (operateResult.Content[0] == 220 && operateResult.Content[1] == 2 && operateResult.Content[2] == 2)
 				{
-					OperateResult operateResult2 = SPSend(sP_ReadData, new byte[3] { 220, 0, 0 });
+					OperateResult operateResult2 = SPSend(m_ReadData, new byte[3] { 220, 0, 0 });
 					if (!operateResult2.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<byte[]>(operateResult2);
@@ -92,7 +92,7 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 				}
 			}
 
-			OperateResult operateResult3 = SPSend(sP_ReadData, new byte[3] { 220, 2, 0 });
+			OperateResult operateResult3 = SPSend(m_ReadData, new byte[3] { 220, 2, 0 });
 			if (!operateResult3.IsSuccess)
 			{
 				return OperateResult.CreateFailedResult<byte[]>(operateResult3);
@@ -119,13 +119,13 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 			{
 				ClearSerialCache();
 			}
-			OperateResult operateResult2 = SPSend(sP_ReadData, operateResult.Content);
+			OperateResult operateResult2 = SPSend(m_ReadData, operateResult.Content);
 			if (!operateResult2.IsSuccess)
 			{
 				return OperateResult.CreateFailedResult<byte[]>(operateResult2);
 			}
 
-			var operateResult3 = SPReceived(sP_ReadData, awaitData: true);
+			var operateResult3 = SPReceived(m_ReadData, awaitData: true);
 			if (!operateResult3.IsSuccess)
 			{
 				return OperateResult.CreateFailedResult<byte[]>(operateResult3);
@@ -134,7 +134,7 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 			{
 				return new OperateResult<byte[]>("PLC Receive Check Failed:" + SoftBasic.ByteToHexString(operateResult3.Content));
 			}
-			operateResult3 = SPReceived(sP_ReadData, awaitData: true);
+			operateResult3 = SPReceived(m_ReadData, awaitData: true);
 			if (!operateResult3.IsSuccess)
 			{
 				return OperateResult.CreateFailedResult<byte[]>(operateResult3);
@@ -143,7 +143,7 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 			{
 				return new OperateResult<byte[]>("PLC Receive Check Failed:" + operateResult3.Content[19]);
 			}
-			operateResult2 = SPSend(sP_ReadData, readConfirm);
+			operateResult2 = SPSend(m_ReadData, readConfirm);
 			if (!operateResult2.IsSuccess)
 			{
 				return OperateResult.CreateFailedResult<byte[]>(operateResult2);
@@ -171,13 +171,13 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 				return OperateResult.CreateFailedResult<bool[]>(operateResult);
 			}
 
-			OperateResult operateResult2 = SPSend(sP_ReadData, operateResult.Content);
+			OperateResult operateResult2 = SPSend(m_ReadData, operateResult.Content);
 			if (!operateResult2.IsSuccess)
 			{
 				return OperateResult.CreateFailedResult<bool[]>(operateResult2);
 			}
 
-			var operateResult3 = SPReceived(sP_ReadData, awaitData: true);
+			var operateResult3 = SPReceived(m_ReadData, awaitData: true);
 			if (!operateResult3.IsSuccess)
 			{
 				return OperateResult.CreateFailedResult<bool[]>(operateResult3);
@@ -186,7 +186,7 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 			{
 				return new OperateResult<bool[]>("PLC Receive Check Failed:" + SoftBasic.ByteToHexString(operateResult3.Content));
 			}
-			operateResult3 = SPReceived(sP_ReadData, awaitData: true);
+			operateResult3 = SPReceived(m_ReadData, awaitData: true);
 			if (!operateResult3.IsSuccess)
 			{
 				return OperateResult.CreateFailedResult<bool[]>(operateResult3);
@@ -195,7 +195,7 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 			{
 				return new OperateResult<bool[]>("PLC Receive Check Failed:" + operateResult3.Content[19]);
 			}
-			operateResult2 = SPSend(sP_ReadData, readConfirm);
+			operateResult2 = SPSend(m_ReadData, readConfirm);
 			if (!operateResult2.IsSuccess)
 			{
 				return OperateResult.CreateFailedResult<bool[]>(operateResult2);
@@ -227,13 +227,13 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 			{
 				ClearSerialCache();
 			}
-			OperateResult operateResult2 = SPSend(sP_ReadData, operateResult.Content);
+			OperateResult operateResult2 = SPSend(m_ReadData, operateResult.Content);
 			if (!operateResult2.IsSuccess)
 			{
 				return OperateResult.CreateFailedResult<byte[]>(operateResult2);
 			}
 
-			var operateResult3 = SPReceived(sP_ReadData, awaitData: true);
+			var operateResult3 = SPReceived(m_ReadData, awaitData: true);
 			if (!operateResult3.IsSuccess)
 			{
 				return OperateResult.CreateFailedResult<byte[]>(operateResult3);
@@ -244,7 +244,7 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 				return new OperateResult<byte[]>("PLC Receive Check Failed:" + SoftBasic.ByteToHexString(operateResult3.Content));
 			}
 
-			operateResult3 = SPReceived(sP_ReadData, awaitData: true);
+			operateResult3 = SPReceived(m_ReadData, awaitData: true);
 			if (!operateResult3.IsSuccess)
 			{
 				return OperateResult.CreateFailedResult<byte[]>(operateResult3);
@@ -255,7 +255,7 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 				return new OperateResult<byte[]>("PLC Receive Check Failed:" + operateResult3.Content[25]);
 			}
 
-			operateResult2 = SPSend(sP_ReadData, writeConfirm);
+			operateResult2 = SPSend(m_ReadData, writeConfirm);
 			if (!operateResult2.IsSuccess)
 			{
 				return OperateResult.CreateFailedResult<byte[]>(operateResult2);

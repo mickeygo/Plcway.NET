@@ -80,7 +80,7 @@ namespace Plcway.Communication.Basic
 			{
 				return false;
 			}
-			return object.Equals(m_args, ex.m_args) && base.Equals(obj);
+			return Equals(m_args, ex.m_args) && base.Equals(obj);
 		}
 
 		public override int GetHashCode()

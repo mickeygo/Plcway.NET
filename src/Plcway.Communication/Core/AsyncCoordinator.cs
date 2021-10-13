@@ -99,6 +99,7 @@ namespace Plcway.Communication.Core
 				num = Interlocked.CompareExchange(ref target, num3, num2);
 			}
 			while (num2 != num);
+
 			return num3;
 		}
 	}

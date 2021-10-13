@@ -9,9 +9,10 @@ namespace Plcway.Communication.Serial
 		/// 和校验
 		/// </summary>
 		BCC,
+
 		/// <summary>
 		/// CRC校验的方式
 		/// </summary>
-		CRC16
+		CRC16,
 	}
 }

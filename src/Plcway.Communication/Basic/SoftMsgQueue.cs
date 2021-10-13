@@ -19,7 +19,7 @@ namespace Plcway.Communication.Basic
 		/// <summary>
 		/// 将集合进行锁定
 		/// </summary>
-		private object lock_queue = new object();
+		private readonly object lock_queue = new();
 
 		/// <summary>
 		/// 临时消息存储的最大条数，必须大于10

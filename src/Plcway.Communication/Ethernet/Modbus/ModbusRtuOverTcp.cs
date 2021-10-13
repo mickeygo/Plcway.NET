@@ -46,7 +46,6 @@ namespace Plcway.Communication.Ethernet.Modbus
 			}
 		}
 
-		/// <inheritdoc cref="P:HslCommunication.ModBus.ModbusTcpNet.IsStringReverse" />
 		public bool IsStringReverse
 		{
 			get
@@ -59,7 +58,6 @@ namespace Plcway.Communication.Ethernet.Modbus
 			}
 		}
 
-		/// <inheritdoc cref="M:HslCommunication.ModBus.ModbusRtu.#ctor" />
 		public ModbusRtuOverTcp()
 		{
 			base.ByteTransform = new ReverseWordTransform();

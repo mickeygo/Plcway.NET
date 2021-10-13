@@ -26,19 +26,21 @@ namespace Plcway.Communication.Basic
 		/// 加密数据，采用对称加密的方式
 		/// </summary>
 		/// <param name="pToEncrypt">待加密的数据</param>
-		/// <param name="Password">密钥，长度为8，英文或数字</param>
+		/// <param name="password">密钥，长度为8，英文或数字</param>
 		/// <returns>加密后的数据</returns>
-		public static string MD5Encrypt(string pToEncrypt, string Password)
+		public static string MD5Encrypt(string pToEncrypt, string password)
 		{
-			var dESCryptoServiceProvider = new DESCryptoServiceProvider();
 			byte[] bytes = Encoding.Default.GetBytes(pToEncrypt);
-			dESCryptoServiceProvider.Key = Encoding.ASCII.GetBytes(Password);
-			dESCryptoServiceProvider.IV = Encoding.ASCII.GetBytes(Password);
-
+			using var dESCryptoServiceProvider = new DESCryptoServiceProvider
+			{
+				Key = Encoding.ASCII.GetBytes(password),
+				IV = Encoding.ASCII.GetBytes(password),
+			};
 			using var memoryStream = new MemoryStream();
 			using var cryptoStream = new CryptoStream(memoryStream, dESCryptoServiceProvider.CreateEncryptor(), CryptoStreamMode.Write);
 			cryptoStream.Write(bytes, 0, bytes.Length);
 			cryptoStream.FlushFinalBlock();
+
 			var stringBuilder = new StringBuilder();
 			byte[] array = memoryStream.ToArray();
 			foreach (byte b in array)
@@ -70,20 +72,24 @@ namespace Plcway.Communication.Basic
 			{
 				return pToDecrypt;
 			}
-
-			var dESCryptoServiceProvider = new DESCryptoServiceProvider();
+			
 			byte[] array = new byte[pToDecrypt.Length / 2];
 			for (int i = 0; i < pToDecrypt.Length / 2; i++)
 			{
 				int num = Convert.ToInt32(pToDecrypt.Substring(i * 2, 2), 16);
 				array[i] = (byte)num;
 			}
-			dESCryptoServiceProvider.Key = Encoding.ASCII.GetBytes(password);
-			dESCryptoServiceProvider.IV = Encoding.ASCII.GetBytes(password);
+
+			using var dESCryptoServiceProvider = new DESCryptoServiceProvider
+            {
+				Key = Encoding.ASCII.GetBytes(password),
+				IV = Encoding.ASCII.GetBytes(password),
+			};
 			using var memoryStream = new MemoryStream();
 			using var cryptoStream = new CryptoStream(memoryStream, dESCryptoServiceProvider.CreateDecryptor(), CryptoStreamMode.Write);
 			cryptoStream.Write(array, 0, array.Length);
 			cryptoStream.FlushFinalBlock();
+
 			return Encoding.Default.GetString(memoryStream.ToArray());
 		}
 	}

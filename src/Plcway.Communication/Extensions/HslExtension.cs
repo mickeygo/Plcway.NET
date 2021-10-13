@@ -45,8 +45,7 @@ namespace Plcway.Communication.Extensions
 		}
 
 		/// <summary>
-		/// 获取当前数组的倒序数组，这是一个新的实例，不改变原来的数组值<br />
-		/// Get the reversed array of the current byte array, this is a new instance, does not change the original array value
+		/// 获取当前数组的倒序数组，这是一个新的实例，不改变原来的数组值
 		/// </summary>
 		/// <param name="value">输入的原始数组</param>
 		/// <returns>反转之后的数组信息</returns>
@@ -63,8 +62,7 @@ namespace Plcway.Communication.Extensions
 		}
 
 		/// <summary>
-		/// 获取Byte数组的第 bytIndex 个位置的，boolIndex偏移的bool值<br />
-		/// Get the bool value of the bytIndex position of the Byte array and the boolIndex offset
+		/// 获取Byte数组的第 bytIndex 个位置的，boolIndex偏移的bool值
 		/// </summary>
 		/// <param name="bytes">字节数组信息</param>
 		/// <param name="bytIndex">字节的偏移位置</param>
@@ -76,8 +74,7 @@ namespace Plcway.Communication.Extensions
 		}
 
 		/// <summary>
-		/// 获取Byte数组的第 boolIndex 偏移的bool值，这个偏移值可以为 10，就是第 1 个字节的 第3位 <br />
-		/// Get the bool value of the boolIndex offset of the Byte array. The offset value can be 10, which is the third bit of the first byte
+		/// 获取Byte数组的第 boolIndex 偏移的bool值，这个偏移值可以为 10，就是第 1 个字节的 第3位
 		/// </summary>
 		/// <param name="bytes">字节数组信息</param>
 		/// <param name="boolIndex">指定字节的位偏移</param>
@@ -88,8 +85,7 @@ namespace Plcway.Communication.Extensions
 		}
 
 		/// <summary>
-		/// 获取Byte的第 boolIndex 偏移的bool值，比如3，就是第4位 <br />
-		/// Get the bool value of Byte's boolIndex offset, such as 3, which is the 4th bit
+		/// 获取Byte的第 boolIndex 偏移的bool值，比如3，就是第4位
 		/// </summary>
 		/// <param name="byt">字节信息</param>
 		/// <param name="boolIndex">指定字节的位偏移</param>
@@ -100,8 +96,7 @@ namespace Plcway.Communication.Extensions
 		}
 
 		/// <summary>
-		/// 设置Byte的第 boolIndex 位的bool值，可以强制为 true 或是 false, 不影响其他的位<br />
-		/// Set the bool value of the boolIndex bit of Byte, which can be forced to true or false, without affecting other bits
+		/// 设置Byte的第 boolIndex 位的bool值，可以强制为 true 或是 false, 不影响其他的位
 		/// </summary>
 		/// <param name="byt">字节信息</param>
 		/// <param name="boolIndex">指定字节的位偏移</param>
@@ -166,10 +161,10 @@ namespace Plcway.Communication.Extensions
 		{
 			if (typeof(T) == typeof(byte))
 			{
-				ParameterExpression parameterExpression = Expression.Parameter(typeof(int), "first");
-				ParameterExpression parameterExpression2 = Expression.Parameter(typeof(int), "second");
-				Expression body = Expression.Add(parameterExpression, parameterExpression2);
-				Expression<Func<int, int, int>> expression = Expression.Lambda<Func<int, int, int>>(body, new ParameterExpression[2] { parameterExpression, parameterExpression2 });
+				var parameterExpression = Expression.Parameter(typeof(int), "first");
+				var parameterExpression2 = Expression.Parameter(typeof(int), "second");
+				var body = Expression.Add(parameterExpression, parameterExpression2);
+				var expression = Expression.Lambda<Func<int, int, int>>(body, new ParameterExpression[2] { parameterExpression, parameterExpression2 });
 				Func<int, int, int> func = expression.Compile();
 				for (int i = 0; i < array.Length; i++)
 				{
@@ -178,10 +173,10 @@ namespace Plcway.Communication.Extensions
 			}
 			else
 			{
-				ParameterExpression parameterExpression3 = Expression.Parameter(typeof(T), "first");
-				ParameterExpression parameterExpression4 = Expression.Parameter(typeof(T), "second");
-				Expression body2 = Expression.Add(parameterExpression3, parameterExpression4);
-				Expression<Func<T, T, T>> expression2 = Expression.Lambda<Func<T, T, T>>(body2, new ParameterExpression[2] { parameterExpression3, parameterExpression4 });
+				var parameterExpression3 = Expression.Parameter(typeof(T), "first");
+				var parameterExpression4 = Expression.Parameter(typeof(T), "second");
+				var body2 = Expression.Add(parameterExpression3, parameterExpression4);
+				var expression2 = Expression.Lambda<Func<T, T, T>>(body2, new ParameterExpression[2] { parameterExpression3, parameterExpression4 });
 				Func<T, T, T> func2 = expression2.Compile();
 				for (int j = 0; j < array.Length; j++)
 				{
@@ -220,8 +215,7 @@ namespace Plcway.Communication.Extensions
 		}
 
 		/// <summary>
-		/// 将字符串数组转换为实际的数据数组。例如字符串格式[1,2,3,4,5]，可以转成实际的数组对象<br />
-		/// Converts a string array into an actual data array. For example, the string format [1,2,3,4,5] can be converted into an actual array object
+		/// 将字符串数组转换为实际的数据数组。例如字符串格式[1,2,3,4,5]，可以转成实际的数组对象
 		/// </summary>
 		/// <typeparam name="T">类型对象</typeparam>
 		/// <param name="value">字符串数据</param>
@@ -242,9 +236,8 @@ namespace Plcway.Communication.Extensions
 		}
 
 		/// <summary>
-		/// 将字符串数组转换为实际的数据数组。支持byte,sbyte,bool,short,ushort,int,uint,long,ulong,float,double，使用默认的十进制，例如字符串格式[1,2,3,4,5]，可以转成实际的数组对象<br />
-		/// Converts a string array into an actual data array. Support byte, sbyte, bool, short, ushort, int, uint, long, ulong, float, double, use the default decimal, 
-		/// such as the string format [1,2,3,4,5], which can be converted into an actual array Object
+		/// 将字符串数组转换为实际的数据数组。支持byte,sbyte,bool,short,ushort,int,uint,long,ulong,float,double，使用默认的十进制，
+		/// 例如字符串格式[1,2,3,4,5]，可以转成实际的数组对象
 		/// </summary>
 		/// <typeparam name="T">类型对象</typeparam>
 		/// <param name="value">字符串数据</param>
@@ -308,8 +301,7 @@ namespace Plcway.Communication.Extensions
 		}
 
 		/// <summary>
-		/// 启动接收数据，需要传入回调方法，传递对象<br />
-		/// To start receiving data, you need to pass in a callback method and pass an object
+		/// 启动接收数据，需要传入回调方法，传递对象
 		/// </summary>
 		/// <param name="socket">socket对象</param>
 		/// <param name="callback">回调方法</param>
@@ -330,8 +322,7 @@ namespace Plcway.Communication.Extensions
 		}
 
 		/// <summary>
-		/// 启动接收数据，需要传入回调方法，传递对象默认为socket本身<br />
-		/// To start receiving data, you need to pass in a callback method. The default object is the socket itself.
+		/// 启动接收数据，需要传入回调方法，传递对象默认为socket本身
 		/// </summary>
 		/// <param name="socket">socket对象</param>
 		/// <param name="callback">回调方法</param>
@@ -342,8 +333,7 @@ namespace Plcway.Communication.Extensions
 		}
 
 		/// <summary>
-		/// 结束挂起的异步读取，返回读取的字节数，如果成功的情况。<br />
-		/// Ends the pending asynchronous read and returns the number of bytes read, if successful.
+		/// 结束挂起的异步读取，返回读取的字节数，如果成功的情况。
 		/// </summary>
 		/// <param name="socket">socket对象</param>
 		/// <param name="ar">回调方法</param>
@@ -362,8 +352,7 @@ namespace Plcway.Communication.Extensions
 		}
 
 		/// <summary>
-		/// 根据英文小数点进行切割字符串，去除空白的字符<br />
-		/// Cut the string according to the English decimal point and remove the blank characters
+		/// 根据英文小数点进行切割字符串，去除空白的字符
 		/// </summary>
 		/// <param name="str">字符串本身</param>
 		/// <returns>切割好的字符串数组，例如输入 "100.5"，返回 "100", "5"</returns>
@@ -373,8 +362,7 @@ namespace Plcway.Communication.Extensions
 		}
 
 		/// <summary>
-		/// 获取当前对象的JSON格式表示的字符串。<br />
-		/// Gets the string represented by the JSON format of the current object.
+		/// 获取当前对象的JSON格式表示的字符串。
 		/// </summary>
 		/// <returns>字符串对象</returns>
 		public static string ToJsonString(this object obj, Formatting formatting = Formatting.Indented)

@@ -1,3 +1,5 @@
+using System;
+
 namespace Plcway.Communication
 {
 	internal class HslSecurity
@@ -11,7 +13,7 @@ namespace Plcway.Communication
 		{
 			if (enBytes == null)
 			{
-				return null;
+				return Array.Empty<byte>();
 			}
 
 			byte[] array = new byte[enBytes.Length];
@@ -37,7 +39,7 @@ namespace Plcway.Communication
 		/// <returns>解密后的字节数据</returns>
 		internal static byte[] ByteDecrypt(byte[] deBytes)
 		{
-			return ByteEncrypt(deBytes);
+			return ByteEncrypt(deBytes);  // 思考：byte ^ 0xB5u 加密解密原理是什么？
 		}
 	}
 }

@@ -25,7 +25,6 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 			}
 		}
 
-		/// <inheritdoc cref="M:HslCommunication.Profinet.Siemens.SiemensPPI.#ctor" />
 		public SiemensPPIOverTcp()
 		{
 			base.WordLength = 2;
@@ -480,64 +479,64 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 			try
 			{
 				operateResult.Content3 = 0;
-				if (address.Substring(0, 2) == "AI")
+				if (address[..2] == "AI")
 				{
 					operateResult.Content1 = 6;
-					operateResult.Content2 = S7AddressData.CalculateAddressStarted(address.Substring(2));
+					operateResult.Content2 = S7AddressData.CalculateAddressStarted(address[2..]);
 				}
-				else if (address.Substring(0, 2) == "AQ")
+				else if (address[..2] == "AQ")
 				{
 					operateResult.Content1 = 7;
-					operateResult.Content2 = S7AddressData.CalculateAddressStarted(address.Substring(2));
+					operateResult.Content2 = S7AddressData.CalculateAddressStarted(address[2..]);
 				}
 				else if (address[0] == 'T')
 				{
 					operateResult.Content1 = 31;
-					operateResult.Content2 = S7AddressData.CalculateAddressStarted(address.Substring(1));
+					operateResult.Content2 = S7AddressData.CalculateAddressStarted(address[1..]);
 				}
 				else if (address[0] == 'C')
 				{
 					operateResult.Content1 = 30;
-					operateResult.Content2 = S7AddressData.CalculateAddressStarted(address.Substring(1));
+					operateResult.Content2 = S7AddressData.CalculateAddressStarted(address[1..]);
 				}
-				else if (address.Substring(0, 2) == "SM")
+				else if (address[..2] == "SM")
 				{
 					operateResult.Content1 = 5;
-					operateResult.Content2 = S7AddressData.CalculateAddressStarted(address.Substring(2));
+					operateResult.Content2 = S7AddressData.CalculateAddressStarted(address[2..]);
 				}
 				else if (address[0] == 'S')
 				{
 					operateResult.Content1 = 4;
-					operateResult.Content2 = S7AddressData.CalculateAddressStarted(address.Substring(1));
+					operateResult.Content2 = S7AddressData.CalculateAddressStarted(address[1..]);
 				}
 				else if (address[0] == 'I')
 				{
 					operateResult.Content1 = 129;
-					operateResult.Content2 = S7AddressData.CalculateAddressStarted(address.Substring(1));
+					operateResult.Content2 = S7AddressData.CalculateAddressStarted(address[1..]);
 				}
 				else if (address[0] == 'Q')
 				{
 					operateResult.Content1 = 130;
-					operateResult.Content2 = S7AddressData.CalculateAddressStarted(address.Substring(1));
+					operateResult.Content2 = S7AddressData.CalculateAddressStarted(address[1..]);
 				}
 				else if (address[0] == 'M')
 				{
 					operateResult.Content1 = 131;
-					operateResult.Content2 = S7AddressData.CalculateAddressStarted(address.Substring(1));
+					operateResult.Content2 = S7AddressData.CalculateAddressStarted(address[1..]);
 				}
-				else if (address[0] == 'D' || address.Substring(0, 2) == "DB")
+				else if (address[0] == 'D' || address[..2] == "DB")
 				{
 					operateResult.Content1 = 132;
 					string[] array = address.Split(new char[1] { '.' });
 					if (address[1] == 'B')
 					{
-						operateResult.Content3 = Convert.ToUInt16(array[0].Substring(2));
+						operateResult.Content3 = Convert.ToUInt16(array[0][2..]);
 					}
 					else
 					{
-						operateResult.Content3 = Convert.ToUInt16(array[0].Substring(1));
+						operateResult.Content3 = Convert.ToUInt16(array[0][1..]);
 					}
-					operateResult.Content2 = S7AddressData.CalculateAddressStarted(address.Substring(address.IndexOf('.') + 1));
+					operateResult.Content2 = S7AddressData.CalculateAddressStarted(address[(address.IndexOf('.') + 1)..]);
 				}
 				else
 				{
@@ -551,7 +550,7 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 					}
 					operateResult.Content1 = 132;
 					operateResult.Content3 = 1;
-					operateResult.Content2 = S7AddressData.CalculateAddressStarted(address.Substring(1));
+					operateResult.Content2 = S7AddressData.CalculateAddressStarted(address[1..]);
 				}
 			}
 			catch (Exception ex)

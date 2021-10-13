@@ -4,8 +4,7 @@ using Plcway.Communication.Core;
 namespace Plcway.Communication.Basic
 {
 	/// <summary>
-	/// 一个线程安全的缓存数据块，支持批量动态修改，添加，并获取快照<br />
-	/// A thread-safe cache data block that supports batch dynamic modification, addition, and snapshot acquisition
+	/// 一个线程安全的缓存数据块，支持批量动态修改，添加，并获取快照
 	/// </summary>
 	/// <remarks>
 	/// 这个类可以实现什么功能呢，就是你有一个大的数组，作为你的应用程序的中间数据池，允许你往byte[]数组里存放指定长度的子byte[]数组，也允许从里面拿数据，
@@ -23,14 +22,12 @@ namespace Plcway.Communication.Basic
         public IByteTransform ByteTransform { get; set; }
 
         /// <summary>
-        /// 获取或设置当前的bool操作是否按照字节反转<br />
-        /// Gets or sets whether the current bool operation is reversed by bytes
+        /// 获取或设置当前的bool操作是否按照字节反转
         /// </summary>
         public bool IsBoolReverseByWord { get; set; }
 
         /// <summary>
-        /// 使用默认的大小初始化缓存空间<br />
-        /// Initialize cache space with default size
+        /// 使用默认的大小初始化缓存空间
         /// </summary>
         public SoftBuffer()
 		{
@@ -40,8 +37,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 使用指定的容量初始化缓存数据块<br />
-		/// Initialize the cache data block with the specified capacity
+		/// 使用指定的容量初始化缓存数据块
 		/// </summary>
 		/// <param name="capacity">初始化的容量</param>
 		public SoftBuffer(int capacity)
@@ -53,26 +49,22 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 设置指定的位置bool值，如果超出，则丢弃数据，该位置是指按照位为单位排序的<br />
-		/// Set the bool value at the specified position, if it is exceeded, 
-		/// the data is discarded, the position refers to sorting in units of bits
+		/// 设置指定的位置bool值，如果超出，则丢弃数据，该位置是指按照位为单位排序的
 		/// </summary>
 		/// <param name="value">bool值</param>
 		/// <param name="destIndex">目标存储的索引</param>
-		/// <exception cref="T:System.IndexOutOfRangeException"></exception>
+		/// <exception cref="IndexOutOfRangeException"></exception>
 		public void SetBool(bool value, int destIndex)
 		{
 			SetBool(new bool[1] { value }, destIndex);
 		}
 
 		/// <summary>
-		/// 设置指定的位置的bool数组，如果超出，则丢弃数据，该位置是指按照位为单位排序的<br />
-		/// Set the bool array at the specified position, if it is exceeded, 
-		/// the data is discarded, the position refers to sorting in units of bits
+		/// 设置指定的位置的bool数组，如果超出，则丢弃数据，该位置是指按照位为单位排序的
 		/// </summary>
 		/// <param name="value">bool数组值</param>
 		/// <param name="destIndex">目标存储的索引</param>
-		/// <exception cref="T:System.IndexOutOfRangeException"></exception>
+		/// <exception cref="IndexOutOfRangeException"></exception>
 		public void SetBool(bool[] value, int destIndex)
 		{
 			if (value == null)
@@ -100,34 +92,34 @@ namespace Plcway.Communication.Basic
 						buffer[num] = (byte)(buffer[num] & GetAndByte(offset));
 					}
 				}
-				hybirdLock.Leave();
 			}
 			catch
 			{
-				hybirdLock.Leave();
 				throw;
+            }
+            finally
+            {
+				hybirdLock.Leave();
 			}
 		}
 
 		/// <summary>
-		/// 获取指定的位置的bool值，如果超出，则引发异常<br />
-		/// Get the bool value at the specified position, if it exceeds, an exception is thrown
+		/// 获取指定的位置的bool值，如果超出，则引发异常
 		/// </summary>
 		/// <param name="destIndex">目标存储的索引</param>
 		/// <returns>获取索引位置的bool数据值</returns>
-		/// <exception cref="T:System.IndexOutOfRangeException"></exception>
+		/// <exception cref="IndexOutOfRangeException"></exception>
 		public bool GetBool(int destIndex)
 		{
 			return GetBool(destIndex, 1)[0];
 		}
 
 		/// <summary>
-		/// 获取指定位置的bool数组值，如果超过，则引发异常<br />
-		/// Get the bool array value at the specified position, if it exceeds, an exception is thrown
+		/// 获取指定位置的bool数组值，如果超过，则引发异常
 		/// </summary>
 		/// <param name="destIndex">目标存储的索引</param>
 		/// <param name="length">读取的数组长度</param>
-		/// <exception cref="T:System.IndexOutOfRangeException"></exception>
+		/// <exception cref="IndexOutOfRangeException"></exception>
 		/// <returns>bool数组值</returns>
 		public bool[] GetBool(int destIndex, int length)
 		{
@@ -145,13 +137,16 @@ namespace Plcway.Communication.Basic
 					}
 					array[i] = (buffer[num] & GetOrByte(offset)) == GetOrByte(offset);
 				}
-				hybirdLock.Leave();
 			}
 			catch
 			{
-				hybirdLock.Leave();
 				throw;
 			}
+			finally
+			{
+				hybirdLock.Leave();
+			}
+
 			return array;
 		}
 
@@ -188,8 +183,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 设置指定的位置的数据块，如果超出，则丢弃数据<br />
-		/// Set the data block at the specified position, if it is exceeded, the data is discarded
+		/// 设置指定的位置的数据块，如果超出，则丢弃数据
 		/// </summary>
 		/// <param name="data">数据块信息</param>
 		/// <param name="destIndex">目标存储的索引</param>
@@ -212,7 +206,6 @@ namespace Plcway.Communication.Basic
 
 		/// <summary>
 		/// 设置指定的位置的数据块，如果超出，则丢弃数据
-		/// Set the data block at the specified position, if it is exceeded, the data is discarded
 		/// </summary>
 		/// <param name="data">数据块信息</param>
 		/// <param name="destIndex">目标存储的索引</param>
@@ -225,6 +218,7 @@ namespace Plcway.Communication.Basic
 				{
 					length = data.Length;
 				}
+
 				hybirdLock.Enter();
 				if (length + destIndex > buffer.Length)
 				{
@@ -239,14 +233,13 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 设置指定的位置的数据块，如果超出，则丢弃数据<br />
-		/// Set the data block at the specified position, if it is exceeded, the data is discarded
+		/// 设置指定的位置的数据块，如果超出，则丢弃数据
 		/// </summary>
 		/// <param name="data">数据块信息</param>
 		/// <param name="sourceIndex">Data中的起始位置</param>
 		/// <param name="destIndex">目标存储的索引</param>
 		/// <param name="length">准备拷贝的数据长度</param>
-		/// <exception cref="T:System.IndexOutOfRangeException"></exception>
+		/// <exception cref="IndexOutOfRangeException"></exception>
 		public void SetBytes(byte[] data, int sourceIndex, int destIndex, int length)
 		{
 			if (destIndex < capacity && destIndex >= 0 && data != null)
@@ -255,6 +248,7 @@ namespace Plcway.Communication.Basic
 				{
 					length = data.Length;
 				}
+
 				hybirdLock.Enter();
 				Array.Copy(data, sourceIndex, buffer, destIndex, length);
 				hybirdLock.Leave();
@@ -262,8 +256,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 获取内存指定长度的数据信息<br />
-		/// Get data information of specified length in memory
+		/// 获取内存指定长度的数据信息
 		/// </summary>
 		/// <param name="index">起始位置</param>
 		/// <param name="length">数组长度</param>
@@ -284,8 +277,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 获取内存所有的数据信息<br />
-		/// Get all data information in memory
+		/// 获取内存所有的数据信息
 		/// </summary>
 		/// <returns>实际的数据信息</returns>
 		public byte[] GetBytes()
@@ -294,8 +286,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 设置byte类型的数据到缓存区<br />
-		/// Set byte type data to the cache area
+		/// 设置byte类型的数据到缓存区
 		/// </summary>
 		/// <param name="value">byte数值</param>
 		/// <param name="index">索引位置</param>
@@ -305,8 +296,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 设置short数组的数据到缓存区<br />
-		/// Set short array data to the cache area
+		/// 设置short数组的数据到缓存区
 		/// </summary>
 		/// <param name="values">short数组</param>
 		/// <param name="index">索引位置</param>
@@ -316,8 +306,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 设置short类型的数据到缓存区<br />
-		/// Set short type data to the cache area
+		/// 设置short类型的数据到缓存区
 		/// </summary>
 		/// <param name="value">short数值</param>
 		/// <param name="index">索引位置</param>
@@ -327,8 +316,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 设置ushort数组的数据到缓存区<br />
-		/// Set ushort array data to the cache area
+		/// 设置ushort数组的数据到缓存区
 		/// </summary>
 		/// <param name="values">ushort数组</param>
 		/// <param name="index">索引位置</param>
@@ -338,8 +326,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 设置ushort类型的数据到缓存区<br />
-		/// Set ushort type data to the cache area
+		/// 设置ushort类型的数据到缓存区
 		/// </summary>
 		/// <param name="value">ushort数值</param>
 		/// <param name="index">索引位置</param>
@@ -349,8 +336,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 设置int数组的数据到缓存区<br />
-		/// Set int array data to the cache area
+		/// 设置int数组的数据到缓存区
 		/// </summary>
 		/// <param name="values">int数组</param>
 		/// <param name="index">索引位置</param>
@@ -360,8 +346,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 设置int类型的数据到缓存区<br />
-		/// Set int type data to the cache area
+		/// 设置int类型的数据到缓存区
 		/// </summary>
 		/// <param name="value">int数值</param>
 		/// <param name="index">索引位置</param>
@@ -371,8 +356,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 设置uint数组的数据到缓存区<br />
-		/// Set uint array data to the cache area
+		/// 设置uint数组的数据到缓存区
 		/// </summary>
 		/// <param name="values">uint数组</param>
 		/// <param name="index">索引位置</param>
@@ -382,8 +366,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 设置uint类型的数据到缓存区<br />
-		/// Set uint byte data to the cache area
+		/// 设置uint类型的数据到缓存区
 		/// </summary>
 		/// <param name="value">uint数值</param>
 		/// <param name="index">索引位置</param>
@@ -393,8 +376,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 设置float数组的数据到缓存区<br />
-		/// Set float array data to the cache area
+		/// 设置float数组的数据到缓存区
 		/// </summary>
 		/// <param name="values">float数组</param>
 		/// <param name="index">索引位置</param>
@@ -404,8 +386,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 设置float类型的数据到缓存区<br />
-		/// Set float type data to the cache area
+		/// 设置float类型的数据到缓存区
 		/// </summary>
 		/// <param name="value">float数值</param>
 		/// <param name="index">索引位置</param>
@@ -415,8 +396,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 设置long数组的数据到缓存区<br />
-		/// Set long array data to the cache area
+		/// 设置long数组的数据到缓存区
 		/// </summary>
 		/// <param name="values">long数组</param>
 		/// <param name="index">索引位置</param>
@@ -426,8 +406,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 设置long类型的数据到缓存区<br />
-		/// Set long type data to the cache area
+		/// 设置long类型的数据到缓存区
 		/// </summary>
 		/// <param name="value">long数值</param>
 		/// <param name="index">索引位置</param>
@@ -437,8 +416,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 设置ulong数组的数据到缓存区<br />
-		/// Set long array data to the cache area
+		/// 设置ulong数组的数据到缓存区
 		/// </summary>
 		/// <param name="values">ulong数组</param>
 		/// <param name="index">索引位置</param>
@@ -448,8 +426,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 设置ulong类型的数据到缓存区<br />
-		/// Set ulong byte data to the cache area
+		/// 设置ulong类型的数据到缓存区
 		/// </summary>
 		/// <param name="value">ulong数值</param>
 		/// <param name="index">索引位置</param>
@@ -459,8 +436,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 设置double数组的数据到缓存区<br />
-		/// Set double array data to the cache area
+		/// 设置double数组的数据到缓存区
 		/// </summary>
 		/// <param name="values">double数组</param>
 		/// <param name="index">索引位置</param>
@@ -470,8 +446,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 设置double类型的数据到缓存区<br />
-		/// Set double type data to the cache area
+		/// 设置double类型的数据到缓存区
 		/// </summary>
 		/// <param name="value">double数值</param>
 		/// <param name="index">索引位置</param>
@@ -481,8 +456,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 获取byte类型的数据<br />
-		/// Get byte data
+		/// 获取byte类型的数据
 		/// </summary>
 		/// <param name="index">索引位置</param>
 		/// <returns>byte数值</returns>
@@ -492,8 +466,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 获取short类型的数组到缓存区<br />
-		/// Get short type array to cache
+		/// 获取short类型的数组到缓存区
 		/// </summary>
 		/// <param name="index">索引位置</param>
 		/// <param name="length">数组长度</param>
@@ -504,8 +477,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 获取short类型的数据到缓存区<br />
-		/// Get short data to the cache
+		/// 获取short类型的数据到缓存区
 		/// </summary>
 		/// <param name="index">索引位置</param>
 		/// <returns>short数据</returns>
@@ -515,8 +487,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 获取ushort类型的数组到缓存区<br />
-		/// Get ushort type array to cache
+		/// 获取ushort类型的数组到缓存区
 		/// </summary>
 		/// <param name="index">索引位置</param>
 		/// <param name="length">数组长度</param>
@@ -527,8 +498,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 获取ushort类型的数据到缓存区<br />
-		/// Get ushort type data to cache
+		/// 获取ushort类型的数据到缓存区
 		/// </summary>
 		/// <param name="index">索引位置</param>
 		/// <returns>ushort数据</returns>
@@ -538,8 +508,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 获取int类型的数组到缓存区<br />
-		/// Get int type array to cache
+		/// 获取int类型的数组到缓存区
 		/// </summary>
 		/// <param name="index">索引位置</param>
 		/// <param name="length">数组长度</param>
@@ -550,8 +519,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 获取int类型的数据到缓存区<br />
-		/// Get int type data to cache
+		/// 获取int类型的数据到缓存区
 		/// </summary>
 		/// <param name="index">索引位置</param>
 		/// <returns>int数据</returns>
@@ -561,8 +529,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 获取uint类型的数组到缓存区<br />
-		/// Get uint type array to cache
+		/// 获取uint类型的数组到缓存区
 		/// </summary>
 		/// <param name="index">索引位置</param>
 		/// <param name="length">数组长度</param>
@@ -573,8 +540,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 获取uint类型的数据到缓存区<br />
-		/// Get uint type data to cache
+		/// 获取uint类型的数据到缓存区
 		/// </summary>
 		/// <param name="index">索引位置</param>
 		/// <returns>uint数据</returns>
@@ -584,8 +550,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 获取float类型的数组到缓存区<br />
-		/// Get float type array to cache
+		/// 获取float类型的数组到缓存区
 		/// </summary>
 		/// <param name="index">索引位置</param>
 		/// <param name="length">数组长度</param>
@@ -596,8 +561,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 获取float类型的数据到缓存区<br />
-		/// Get float type data to cache
+		/// 获取float类型的数据到缓存区
 		/// </summary>
 		/// <param name="index">索引位置</param>
 		/// <returns>float数据</returns>
@@ -607,8 +571,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 获取long类型的数组到缓存区<br />
-		/// Get long type array to cache
+		/// 获取long类型的数组到缓存区
 		/// </summary>
 		/// <param name="index">索引位置</param>
 		/// <param name="length">数组长度</param>
@@ -619,8 +582,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 获取long类型的数据到缓存区<br />
-		/// Get long type data to cache
+		/// 获取long类型的数据到缓存区
 		/// </summary>
 		/// <param name="index">索引位置</param>
 		/// <returns>long数据</returns>
@@ -630,8 +592,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 获取ulong类型的数组到缓存区<br />
-		/// Get ulong type array to cache
+		/// 获取ulong类型的数组到缓存区
 		/// </summary>
 		/// <param name="index">索引位置</param>
 		/// <param name="length">数组长度</param>
@@ -642,8 +603,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 获取ulong类型的数据到缓存区<br />
-		/// Get ulong type data to cache
+		/// 获取ulong类型的数据到缓存区
 		/// </summary>
 		/// <param name="index">索引位置</param>
 		/// <returns>ulong数据</returns>
@@ -653,8 +613,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 获取double类型的数组到缓存区<br />
-		/// Get double type array to cache
+		/// 获取double类型的数组到缓存区
 		/// </summary>
 		/// <param name="index">索引位置</param>
 		/// <param name="length">数组长度</param>
@@ -665,8 +624,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 获取double类型的数据到缓存区<br />
-		/// Get double type data to cache
+		/// 获取double类型的数据到缓存区
 		/// </summary>
 		/// <param name="index">索引位置</param>
 		/// <returns>double数据</returns>
@@ -676,8 +634,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 读取自定义类型的数据，需要规定解析规则<br />
-		/// Read custom types of data, need to specify the parsing rules
+		/// 读取自定义类型的数据，需要规定解析规则
 		/// </summary>
 		/// <typeparam name="T">类型名称</typeparam>
 		/// <param name="index">起始索引</param>
@@ -691,8 +648,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 写入自定义类型的数据到缓存中去，需要规定生成字节的方法<br />
-		/// Write custom type data to the cache, need to specify the method of generating bytes
+		/// 写入自定义类型的数据到缓存中去，需要规定生成字节的方法
 		/// </summary>
 		/// <typeparam name="T">自定义类型</typeparam>
 		/// <param name="data">实例对象</param>

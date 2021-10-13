@@ -14,7 +14,7 @@ namespace Plcway.Communication.Basic
 
 		private long max = long.MaxValue;
 
-		private SimpleHybirdLock hybirdLock;
+		private readonly SimpleHybirdLock hybirdLock;
 
 		private bool disposedValue = false;
 
@@ -25,8 +25,7 @@ namespace Plcway.Communication.Basic
 
 
 		/// <summary>
-		/// 获取当前的计数器的最大的设置值。<br />
-		/// Get the maximum setting value of the current counter.
+		/// 获取当前的计数器的最大的设置值。
 		/// </summary>
 		public long MaxValue => max;
 
@@ -51,10 +50,9 @@ namespace Plcway.Communication.Basic
 		/// <returns>计数自增后的值</returns>
 		public long GetCurrentValue()
 		{
-			long num = 0L;
-			hybirdLock.Enter();
-			num = current;
-			current += IncreaseTick;
+            hybirdLock.Enter();
+            long num = current;
+            current += IncreaseTick;
 			if (current > max)
 			{
 				current = start;
@@ -104,8 +102,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 将当前的值重置为初始值。<br />
-		/// Reset the current value to the initial value.
+		/// 将当前的值重置为初始值。
 		/// </summary>
 		public void ResetCurrentValue()
 		{

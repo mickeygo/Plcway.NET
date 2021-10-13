@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Cryptography;
 using System.Text;
 using Newtonsoft.Json.Linq;
@@ -16,23 +14,13 @@ namespace Plcway.Communication.Basic
 	public class SoftBasic
 	{
 		/// <summary>
-		/// 设置或获取系统框架的版本号<br />
-		/// Set or get the version number of the system framework
-		/// </summary>
-		/// <remarks>
-		/// 当你要显示本组件框架的版本号的时候，就可以用这个属性来显示
-		/// </remarks>
-		public static SystemVersion FrameworkVersion => new SystemVersion("10.0.2");
-
-		/// <summary>
-		/// 获取文件的md5码<br />
-		/// Get the MD5 code of the file
+		/// 获取文件的md5码
 		/// </summary>
 		/// <param name="filePath">文件的路径，既可以是完整的路径，也可以是相对的路径 -&gt; The path to the file</param>
 		/// <returns>Md5字符串</returns>
 		public static string CalculateFileMD5(string filePath)
 		{
-			string result = string.Empty;
+			string result;
 			using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
 			{
 				result = CalculateStreamMD5(stream);
@@ -47,7 +35,7 @@ namespace Plcway.Communication.Basic
 		/// <returns>Md5字符串</returns>
 		public static string CalculateStreamMD5(Stream stream)
 		{
-			byte[] array = null;
+			byte[] array;
 			using (MD5 mD = new MD5CryptoServiceProvider())
 			{
 				array = mD.ComputeHash(stream);
@@ -73,7 +61,7 @@ namespace Plcway.Communication.Basic
 		/// <returns>Md5字符串</returns>
 		public static string CalculateStreamMD5(string data, Encoding encode)
 		{
-			string result = string.Empty;
+			string result;
 			using (MD5 mD = new MD5CryptoServiceProvider())
 			{
 				byte[] array = mD.ComputeHash(encode.GetBytes(data));
@@ -93,15 +81,18 @@ namespace Plcway.Communication.Basic
 			{
 				return size + " B";
 			}
+
 			if (size < 1000000)
 			{
-				return ((float)size / 1024f).ToString("F2") + " Kb";
+				return (size / 1024f).ToString("F2") + " Kb";
 			}
+
 			if (size < 1000000000)
 			{
-				return ((float)size / 1024f / 1024f).ToString("F2") + " Mb";
+				return (size / 1024f / 1024f).ToString("F2") + " Mb";
 			}
-			return ((float)size / 1024f / 1024f / 1024f).ToString("F2") + " Gb";
+
+			return (size / 1024f / 1024f / 1024f).ToString("F2") + " Gb";
 		}
 
 		/// <summary>
@@ -115,14 +106,17 @@ namespace Plcway.Communication.Basic
 			{
 				return (int)ts.TotalSeconds + "s";
 			}
+
 			if (ts.TotalMinutes <= 60.0)
 			{
 				return ts.TotalMinutes.ToString("F1") + "min";
 			}
+
 			if (ts.TotalHours <= 24.0)
 			{
 				return ts.TotalHours.ToString("F2") + "h";
 			}
+
 			return ts.TotalDays.ToString("F2") + "d";
 		}
 
@@ -157,16 +151,15 @@ namespace Plcway.Communication.Basic
 				stringBuilder.Append(string.IsNullOrEmpty(format) ? array[i].ToString() : string.Format(format, array[i]));
 				if (i != array.Length - 1)
 				{
-					stringBuilder.Append(",");
+					stringBuilder.Append(',');
 				}
 			}
-			stringBuilder.Append("]");
+			stringBuilder.Append(']');
 			return stringBuilder.ToString();
 		}
 
 		/// <summary>
-		/// 将数组格式化为显示的字符串的信息，支持所有的类型对象<br />
-		/// Formats the array into the displayed string information, supporting all types of objects
+		/// 将数组格式化为显示的字符串的信息，支持所有的类型对象
 		/// </summary>
 		/// <typeparam name="T">数组的类型</typeparam>
 		/// <param name="array">数组信息</param>
@@ -177,8 +170,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 将数组格式化为显示的字符串的信息，支持所有的类型对象<br />
-		/// Formats the array into the displayed string information, supporting all types of objects
+		/// 将数组格式化为显示的字符串的信息，支持所有的类型对象
 		/// </summary>
 		/// <typeparam name="T">数组的类型</typeparam>
 		/// <param name="array">数组信息</param>
@@ -195,7 +187,7 @@ namespace Plcway.Communication.Basic
 					stringBuilder.Append(string.IsNullOrEmpty(format) ? item.ToString() : string.Format(format, item));
 					stringBuilder.Append(',');
 				}
-				if (array2.Length > 0 && stringBuilder[stringBuilder.Length - 1] == ',')
+				if (array2.Length > 0 && stringBuilder[^1] == ',')
 				{
 					stringBuilder.Remove(stringBuilder.Length - 1, 1);
 				}
@@ -313,7 +305,7 @@ namespace Plcway.Communication.Basic
 				return new List<T[]>();
 			}
 
-			List<T[]> list = new List<T[]>();
+			var list = new List<T[]>();
 			int num = 0;
 			while (num < array.Length)
 			{
@@ -676,8 +668,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 从字节构建一个ASCII格式的数据内容<br />
-		/// Build an ASCII-formatted data content from bytes
+		/// 从字节构建一个ASCII格式的数据内容
 		/// </summary>
 		/// <param name="value">数据</param>
 		/// <returns>ASCII格式的字节数组</returns>
@@ -687,8 +678,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 从short构建一个ASCII格式的数据内容<br />
-		/// Constructing an ASCII-formatted data content from a short
+		/// 从short构建一个ASCII格式的数据内容
 		/// </summary>
 		/// <param name="value">数据</param>
 		/// <returns>ASCII格式的字节数组</returns>
@@ -698,8 +688,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 从ushort构建一个ASCII格式的数据内容<br />
-		/// Constructing an ASCII-formatted data content from ushort
+		/// 从ushort构建一个ASCII格式的数据内容
 		/// </summary>
 		/// <param name="value">数据</param>
 		/// <returns>ASCII格式的字节数组</returns>
@@ -709,8 +698,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 从uint构建一个ASCII格式的数据内容<br />
-		/// Constructing an ASCII-formatted data content from uint
+		/// 从uint构建一个ASCII格式的数据内容
 		/// </summary>
 		/// <param name="value">数据</param>
 		/// <returns>ASCII格式的字节数组</returns>
@@ -720,8 +708,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 从字节数组构建一个ASCII格式的数据内容<br />
-		/// Byte array to construct an ASCII format data content
+		/// 从字节数组构建一个ASCII格式的数据内容
 		/// </summary>
 		/// <param name="value">字节信息</param>
 		/// <returns>ASCII格式的地址</returns>
@@ -836,7 +823,7 @@ namespace Plcway.Communication.Basic
 		/// <returns>转换后的bool数组</returns>
 		public static bool[] ByteToBoolArray(byte[] InBytes)
 		{
-			return InBytes == null ? null : ByteToBoolArray(InBytes, InBytes.Length * 8);
+			return InBytes == null ? Array.Empty<bool>() : ByteToBoolArray(InBytes, InBytes.Length * 8);
 		}
 
 		/// <summary>
@@ -851,7 +838,7 @@ namespace Plcway.Communication.Basic
 		{
 			if (value == null)
 			{
-				return null;
+				return Array.Empty<T>();
 			}
 			if (value.Length <= leftLength + rightLength)
 			{
@@ -899,8 +886,9 @@ namespace Plcway.Communication.Basic
 		{
 			if (value == null)
 			{
-				return null;
+				return Array.Empty<T>();
 			}
+
 			T[] array = new T[Math.Min(value.Length, length)];
 			Array.Copy(value, index, array, 0, array.Length);
 			return array;
@@ -952,6 +940,7 @@ namespace Plcway.Communication.Basic
 					num += arrays[i].Length;
 				}
 			}
+
 			int num2 = 0;
 			T[] array = new T[num];
 			for (int j = 0; j < arrays.Length; j++)
@@ -1021,8 +1010,8 @@ namespace Plcway.Communication.Basic
 		/// </summary>
 		/// <param name="oringinal">源对象，支持序列化</param>
 		/// <returns>新的一个实例化的对象</returns>
-		/// <exception cref="NullReferenceException"></exception>
-		/// <exception cref="NonSerializedAttribute"></exception>
+		/// <exception cref="NotSupportedException"></exception>
+		/// <exception cref="System.Text.Json.JsonException"></exception>
 		/// <remarks>
 		/// <note type="warning">
 		/// <paramref name="oringinal" /> 参数必须实现序列化的特性
@@ -1030,14 +1019,10 @@ namespace Plcway.Communication.Basic
 		/// </remarks>
 		public static object DeepClone(object oringinal)
 		{
-			using var memoryStream = new MemoryStream();
-			var binaryFormatter = new BinaryFormatter
-			{
-				Context = new StreamingContext(StreamingContextStates.Clone)
-			};
-			binaryFormatter.Serialize(memoryStream, oringinal);
-			memoryStream.Position = 0L;
-			return binaryFormatter.Deserialize(memoryStream);
+			// 因 BinaryFormatter 的安全漏洞，建议使用其他代替方案，
+			// 参考 https://docs.microsoft.com/zh-cn/dotnet/standard/serialization/binaryformatter-security-guide
+			var json = System.Text.Json.JsonSerializer.Serialize(oringinal);
+			return System.Text.Json.JsonSerializer.Deserialize(json, oringinal.GetType());
 		}
 
 		/// <summary>

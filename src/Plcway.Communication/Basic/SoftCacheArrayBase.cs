@@ -1,3 +1,4 @@
+using System;
 using Plcway.Communication.Core;
 
 namespace Plcway.Communication.Basic
@@ -10,12 +11,12 @@ namespace Plcway.Communication.Basic
 		/// <summary>
 		/// 字节数据流
 		/// </summary>
-		protected byte[] DataBytes = null;
+		protected byte[] DataBytes = Array.Empty<byte>();
 
 		/// <summary>
 		/// 数据数组变动时的数据锁
 		/// </summary>
-		protected SimpleHybirdLock HybirdLock = new SimpleHybirdLock();
+		protected SimpleHybirdLock HybirdLock = new();
 
 		/// <summary>
 		/// 数据的长度

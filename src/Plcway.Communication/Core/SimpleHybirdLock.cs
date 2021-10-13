@@ -4,8 +4,7 @@ using System.Threading;
 namespace Plcway.Communication.Core
 {
 	/// <summary>
-	/// 一个简单的混合线程同步锁，采用了基元用户加基元内核同步构造实现<br />
-	/// A simple hybrid thread editing lock, implemented by the base user plus the element kernel synchronization.
+	/// 一个简单的混合线程同步锁，采用了基元用户加基元内核同步构造实现
 	/// </summary>
 	/// <remarks>
 	/// 当前的锁适用于，竞争频率比较低，锁部分的代码运行时间比较久的情况，当前的简单混合锁可以达到最大性能。
@@ -34,8 +33,7 @@ namespace Plcway.Communication.Core
 		public bool IsWaitting => m_waiters != 0;
 
 		/// <summary>
-		/// 获取当前总的所有进入锁的信息<br />
-		/// Get the current total information of all access locks
+		/// 获取当前总的所有进入锁的信息
 		/// </summary>
 		public static long SimpleHybirdLockCount => simpleHybirdLockCount;
 

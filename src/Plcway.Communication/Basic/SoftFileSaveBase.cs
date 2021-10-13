@@ -10,11 +10,11 @@ namespace Plcway.Communication.Basic
 	/// 文件存储功能的基类，包含了文件存储路径，存储方法等
 	/// </summary>
 	/// <remarks>
-	/// 需要继承才能实现你想存储的数据，比较经典的例子就是存储你的应用程序的配置信息，通常的格式就是xml文件或是json文件。具体请看例子：
+	/// 需要继承才能实现你想存储的数据，比较经典的例子就是存储你的应用程序的配置信息，通常的格式就是xml文件或是json文件。
 	/// </remarks>
 	public class SoftFileSaveBase : ISoftFileSaveBase
 	{
-		private SimpleHybirdLock HybirdLock;
+		private readonly SimpleHybirdLock HybirdLock;
 
 		/// <summary>
 		/// 在日志保存时的标记当前调用类的信息
@@ -63,10 +63,11 @@ namespace Plcway.Communication.Basic
 			{
 				return;
 			}
+
 			HybirdLock.Enter();
 			try
 			{
-				using StreamReader streamReader = new StreamReader(FileSavePath, Encoding.Default);
+				using var streamReader = new StreamReader(FileSavePath, Encoding.Default);
 				LoadByString(decrypt(streamReader.ReadToEnd()));
 			}
 			catch (Exception ex)
@@ -98,7 +99,7 @@ namespace Plcway.Communication.Basic
 			HybirdLock.Enter();
 			try
 			{
-				using StreamWriter streamWriter = new StreamWriter(FileSavePath, append: false, Encoding.Default);
+				using var streamWriter = new StreamWriter(FileSavePath, append: false, Encoding.Default);
 				streamWriter.Write(encrypt(ToSaveString()));
 				streamWriter.Flush();
 			}

@@ -9,8 +9,7 @@ using Plcway.Communication.Serial;
 namespace Plcway.Communication.Ethernet.Modbus
 {
 	/// <summary>
-	/// Modbus协议相关的一些信息，包括功能码定义，报文的生成的定义等等信息<br />
-	/// Some information related to Modbus protocol, including function code definition, definition of message generation, etc.
+	/// Modbus协议相关的一些信息，包括功能码定义，报文的生成的定义等等信息。
 	/// </summary>
 	public class ModbusInfo
 	{
@@ -92,9 +91,7 @@ namespace Plcway.Communication.Ethernet.Modbus
 		}
 
 		/// <summary>
-		/// 构建Modbus读取数据的核心报文，需要指定地址，长度，站号，是否起始地址0，默认的功能码应该根据bool或是字来区分<br />
-		/// To construct the core message of Modbus reading data, you need to specify the address, length, station number, 
-		/// whether the starting address is 0, and the default function code should be distinguished according to bool or word
+		/// 构建Modbus读取数据的核心报文，需要指定地址，长度，站号，是否起始地址0，默认的功能码应该根据bool或是字来区分。
 		/// </summary>
 		/// <param name="address">Modbus的富文本地址</param>
 		/// <param name="length">读取的数据长度</param>
@@ -117,9 +114,7 @@ namespace Plcway.Communication.Ethernet.Modbus
 		}
 
 		/// <summary>
-		/// 构建Modbus读取数据的核心报文，需要指定地址，长度，站号，是否起始地址0，默认的功能码应该根据bool或是字来区分<br />
-		/// To construct the core message of Modbus reading data, you need to specify the address, length, station number, 
-		/// whether the starting address is 0, and the default function code should be distinguished according to bool or word
+		/// 构建Modbus读取数据的核心报文，需要指定地址，长度，站号，是否起始地址0，默认的功能码应该根据bool或是字来区分。
 		/// </summary>
 		/// <param name="mAddress">Modbus的富文本地址</param>
 		/// <param name="length">读取的数据长度</param>
@@ -127,9 +122,9 @@ namespace Plcway.Communication.Ethernet.Modbus
 		public static OperateResult<byte[][]> BuildReadModbusCommand(ModbusAddress mAddress, ushort length)
 		{
 			var list = new List<byte[]>();
-			if (mAddress.Function == 1 || mAddress.Function == 2 || mAddress.Function == 3 || mAddress.Function == 4)
+			if (mAddress.Function == ReadCoil || mAddress.Function == ReadDiscrete || mAddress.Function == ReadRegister || mAddress.Function == ReadInputRegister)
 			{
-				var operateResult = HslHelper.SplitReadLength(mAddress.Address, length, (ushort)((mAddress.Function == 1 || mAddress.Function == 2) ? 2000 : 120));
+				var operateResult = HslHelper.SplitReadLength(mAddress.Address, length, (ushort)((mAddress.Function == ReadCoil || mAddress.Function == ReadDiscrete) ? 2000 : 120));
 				for (int i = 0; i < operateResult.Content1.Length; i++)
 				{
 					list.Add(new byte[6]
@@ -160,9 +155,7 @@ namespace Plcway.Communication.Ethernet.Modbus
 		}
 
 		/// <summary>
-		/// 构建Modbus写入bool数据的核心报文，需要指定地址，长度，站号，是否起始地址0，默认的功能码<br />
-		/// To construct the core message that Modbus writes to bool data, you need to specify the address, length,
-		/// station number, whether the starting address is 0, and the default function code
+		/// 构建Modbus写入bool数据的核心报文，需要指定地址，长度，站号，是否起始地址0，默认的功能码。
 		/// </summary>
 		/// <param name="address">Modbus的富文本地址</param>
 		/// <param name="values">bool数组的信息</param>
@@ -185,8 +178,7 @@ namespace Plcway.Communication.Ethernet.Modbus
 		}
 
 		/// <summary>
-		/// 构建Modbus写入bool数据的核心报文，需要指定地址，长度，站号，是否起始地址0，默认的功能码<br />
-		/// To construct the core message that Modbus writes to bool data, you need to specify the address, length, station number, whether the starting address is 0, and the default function code
+		/// 构建Modbus写入bool数据的核心报文，需要指定地址，长度，站号，是否起始地址0，默认的功能码。
 		/// </summary>
 		/// <param name="address">Modbus的富文本地址</param>
 		/// <param name="value">bool的信息</param>
@@ -205,7 +197,7 @@ namespace Plcway.Communication.Ethernet.Modbus
 					return BuildWriteBoolModbusCommand(mAddress, value);
 				}
 
-				int num = Convert.ToInt32(address.Substring(address.IndexOf('.') + 1));
+				int num = Convert.ToInt32(address[(address.IndexOf('.') + 1)..]);
 				if (num < 0 || num > 15)
 				{
 					return new OperateResult<byte[]>("ModbusBitIndexOverstep");
@@ -218,7 +210,7 @@ namespace Plcway.Communication.Ethernet.Modbus
 					num2 = 0;
 				}
 
-				return BuildWriteMaskModbusCommand(address.Substring(0, address.IndexOf('.')), (ushort)num3, (ushort)num2, station, isStartWithZero, 22);
+				return BuildWriteMaskModbusCommand(address[..address.IndexOf('.')], (ushort)num3, (ushort)num2, station, isStartWithZero, 22);
 			}
 			catch (Exception ex)
 			{
@@ -257,8 +249,7 @@ namespace Plcway.Communication.Ethernet.Modbus
 		}
 
 		/// <summary>
-		/// 构建Modbus写入bool数据的核心报文，需要指定地址，长度，站号，是否起始地址0，默认的功能码<br />
-		/// To construct the core message that Modbus writes to bool data, you need to specify the address, length, station number, whether the starting address is 0, and the default function code
+		/// 构建Modbus写入bool数据的核心报文，需要指定地址，长度，站号，是否起始地址0，默认的功能码。
 		/// </summary>
 		/// <param name="mAddress">Modbus的富文本地址</param>
 		/// <param name="value">bool数据的信息</param>
@@ -289,9 +280,7 @@ namespace Plcway.Communication.Ethernet.Modbus
 		}
 
 		/// <summary>
-		/// 构建Modbus写入字数据的核心报文，需要指定地址，长度，站号，是否起始地址0，默认的功能码<br />
-		/// To construct the core message of Modbus writing word data, you need to specify the address, length, 
-		/// station number, whether the starting address is 0, and the default function code
+		/// 构建Modbus写入字数据的核心报文，需要指定地址，长度，站号，是否起始地址0，默认的功能码。
 		/// </summary>
 		/// <param name="address">Modbus的富文本地址</param>
 		/// <param name="values">bool数组的信息</param>
@@ -318,9 +307,7 @@ namespace Plcway.Communication.Ethernet.Modbus
 		}
 
 		/// <summary>
-		/// 构建Modbus写入字数据的核心报文，需要指定地址，长度，站号，是否起始地址0，默认的功能码<br />
-		/// To construct the core message of Modbus writing word data, you need to specify the address, length, 
-		/// station number, whether the starting address is 0, and the default function code
+		/// 构建Modbus写入字数据的核心报文，需要指定地址，长度，站号，是否起始地址0，默认的功能码。
 		/// </summary>
 		/// <param name="address">Modbus的富文本地址</param>
 		/// <param name="value">short数据信息</param>
@@ -347,9 +334,7 @@ namespace Plcway.Communication.Ethernet.Modbus
 		}
 
 		/// <summary>
-		/// 构建Modbus写入字数据的核心报文，需要指定地址，长度，站号，是否起始地址0，默认的功能码<br />
-		/// To construct the core message of Modbus writing word data, you need to specify the address, length, 
-		/// station number, whether the starting address is 0, and the default function code
+		/// 构建Modbus写入字数据的核心报文，需要指定地址，长度，站号，是否起始地址0，默认的功能码。
 		/// </summary>
 		/// <param name="address">Modbus的富文本地址</param>
 		/// <param name="value">bool数组的信息</param>
@@ -376,9 +361,7 @@ namespace Plcway.Communication.Ethernet.Modbus
 		}
 
 		/// <summary>
-		/// 构建Modbus写入掩码的核心报文，需要指定地址，长度，站号，是否起始地址0，默认的功能码<br />
-		/// To construct the Modbus write mask core message, you need to specify the address, length, 
-		/// station number, whether the starting address is 0, and the default function code
+		/// 构建Modbus写入掩码的核心报文，需要指定地址，长度，站号，是否起始地址0，默认的功能码。
 		/// </summary>
 		/// <param name="address">Modbus的富文本地址</param>
 		/// <param name="andMask">进行与操作的掩码信息</param>
@@ -406,9 +389,7 @@ namespace Plcway.Communication.Ethernet.Modbus
 		}
 
 		/// <summary>
-		/// 构建Modbus写入字数据的核心报文，需要指定地址，长度，站号，是否起始地址0，默认的功能码<br />
-		/// To construct the core message of Modbus writing word data, you need to specify the address, length, 
-		/// station number, whether the starting address is 0, and the default function code
+		/// 构建Modbus写入字数据的核心报文，需要指定地址，长度，站号，是否起始地址0，默认的功能码。
 		/// </summary>
 		/// <param name="mAddress">Modbus的富文本地址</param>
 		/// <param name="values">bool数组的信息</param>
@@ -428,9 +409,7 @@ namespace Plcway.Communication.Ethernet.Modbus
 		}
 
 		/// <summary>
-		/// 构建Modbus写入掩码数据的核心报文，需要指定地址，长度，站号，是否起始地址0，默认的功能码<br />
-		/// To construct the core message of Modbus writing mask data, you need to specify the address, length, 
-		/// station number, whether the starting address is 0, and the default function code
+		/// 构建Modbus写入掩码数据的核心报文，需要指定地址，长度，站号，是否起始地址0，默认的功能码。
 		/// </summary>
 		/// <param name="mAddress">Modbus的富文本地址</param>
 		/// <param name="andMask">等待进行与操作的掩码</param>
@@ -452,9 +431,7 @@ namespace Plcway.Communication.Ethernet.Modbus
 		}
 
 		/// <summary>
-		/// 构建Modbus写入字数据的核心报文，需要指定地址，长度，站号，是否起始地址0，默认的功能码<br />
-		/// To construct the core message of Modbus writing word data, you need to specify the address, length, 
-		/// station number, whether the starting address is 0, and the default function code
+		/// 构建Modbus写入字数据的核心报文，需要指定地址，长度，站号，是否起始地址0，默认的功能码。
 		/// </summary>
 		/// <param name="mAddress">Modbus的富文本地址</param>
 		/// <param name="value">short的值</param>
@@ -473,9 +450,7 @@ namespace Plcway.Communication.Ethernet.Modbus
 		}
 
 		/// <summary>
-		/// 构建Modbus写入字数据的核心报文，需要指定地址，长度，站号，是否起始地址0，默认的功能码<br />
-		/// To construct the core message of Modbus writing word data, you need to specify the address, length, 
-		/// station number, whether the starting address is 0, and the default function code
+		/// 构建Modbus写入字数据的核心报文，需要指定地址，长度，站号，是否起始地址0，默认的功能码。
 		/// </summary>
 		/// <param name="mAddress">Modbus的富文本地址</param>
 		/// <param name="value">ushort的值</param>
@@ -494,8 +469,7 @@ namespace Plcway.Communication.Ethernet.Modbus
 		}
 
 		/// <summary>
-		/// 从返回的modbus的书内容中，提取出真实的数据，适用于写入和读取操作<br />
-		/// Extract real data from the content of the returned modbus book, suitable for writing and reading operations
+		/// 从返回的modbus的书内容中，提取出真实的数据，适用于写入和读取操作。
 		/// </summary>
 		/// <param name="response">返回的核心modbus报文信息</param>
 		/// <returns>结果数据内容</returns>
@@ -520,8 +494,7 @@ namespace Plcway.Communication.Ethernet.Modbus
 		}
 
 		/// <summary>
-		/// 将modbus指令打包成Modbus-Tcp指令，需要指定ID信息来添加6个字节的报文头<br />
-		/// Pack the Modbus command into Modbus-Tcp command, you need to specify the ID information to add a 6-byte message header
+		/// 将modbus指令打包成Modbus-Tcp指令，需要指定ID信息来添加6个字节的报文头。
 		/// </summary>
 		/// <param name="modbus">Modbus核心指令</param>
 		/// <param name="id">消息的序号</param>
@@ -538,8 +511,7 @@ namespace Plcway.Communication.Ethernet.Modbus
 		}
 
 		/// <summary>
-		/// 将modbus-tcp的报文数据重新还原成modbus指令，移除6个字节的报文头数据<br />
-		/// Re-modify the message data of modbus-tcp into the modbus command, remove the 6-byte message header data
+		/// 将modbus-tcp的报文数据重新还原成modbus指令，移除6个字节的报文头数据。
 		/// </summary>
 		/// <param name="modbusTcp">modbus-tcp的报文</param>
 		/// <returns>modbus数据报文</returns>
@@ -549,8 +521,7 @@ namespace Plcway.Communication.Ethernet.Modbus
 		}
 
 		/// <summary>
-		/// 将modbus-rtu的数据重新还原成modbus数据，移除CRC校验的内容<br />
-		/// Restore the data of modbus-rtu to modbus data again, remove the content of CRC check
+		/// 将modbus-rtu的数据重新还原成modbus数据，移除CRC校验的内容。
 		/// </summary>
 		/// <param name="modbusRtu">modbus-rtu的报文</param>
 		/// <returns>modbus数据报文</returns>
@@ -560,8 +531,7 @@ namespace Plcway.Communication.Ethernet.Modbus
 		}
 
 		/// <summary>
-		/// 将modbus指令打包成Modbus-Rtu指令，在报文的末尾添加CRC16的校验码<br />
-		/// Pack the modbus instruction into Modbus-Rtu instruction, add CRC16 check code at the end of the message
+		/// 将modbus指令打包成Modbus-Rtu指令，在报文的末尾添加CRC16的校验码。
 		/// </summary>
 		/// <param name="modbus">Modbus指令</param>
 		/// <returns>Modbus-Rtu指令</returns>
@@ -571,8 +541,7 @@ namespace Plcway.Communication.Ethernet.Modbus
 		}
 
 		/// <summary>
-		/// 将一个modbus核心的数据报文，转换成modbus-ascii的数据报文，增加LRC校验，增加首尾标记数据<br />
-		/// Convert a Modbus core data message into a Modbus-ascii data message, add LRC check, and add head and tail tag data
+		/// 将一个modbus核心的数据报文，转换成modbus-ascii的数据报文，增加LRC校验，增加首尾标记数据。
 		/// </summary>
 		/// <param name="modbus">modbus-rtu的完整报文，携带相关的校验码</param>
 		/// <returns>可以用于直接发送的modbus-ascii的报文</returns>
@@ -584,8 +553,7 @@ namespace Plcway.Communication.Ethernet.Modbus
 		}
 
 		/// <summary>
-		/// 将一个modbus-ascii的数据报文，转换成的modbus核心数据报文，移除首尾标记，移除LRC校验<br />
-		/// Convert a Modbus-ascii data message into a Modbus core data message, remove the first and last tags, and remove the LRC check
+		/// 将一个modbus-ascii的数据报文，转换成的modbus核心数据报文，移除首尾标记，移除LRC校验。
 		/// </summary>
 		/// <param name="modbusAscii">modbus-ascii的完整报文，携带相关的校验码</param>
 		/// <returns>可以用于直接发送的modbus的报文</returns>
@@ -622,8 +590,7 @@ namespace Plcway.Communication.Ethernet.Modbus
 		}
 
 		/// <summary>
-		/// 分析Modbus协议的地址信息，该地址适应于tcp及rtu模式<br />
-		/// Analysis of the address information of Modbus protocol, the address is adapted to tcp and rtu mode
+		/// 分析Modbus协议的地址信息，该地址适应于tcp及rtu模式。
 		/// </summary>
 		/// <param name="address">带格式的地址，比如"100"，"x=4;100"，"s=1;100","s=1;x=4;100"</param>
 		/// <param name="defaultStation">默认的站号信息</param>
@@ -634,7 +601,7 @@ namespace Plcway.Communication.Ethernet.Modbus
 		{
 			try
 			{
-				ModbusAddress modbusAddress = new ModbusAddress(address, defaultStation, defaultFunction);
+				var modbusAddress = new ModbusAddress(address, defaultStation, defaultFunction);
 				if (!isStartWithZero)
 				{
 					if (modbusAddress.Address < 1)
@@ -655,8 +622,7 @@ namespace Plcway.Communication.Ethernet.Modbus
 		}
 
 		/// <summary>
-		/// 通过错误码来获取到对应的文本消息<br />
-		/// Get the corresponding text message through the error code
+		/// 通过错误码来获取到对应的文本消息。
 		/// </summary>
 		/// <param name="code">错误码</param>
 		/// <returns>错误的文本描述</returns>

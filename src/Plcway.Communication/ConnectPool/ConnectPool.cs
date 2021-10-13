@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Threading;
 
 namespace Plcway.Communication.Infrastructure.ConnectPool
@@ -10,12 +9,15 @@ namespace Plcway.Communication.Infrastructure.ConnectPool
 	/// </summary>
 	/// <typeparam name="TConnector">管理的连接类，需要支持IConnector接口</typeparam>
 	/// <remarks>
-	/// 需要先实现 <see cref="IConnector" /> 接口的对象，然后就可以实现真正的连接池了，理论上可以实现任意的连接对象，包括modbus连接对象，各种PLC连接对象，数据库连接对象，redis连接对象，SimplifyNet连接对象等等。下面的示例就是modbus-tcp的实现
-	/// <note type="warning">要想真正的支持连接池访问，还需要服务器支持一个端口的多连接操作，三菱PLC的端口就不支持，如果要测试示例代码的连接池对象，需要使用本组件的<see cref="ModbusTcpServer" />来创建服务器对象</note>
+	/// 需要先实现 <see cref="IConnector" /> 接口的对象，然后就可以实现真正的连接池了，理论上可以实现任意的连接对象，
+	/// 包括modbus连接对象，各种PLC连接对象，数据库连接对象，redis连接对象，SimplifyNet连接对象等等。
+	/// 下面的示例就是modbus-tcp的实现
+	/// <note type="warning">要想真正的支持连接池访问，还需要服务器支持一个端口的多连接操作，三菱PLC的端口就不支持，
+	/// 如果要测试示例代码的连接池对象，需要使用本组件的<see cref="ModbusTcpServer" />来创建服务器对象</note>
 	/// </remarks>
 	public class ConnectPool<TConnector> where TConnector : IConnector
 	{
-		private readonly Func<TConnector> _createConnector = null;
+		private readonly Func<TConnector> _createConnector;
 		private bool _canGetConnector = true;
 		private readonly Timer _timerCheck;
         private readonly object _syncLock = new();
@@ -47,8 +49,6 @@ namespace Plcway.Communication.Infrastructure.ConnectPool
 		/// <param name="createConnector">创建连接对象的委托</param>
 		public ConnectPool(Func<TConnector> createConnector)
 		{
-			Contract.Requires(createConnector != null);
-
 			_createConnector = createConnector;
 			_timerCheck = new Timer(TimerCheckBackground, null, 10000, 30000);
 		}

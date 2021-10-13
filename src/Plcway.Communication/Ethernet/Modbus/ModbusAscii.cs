@@ -10,8 +10,7 @@ namespace Plcway.Communication.Ethernet.Modbus
 	public class ModbusAscii : ModbusRtu
 	{
 		/// <summary>
-		/// 实例化一个Modbus-ascii协议的客户端对象<br />
-		/// Instantiate a client object of the Modbus-ascii protocol
+		/// 实例化一个Modbus-ascii协议的客户端对象。
 		/// </summary>
 		public ModbusAscii()
 		{

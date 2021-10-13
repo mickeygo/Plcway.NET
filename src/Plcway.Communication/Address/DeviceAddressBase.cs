@@ -1,20 +1,17 @@
 namespace Plcway.Communication.Address
 {
 	/// <summary>
-	/// 所有设备通信类的地址基础类<br />
-	/// Address basic class of all device communication classes
+	/// 所有设备通信类的地址基础类
 	/// </summary>
 	public class DeviceAddressBase
 	{
 		/// <summary>
-		/// 获取或设置起始地址<br />
-		/// Get or set the starting address
+		/// 获取或设置起始地址
 		/// </summary>
 		public ushort Address { get; set; }
 
 		/// <summary>
-		/// 解析字符串的地址<br />
-		/// Parse the address of the string
+		/// 解析字符串的地址
 		/// </summary>
 		/// <param name="address">地址信息</param>
 		public virtual void Parse(string address)
@@ -22,7 +19,6 @@ namespace Plcway.Communication.Address
 			Address = ushort.Parse(address);
 		}
 
-		/// <inheritdoc />
 		public override string ToString()
 		{
 			return Address.ToString();

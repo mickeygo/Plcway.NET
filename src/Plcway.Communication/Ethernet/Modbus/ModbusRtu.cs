@@ -42,8 +42,7 @@ namespace Plcway.Communication.Ethernet.Modbus
 		}
 
 		/// <summary>
-		/// 实例化一个Modbus-Rtu协议的客户端对象<br />
-		/// Instantiate a client object of the Modbus-Rtu protocol
+		/// 实例化一个Modbus-Rtu协议的客户端对象。
 		/// </summary>
 		public ModbusRtu()
 		{
@@ -51,8 +50,7 @@ namespace Plcway.Communication.Ethernet.Modbus
 		}
 
 		/// <summary>
-		/// 指定客户端自己的站号来初始化<br />
-		/// Specify the client's own station number to initialize
+		/// 指定客户端自己的站号来初始化。
 		/// </summary>
 		/// <param name="station">客户端自身的站号</param>
 		public ModbusRtu(byte station = 1)

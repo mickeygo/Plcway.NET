@@ -21,7 +21,7 @@ namespace Plcway.Communication.Core
 			return BitConverter.ToInt16(new byte[2]
 			{
 				buffer[1 + index],
-				buffer[index]
+				buffer[index],
 			}, 0);
 		}
 
@@ -30,7 +30,7 @@ namespace Plcway.Communication.Core
 			return BitConverter.ToUInt16(new byte[2]
 			{
 				buffer[1 + index],
-				buffer[index]
+				buffer[index],
 			}, 0);
 		}
 
@@ -41,7 +41,7 @@ namespace Plcway.Communication.Core
 				buffer[3 + index],
 				buffer[2 + index],
 				buffer[1 + index],
-				buffer[index]
+				buffer[index],
 			}), 0);
 		}
 
@@ -52,7 +52,7 @@ namespace Plcway.Communication.Core
 				buffer[3 + index],
 				buffer[2 + index],
 				buffer[1 + index],
-				buffer[index]
+				buffer[index],
 			}), 0);
 		}
 
@@ -67,7 +67,7 @@ namespace Plcway.Communication.Core
 				buffer[3 + index],
 				buffer[2 + index],
 				buffer[1 + index],
-				buffer[index]
+				buffer[index],
 			}), 0);
 		}
 
@@ -82,7 +82,7 @@ namespace Plcway.Communication.Core
 				buffer[3 + index],
 				buffer[2 + index],
 				buffer[1 + index],
-				buffer[index]
+				buffer[index],
 			}), 0);
 		}
 
@@ -93,7 +93,7 @@ namespace Plcway.Communication.Core
 				buffer[3 + index],
 				buffer[2 + index],
 				buffer[1 + index],
-				buffer[index]
+				buffer[index],
 			}), 0);
 		}
 
@@ -108,7 +108,7 @@ namespace Plcway.Communication.Core
 				buffer[3 + index],
 				buffer[2 + index],
 				buffer[1 + index],
-				buffer[index]
+				buffer[index],
 			}), 0);
 		}
 
@@ -118,6 +118,7 @@ namespace Plcway.Communication.Core
 			{
 				return Array.Empty<byte>();
 			}
+
 			byte[] array = new byte[values.Length * 2];
 			for (int i = 0; i < values.Length; i++)
 			{
@@ -134,6 +135,7 @@ namespace Plcway.Communication.Core
 			{
 				return Array.Empty<byte>();
 			}
+
 			byte[] array = new byte[values.Length * 2];
 			for (int i = 0; i < values.Length; i++)
 			{
@@ -146,11 +148,12 @@ namespace Plcway.Communication.Core
 
 		public override byte[] TransByte(int[] values)
 		{
-			//if (values == null)
-			//{
-			//	return Array.Empty<byte>();
-			//}
-			byte[] array = new byte[values.Length * 4];
+            if (values == null)
+            {
+                return Array.Empty<byte>();
+            }
+
+            byte[] array = new byte[values.Length * 4];
 			for (int i = 0; i < values.Length; i++)
 			{
 				byte[] bytes = BitConverter.GetBytes(values[i]);
@@ -166,6 +169,7 @@ namespace Plcway.Communication.Core
 			{
 				return Array.Empty<byte>();
 			}
+
 			byte[] array = new byte[values.Length * 4];
 			for (int i = 0; i < values.Length; i++)
 			{
@@ -182,6 +186,7 @@ namespace Plcway.Communication.Core
 			{
 				return Array.Empty<byte>();
 			}
+
 			byte[] array = new byte[values.Length * 8];
 			for (int i = 0; i < values.Length; i++)
 			{
@@ -198,6 +203,7 @@ namespace Plcway.Communication.Core
 			{
 				return Array.Empty<byte>();
 			}
+
 			byte[] array = new byte[values.Length * 8];
 			for (int i = 0; i < values.Length; i++)
 			{
@@ -214,6 +220,7 @@ namespace Plcway.Communication.Core
 			{
 				return Array.Empty<byte>();
 			}
+
 			byte[] array = new byte[values.Length * 4];
 			for (int i = 0; i < values.Length; i++)
 			{
@@ -230,6 +237,7 @@ namespace Plcway.Communication.Core
 			{
 				return Array.Empty<byte>();
 			}
+
 			byte[] array = new byte[values.Length * 8];
 			for (int i = 0; i < values.Length; i++)
 			{
@@ -244,7 +252,7 @@ namespace Plcway.Communication.Core
 		{
 			return new ReverseBytesTransform(dataFormat)
 			{
-				IsStringReverseByteWord = base.IsStringReverseByteWord
+				IsStringReverseByteWord = IsStringReverseByteWord,
 			};
 		}
 

@@ -13,7 +13,7 @@ namespace Plcway.Communication.Basic
 		/// 压缩字节数据
 		/// </summary>
 		/// <param name="bytes">等待被压缩的数据</param>
-		/// <exception cref="T:System.ArgumentNullException"></exception>
+		/// <exception cref="ArgumentNullException"></exception>
 		/// <returns>压缩之后的字节数据</returns>
 		public static byte[] CompressBytes(byte[] bytes)
 		{
@@ -34,7 +34,7 @@ namespace Plcway.Communication.Basic
 		/// 解压压缩后的数据
 		/// </summary>
 		/// <param name="bytes">压缩后的数据</param>
-		/// <exception cref="T:System.ArgumentNullException"></exception>
+		/// <exception cref="ArgumentNullException"></exception>
 		/// <returns>压缩前的原始字节数据</returns>
 		public static byte[] Decompress(byte[] bytes)
 		{

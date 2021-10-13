@@ -1,7 +1,7 @@
-using Plcway.Communication.Basic;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Plcway.Communication.Basic;
 
 namespace Plcway.Communication
 {
@@ -165,8 +165,8 @@ namespace Plcway.Communication
 		/// <returns>包装后的数据信息</returns>
 		internal static byte[] CommandBytes(int command, int customer, Guid token, byte[] data)
 		{
-			int value = 3001;
-			int num = ((data != null) ? data.Length : 0);
+			int value = ProtocolNoZipped;
+			int num = (data != null) ? data.Length : 0;
 			byte[] array = new byte[32 + num];
 			BitConverter.GetBytes(command).CopyTo(array, 0);
 			BitConverter.GetBytes(customer).CopyTo(array, 4);
@@ -192,13 +192,14 @@ namespace Plcway.Communication
 			if (content != null)
 			{
 				int num = BitConverter.ToInt32(head, 8);
-				if (num == 3002)
+				if (num == ProtocolZipped)
 				{
 					content = SoftZipped.Decompress(content);
 				}
 				return HslSecurity.ByteDecrypt(content);
 			}
-			return null;
+
+			return Array.Empty<byte>();
 		}
 
 		/// <summary>
@@ -210,7 +211,7 @@ namespace Plcway.Communication
 		/// <returns>包装后的指令信息</returns>
 		internal static byte[] CommandBytes(int customer, Guid token, byte[] data)
 		{
-			return CommandBytes(1002, customer, token, data);
+			return CommandBytes(ProtocolUserBytes, customer, token, data);
 		}
 
 		/// <summary>
@@ -224,9 +225,9 @@ namespace Plcway.Communication
 		{
 			if (data == null)
 			{
-				return CommandBytes(1001, customer, token, null);
+				return CommandBytes(ProtocolUserString, customer, token, null);
 			}
-			return CommandBytes(1001, customer, token, Encoding.Unicode.GetBytes(data));
+			return CommandBytes(ProtocolUserString, customer, token, Encoding.Unicode.GetBytes(data));
 		}
 
 		/// <summary>
@@ -238,10 +239,9 @@ namespace Plcway.Communication
 		/// <returns>包装后的指令信息</returns>
 		internal static byte[] CommandBytes(int customer, Guid token, string[] data)
 		{
-			return CommandBytes(1005, customer, token, PackStringArrayToByte(data));
+			return CommandBytes(ProtocolUserStringArray, customer, token, PackStringArrayToByte(data));
 		}
 
-		/// <inheritdoc cref="M:HslCommunication.HslProtocol.PackStringArrayToByte(System.String[])" />
 		internal static byte[] PackStringArrayToByte(string data)
 		{
 			return PackStringArrayToByte(new string[1] { data });
@@ -256,7 +256,7 @@ namespace Plcway.Communication
 		{
 			if (data == null)
 			{
-				data = new string[0];
+				data = Array.Empty<string>();
 			}
 
 			var list = new List<byte>();
@@ -286,7 +286,7 @@ namespace Plcway.Communication
 		{
 			if (content != null && content.Length < 4)
 			{
-				return null;
+				return Array.Empty<string>();
 			}
 
 			int num = 0;
@@ -319,8 +319,9 @@ namespace Plcway.Communication
 		{
 			if (content.Length == 0)
 			{
-				return OperateResult.CreateSuccessResult((NetHandle)0, new byte[0]);
+				return OperateResult.CreateSuccessResult((NetHandle)0, Array.Empty<byte>());
 			}
+
 			byte[] array = new byte[32];
 			byte[] array2 = new byte[content.Length - 32];
 			Array.Copy(content, 0, array, 0, 32);
@@ -328,10 +329,12 @@ namespace Plcway.Communication
 			{
 				Array.Copy(content, 32, array2, 0, content.Length - 32);
 			}
-			if (BitConverter.ToInt32(array, 0) == 2010)
+
+			if (BitConverter.ToInt32(array, 0) == ProtocolErrorMsg)
 			{
 				return new OperateResult<NetHandle, byte[]>(Encoding.Unicode.GetString(array2));
 			}
+
 			int num = BitConverter.ToInt32(array, 0);
 			int num2 = BitConverter.ToInt32(array, 4);
 			array2 = CommandAnalysis(array, array2);
@@ -339,6 +342,7 @@ namespace Plcway.Communication
 			{
 				return new OperateResult<NetHandle, byte[]>(Encoding.Unicode.GetString(array2));
 			}
+
 			return OperateResult.CreateSuccessResult((NetHandle)num2, array2);
 		}
 	}

@@ -24,7 +24,7 @@ namespace Plcway.Communication.Basic
 		/// <summary>
 		/// 流水号的文本头
 		/// </summary>
-		private string TextHead = string.Empty;
+		private readonly string TextHead = string.Empty;
 
 		/// <summary>
 		/// 时间格式默认年月日

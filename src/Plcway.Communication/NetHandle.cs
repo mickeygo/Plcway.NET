@@ -6,7 +6,7 @@ namespace Plcway.Communication
 	/// 用于网络传递的信息头，使用上等同于int
 	/// </summary>
 	/// <remarks>
-	/// 通常用于<see cref="T:HslCommunication.Enthernet.NetComplexServer" />和<see cref="T:HslCommunication.Enthernet.NetComplexClient" />之间的通信，以及<see cref="T:HslCommunication.Enthernet.NetSimplifyServer" />和<see cref="T:HslCommunication.Enthernet.NetSimplifyClient" />通讯
+	/// 通常用于<see cref="NetComplexServer" />和<see cref="NetComplexClient" />之间的通信，以及<see cref="NetSimplifyServer" />和<see cref="NetSimplifyClient" />通讯
 	/// </remarks>
 	[StructLayout(LayoutKind.Explicit)]
 	public struct NetHandle
@@ -234,6 +234,7 @@ namespace Plcway.Communication
 			{
 				num = 0;
 			}
+
 			if (num != 0)
 			{
 				return CodeValue.Equals(netHandle.CodeValue);

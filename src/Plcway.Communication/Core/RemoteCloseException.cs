@@ -3,8 +3,7 @@ using System;
 namespace Plcway.Communication.Core
 {
 	/// <summary>
-	/// 远程对象关闭的异常信息<br />
-	/// Exception information of remote object close
+	/// 远程对象关闭的异常信息。
 	/// </summary>
 	public class RemoteCloseException : Exception
 	{

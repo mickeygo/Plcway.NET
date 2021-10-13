@@ -33,6 +33,6 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 		/// <summary>
 		/// 200系统，需要额外配置以太网模块
 		/// </summary>
-		S200
+		S200,
 	}
 }
