@@ -9,8 +9,7 @@ using Plcway.Communication.Extensions;
 namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 {
 	/// <summary>
-	/// AllenBradley品牌的PLC，针对SLC系列的通信的实现，测试PLC为1747。<br />
-	/// AllenBradley brand PLC, for the realization of SLC series communication, the test PLC is 1747.
+	/// AllenBradley品牌的PLC，针对SLC系列的通信的实现，测试PLC为1747。
 	/// </summary>
 	/// <remarks>
 	/// 地址格式如下：
@@ -96,8 +95,8 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 		/// </summary>
 		public AllenBradleySLCNet()
 		{
-			base.WordLength = 2;
-			base.ByteTransform = new RegularByteTransform();
+            WordLength = 2;
+            ByteTransform = new RegularByteTransform();
 		}
 
 		/// <summary>
@@ -107,39 +106,38 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 		/// <param name="port">PLC Port</param>
 		public AllenBradleySLCNet(string ipAddress, int port = 44818)
 		{
-			base.WordLength = 2;
+            WordLength = 2;
 			IpAddress = ipAddress;
 			Port = port;
-			base.ByteTransform = new RegularByteTransform();
+            ByteTransform = new RegularByteTransform();
 		}
 
-		/// <inheritdoc />
 		protected override INetMessage GetNewNetMessage()
 		{
 			return new AllenBradleySLCMessage();
 		}
 
-		/// <inheritdoc />
 		protected override OperateResult InitializationOnConnect(Socket socket)
 		{
-			OperateResult<byte[]> operateResult = ReadFromCoreServer(socket, "01 01 00 00 00 00 00 00 00 00 00 00 00 04 00 05 00 00 00 00 00 00 00 00 00 00 00 00".ToHexBytes());
+			var operateResult = ReadFromCoreServer(socket, "01 01 00 00 00 00 00 00 00 00 00 00 00 04 00 05 00 00 00 00 00 00 00 00 00 00 00 00".ToHexBytes());
 			if (!operateResult.IsSuccess)
 			{
 				return operateResult;
 			}
-			SessionHandle = base.ByteTransform.TransUInt32(operateResult.Content, 4);
+
+			SessionHandle = ByteTransform.TransUInt32(operateResult.Content, 4);
 			return OperateResult.CreateSuccessResult();
 		}
 
-		/// <inheritdoc />
 		protected override async Task<OperateResult> InitializationOnConnectAsync(Socket socket)
 		{
-			OperateResult<byte[]> read = await ReadFromCoreServerAsync(socket, "01 01 00 00 00 00 00 00 00 00 00 00 00 04 00 05 00 00 00 00 00 00 00 00 00 00 00 00".ToHexBytes());
+			var read = await ReadFromCoreServerAsync(socket, "01 01 00 00 00 00 00 00 00 00 00 00 00 04 00 05 00 00 00 00 00 00 00 00 00 00 00 00".ToHexBytes());
 			if (!read.IsSuccess)
 			{
 				return read;
 			}
-			SessionHandle = base.ByteTransform.TransUInt32(read.Content, 4);
+
+			SessionHandle = ByteTransform.TransUInt32(read.Content, 4);
 			return OperateResult.CreateSuccessResult();
 		}
 
@@ -156,11 +154,13 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 			{
 				return operateResult;
 			}
+
 			OperateResult<byte[]> operateResult2 = ReadFromCoreServer(PackCommand(operateResult.Content));
 			if (!operateResult2.IsSuccess)
 			{
 				return operateResult2;
 			}
+
 			OperateResult<byte[]> operateResult3 = ExtraActualContent(operateResult2.Content);
 			if (!operateResult3.IsSuccess)
 			{
@@ -176,11 +176,13 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 			{
 				return operateResult;
 			}
+
 			OperateResult<byte[]> operateResult2 = ReadFromCoreServer(PackCommand(operateResult.Content));
 			if (!operateResult2.IsSuccess)
 			{
 				return operateResult2;
 			}
+
 			OperateResult<byte[]> operateResult3 = ExtraActualContent(operateResult2.Content);
 			if (!operateResult3.IsSuccess)
 			{
@@ -197,6 +199,7 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 			{
 				return OperateResult.CreateFailedResult<bool>(operateResult);
 			}
+
 			return OperateResult.CreateSuccessResult(operateResult.Content.ToBoolArray()[bitIndex]);
 		}
 
@@ -207,11 +210,13 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 			{
 				return operateResult;
 			}
+
 			OperateResult<byte[]> operateResult2 = ReadFromCoreServer(PackCommand(operateResult.Content));
 			if (!operateResult2.IsSuccess)
 			{
 				return operateResult2;
 			}
+
 			OperateResult<byte[]> operateResult3 = ExtraActualContent(operateResult2.Content);
 			if (!operateResult3.IsSuccess)
 			{
@@ -227,20 +232,22 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 			{
 				return command;
 			}
+
 			OperateResult<byte[]> read = await ReadFromCoreServerAsync(PackCommand(command.Content));
 			if (!read.IsSuccess)
 			{
 				return read;
 			}
+
 			OperateResult<byte[]> extra = ExtraActualContent(read.Content);
 			if (!extra.IsSuccess)
 			{
 				return extra;
 			}
+
 			return OperateResult.CreateSuccessResult(extra.Content);
 		}
 
-		/// <inheritdoc />
 		public override async Task<OperateResult> WriteAsync(string address, byte[] value)
 		{
 			OperateResult<byte[]> command = BuildWriteCommand(address, value);
@@ -248,11 +255,13 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 			{
 				return command;
 			}
+
 			OperateResult<byte[]> read = await ReadFromCoreServerAsync(PackCommand(command.Content));
 			if (!read.IsSuccess)
 			{
 				return read;
 			}
+
 			OperateResult<byte[]> extra = ExtraActualContent(read.Content);
 			if (!extra.IsSuccess)
 			{
@@ -261,7 +270,6 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 			return OperateResult.CreateSuccessResult(extra.Content);
 		}
 
-		/// <inheritdoc />
 		public override async Task<OperateResult<bool>> ReadBoolAsync(string address)
 		{
 			address = AnalysisBitIndex(address, out var bitIndex);
@@ -273,7 +281,6 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 			return OperateResult.CreateSuccessResult(read.Content.ToBoolArray()[bitIndex]);
 		}
 
-		/// <inheritdoc />
 		public override async Task<OperateResult> WriteAsync(string address, bool value)
 		{
 			OperateResult<byte[]> command = BuildWriteCommand(address, value);
@@ -281,11 +288,13 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 			{
 				return command;
 			}
+
 			OperateResult<byte[]> read = await ReadFromCoreServerAsync(PackCommand(command.Content));
 			if (!read.IsSuccess)
 			{
 				return read;
 			}
+
 			OperateResult<byte[]> extra = ExtraActualContent(read.Content);
 			if (!extra.IsSuccess)
 			{
@@ -320,17 +329,18 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 			{
 				num = address.IndexOf('.');
 			}
+
 			if (num > 0)
 			{
-				bitIndex = int.Parse(address.Substring(num + 1));
-				address = address.Substring(0, num);
+				bitIndex = int.Parse(address[(num + 1)..]);
+				address = address[..num];
 			}
+
 			return address;
 		}
 
 		/// <summary>
-		/// 分析当前的地址信息，返回类型代号，区块号，起始地址<br />
-		/// Analyze the current address information, return the type code, block number, and actual address
+		/// 分析当前的地址信息，返回类型代号，区块号，起始地址。
 		/// </summary>
 		/// <param name="address">地址信息</param>
 		/// <returns>结果内容对象</returns>
@@ -340,46 +350,29 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 			{
 				return new OperateResult<byte, byte, ushort>("Address can't find ':', example : A9:0");
 			}
+
 			string[] array = address.Split(new char[1] { ':' });
 			try
 			{
-				OperateResult<byte, byte, ushort> operateResult = new OperateResult<byte, byte, ushort>();
-				switch (array[0][0])
-				{
-				case 'A':
-					operateResult.Content1 = 142;
-					break;
-				case 'B':
-					operateResult.Content1 = 133;
-					break;
-				case 'N':
-					operateResult.Content1 = 137;
-					break;
-				case 'F':
-					operateResult.Content1 = 138;
-					break;
-				case 'S':
-					operateResult.Content1 = 132;
-					break;
-				case 'C':
-					operateResult.Content1 = 135;
-					break;
-				case 'I':
-					operateResult.Content1 = 131;
-					break;
-				case 'O':
-					operateResult.Content1 = 130;
-					break;
-				case 'R':
-					operateResult.Content1 = 136;
-					break;
-				case 'T':
-					operateResult.Content1 = 134;
-					break;
-				default:
-					throw new Exception("Address code wrong, must be A,B,N,F,S,C,I,O,R,T");
-				}
-				if (operateResult.Content1 == 132)
+                var operateResult = new OperateResult<byte, byte, ushort>
+                {
+                    Content1 = array[0][0] switch
+                    {
+                        'A' => 142,
+                        'B' => 133,
+                        'N' => 137,
+                        'F' => 138,
+                        'S' => 132,
+                        'C' => 135,
+                        'I' => 131,
+                        'O' => 130,
+                        'R' => 136,
+                        'T' => 134,
+                        _ => throw new Exception("Address code wrong, must be A,B,N,F,S,C,I,O,R,T"),
+                    },
+                };
+
+                if (operateResult.Content1 == 132)
 				{
 					operateResult.Content2 = 2;
 				}
@@ -387,6 +380,7 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 				{
 					operateResult.Content2 = byte.Parse(array[0].Substring(1));
 				}
+
 				operateResult.Content3 = ushort.Parse(array[1]);
 				operateResult.IsSuccess = true;
 				operateResult.Message = "Success";
@@ -394,7 +388,7 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 			}
 			catch (Exception ex)
 			{
-				return new OperateResult<byte, byte, ushort>("Wrong Address formate: " + ex.Message);
+				return new OperateResult<byte, byte, ushort>($"Wrong Address formate: {ex.Message}");
 			}
 		}
 
@@ -411,14 +405,17 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 			{
 				return OperateResult.CreateFailedResult<byte[]>(operateResult);
 			}
+
 			if (length < 2)
 			{
 				length = 2;
 			}
+
 			if (operateResult.Content1 == 142)
 			{
 				operateResult.Content3 /= 2;
 			}
+
 			byte[] array = new byte[14]
 			{
 				0,
@@ -434,7 +431,7 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 				operateResult.Content2,
 				operateResult.Content1,
 				0,
-				0
+				0,
 			};
 			BitConverter.GetBytes(operateResult.Content3).CopyTo(array, 12);
 			return OperateResult.CreateSuccessResult(array);
@@ -453,10 +450,12 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 			{
 				return OperateResult.CreateFailedResult<byte[]>(operateResult);
 			}
+
 			if (operateResult.Content1 == 142)
 			{
 				operateResult.Content3 /= 2;
 			}
+
 			byte[] array = new byte[18 + value.Length];
 			array[0] = 0;
 			array[1] = 5;
@@ -493,6 +492,7 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 			{
 				return OperateResult.CreateFailedResult<byte[]>(operateResult);
 			}
+
 			if (operateResult.Content1 == 142)
 			{
 				operateResult.Content3 /= 2;
@@ -523,7 +523,7 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 		{
 			if (content.Length < 36)
 			{
-				return new OperateResult<byte[]>("ReceiveDataLengthTooShort " + content.ToHexString(' '));
+				return new OperateResult<byte[]>($"{ErrorCode.ReceiveDataLengthTooShort.Desc()} {content.ToHexString(' ')}");
 			}
 			return OperateResult.CreateSuccessResult(content.RemoveBegin(36));
 		}

@@ -39,8 +39,7 @@
     <Folder Include="Codecs\Http\" />
     <Folder Include="Codecs\Mqtt\" />
     <Folder Include="Codecs\Protobuf\" />
-    <Folder Include="Ethernet\Profinet\Melsec\" />
-    <Folder Include="Ethernet\Profinet\Omron\" />
+    <Folder Include="Utils\" />
   </ItemGroup>
 
 </Project>

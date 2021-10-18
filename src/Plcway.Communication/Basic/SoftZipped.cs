@@ -17,9 +17,9 @@ namespace Plcway.Communication.Basic
 		/// <returns>压缩之后的字节数据</returns>
 		public static byte[] CompressBytes(byte[] bytes)
 		{
-			if (bytes == null)
+			if (bytes.Length == 0)
 			{
-				throw new ArgumentNullException(nameof(bytes));
+				return Array.Empty<byte>();
 			}
 
 			using var memoryStream = new MemoryStream();
@@ -38,9 +38,9 @@ namespace Plcway.Communication.Basic
 		/// <returns>压缩前的原始字节数据</returns>
 		public static byte[] Decompress(byte[] bytes)
 		{
-			if (bytes == null)
+			if (bytes.Length == 0)
 			{
-				throw new ArgumentNullException(nameof(bytes));
+				return Array.Empty<byte>();
 			}
 
 			using var stream = new MemoryStream(bytes);

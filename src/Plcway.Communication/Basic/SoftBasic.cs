@@ -16,7 +16,7 @@ namespace Plcway.Communication.Basic
 		/// <summary>
 		/// 获取文件的md5码
 		/// </summary>
-		/// <param name="filePath">文件的路径，既可以是完整的路径，也可以是相对的路径 -&gt; The path to the file</param>
+		/// <param name="filePath">文件的路径，既可以是完整的路径，也可以是相对的路径</param>
 		/// <returns>Md5字符串</returns>
 		public static string CalculateFileMD5(string filePath)
 		{
@@ -842,7 +842,7 @@ namespace Plcway.Communication.Basic
 			}
 			if (value.Length <= leftLength + rightLength)
 			{
-				return new T[0];
+				return Array.Empty<T>();
 			}
 
 			T[] array = new T[value.Length - leftLength - rightLength];
@@ -970,8 +970,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 将两个<see cref="T:System.String" />的数组和多个<see cref="T:System.String" /> 类型的对象整合成一个数组<br />
-		/// Combine two arrays of <see cref="T:System.String" /> and multiple objects of type <see cref="T:System.String" /> into one array
+		/// 将两个<see cref="T:System.String" />的数组和多个<see cref="T:System.String" /> 类型的对象整合成一个数组。
 		/// </summary>
 		/// <param name="first">第一个数据对象</param>
 		/// <param name="second">第二个数据对象</param>
@@ -987,8 +986,7 @@ namespace Plcway.Communication.Basic
 		}
 
 		/// <summary>
-		/// 将两个<see cref="T:System.String" />的数组和多个<see cref="T:System.String" /> 类型的对象整合成一个数组<br />
-		/// Combine two arrays of <see cref="T:System.String" /> and multiple objects of type <see cref="T:System.String" /> into one array
+		/// 将两个<see cref="T:System.String" />的数组和多个<see cref="T:System.String" /> 类型的对象整合成一个数组。
 		/// </summary>
 		/// <param name="first">第一个数据对象</param>
 		/// <param name="second">第二个数据对象</param>

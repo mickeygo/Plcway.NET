@@ -12,7 +12,7 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 	/// </summary>
 	public class AllenBradleyDF1Serial : SerialDeviceBase
 	{
-		private SoftIncrementCount incrementCount;
+		private readonly SoftIncrementCount incrementCount;
 
 		/// <summary>
 		/// 站号信息
@@ -56,12 +56,13 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 			byte station = (byte)HslHelper.ExtractParameter(ref address, "s", Station);
 			byte dstNode = (byte)HslHelper.ExtractParameter(ref address, "dst", DstNode);
 			byte srcNode = (byte)HslHelper.ExtractParameter(ref address, "src", SrcNode);
-			OperateResult<byte[]> operateResult = BuildProtectedTypedLogicalRead(dstNode, srcNode, (int)incrementCount.GetCurrentValue(), address, length);
+			var operateResult = BuildProtectedTypedLogicalRead(dstNode, srcNode, (int)incrementCount.GetCurrentValue(), address, length);
 			if (!operateResult.IsSuccess)
 			{
 				return operateResult;
 			}
-			OperateResult<byte[]> operateResult2 = ReadFromCoreServer(PackCommand(station, operateResult.Content));
+
+			var operateResult2 = ReadFromCoreServer(PackCommand(station, operateResult.Content));
 			if (!operateResult2.IsSuccess)
 			{
 				return operateResult2;
@@ -80,12 +81,13 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 			byte station = (byte)HslHelper.ExtractParameter(ref address, "s", Station);
 			byte dstNode = (byte)HslHelper.ExtractParameter(ref address, "dst", DstNode);
 			byte srcNode = (byte)HslHelper.ExtractParameter(ref address, "src", SrcNode);
-			OperateResult<byte[]> operateResult = BuildProtectedTypedLogicalWrite(dstNode, srcNode, (int)incrementCount.GetCurrentValue(), address, value);
+			var operateResult = BuildProtectedTypedLogicalWrite(dstNode, srcNode, (int)incrementCount.GetCurrentValue(), address, value);
 			if (!operateResult.IsSuccess)
 			{
 				return operateResult;
 			}
-			OperateResult<byte[]> operateResult2 = ReadFromCoreServer(PackCommand(station, operateResult.Content));
+
+			var operateResult2 = ReadFromCoreServer(PackCommand(station, operateResult.Content));
 			if (!operateResult2.IsSuccess)
 			{
 				return operateResult2;
@@ -106,7 +108,7 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 				num++;
 				return new byte[1] { (byte)num };
 			}
-			byte[] value = SoftBasic.SpliceArray<byte>(new byte[1] { station }, new byte[1] { 2 }, command, new byte[1] { 3 });
+			byte[] value = SoftBasic.SpliceArray(new byte[1] { station }, new byte[1] { 2 }, command, new byte[1] { 3 });
 			return SoftCRC16.CRC16(value, 160, 1, 0, 0).SelectLast(2);
 		}
 
@@ -127,6 +129,7 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 			{
 				memoryStream.WriteByte(station);
 			}
+
 			memoryStream.WriteByte(16);
 			memoryStream.WriteByte(2);
 			for (int i = 0; i < command.Length; i++)
@@ -137,6 +140,7 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 					memoryStream.WriteByte(command[i]);
 				}
 			}
+
 			memoryStream.WriteByte(16);
 			memoryStream.WriteByte(3);
 			memoryStream.Write(array, 0, array.Length);
@@ -146,8 +150,7 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 		}
 
 		/// <summary>
-		/// 构建0F-A2命令码的报文读取指令，用来读取文件数据。适用 Micro-Logix1000,SLC500,SLC 5/03,SLC 5/04，地址示例：N7:1<br />
-		/// Construct a message read instruction of 0F-A2 command code to read file data. Applicable to Micro-Logix1000, SLC500, SLC 5/03, SLC 5/04, address example: N7:1
+		/// 构建0F-A2命令码的报文读取指令，用来读取文件数据。适用 Micro-Logix1000,SLC500,SLC 5/03,SLC 5/04，地址示例：N7:1。
 		/// </summary>
 		/// <param name="dstNode">目标节点号</param>
 		/// <param name="srcNode">原节点号</param>
@@ -165,6 +168,7 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 			{
 				return OperateResult.CreateFailedResult<byte[]>(operateResult);
 			}
+
 			return OperateResult.CreateSuccessResult(new byte[12]
 			{
 				dstNode,
@@ -183,8 +187,7 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 		}
 
 		/// <summary>
-		/// 构建0F-AA命令码的写入读取指令，用来写入文件数据。适用 Micro-Logix1000,SLC500,SLC 5/03,SLC 5/04，地址示例：N7:1<br />
-		/// Construct a write and read command of 0F-AA command code to write file data. Applicable to Micro-Logix1000, SLC500, SLC 5/03, SLC 5/04, address example: N7:1
+		/// 构建0F-AA命令码的写入读取指令，用来写入文件数据。适用 Micro-Logix1000,SLC500,SLC 5/03,SLC 5/04，地址示例：N7:1。
 		/// </summary>
 		/// <param name="dstNode">目标节点号</param>
 		/// <param name="srcNode">原节点号</param>
@@ -202,6 +205,7 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 			{
 				return OperateResult.CreateFailedResult<byte[]>(operateResult);
 			}
+
 			byte[] array = new byte[12 + data.Length];
 			array[0] = dstNode;
 			array[1] = srcNode;
@@ -220,8 +224,7 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 		}
 
 		/// <summary>
-		/// 提取返回报文的数据内容，将其转换成实际的数据内容，如果PLC返回了错误信息，则结果对象为失败。<br />
-		/// Extract the data content of the returned message and convert it into the actual data content. If the PLC returns an error message, the result object is a failure.
+		/// 提取返回报文的数据内容，将其转换成实际的数据内容，如果PLC返回了错误信息，则结果对象为失败。
 		/// </summary>
 		/// <param name="content">PLC返回的报文信息</param>
 		/// <returns>结果对象内容</returns>
@@ -238,44 +241,50 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 						break;
 					}
 				}
+
 				if (num < 0 || num >= content.Length - 6)
 				{
 					return new OperateResult<byte[]>("Message must start with '10 02', source: " + content.ToHexString(' '));
 				}
-				MemoryStream memoryStream = new MemoryStream();
-				for (int j = num; j < content.Length - 1; j++)
+
+				using (var memoryStream = new MemoryStream())
 				{
-					if (content[j] == 16 && content[j + 1] == 16)
+					for (int j = num; j < content.Length - 1; j++)
 					{
+						if (content[j] == 16 && content[j + 1] == 16)
+						{
+							memoryStream.WriteByte(content[j]);
+							j++;
+							continue;
+						}
+						if (content[j] == 16 && content[j + 1] == 3)
+						{
+							break;
+						}
 						memoryStream.WriteByte(content[j]);
-						j++;
-						continue;
 					}
-					if (content[j] == 16 && content[j + 1] == 3)
-					{
-						break;
-					}
-					memoryStream.WriteByte(content[j]);
+					content = memoryStream.ToArray();
 				}
-				content = memoryStream.ToArray();
-				memoryStream.Dispose();
+
 				if (content[3] == 240)
 				{
 					return new OperateResult<byte[]>(GetExtStatusDescription(content[6]));
 				}
+
 				if (content[3] != 0)
 				{
 					return new OperateResult<byte[]>(GetStatusDescription(content[3]));
 				}
+
 				if (content.Length > 6)
 				{
 					return OperateResult.CreateSuccessResult(content.RemoveBegin(6));
 				}
-				return OperateResult.CreateSuccessResult(new byte[0]);
+				return OperateResult.CreateSuccessResult(Array.Empty<byte>());
 			}
 			catch (Exception ex)
 			{
-				return new OperateResult<byte[]>(ex.Message + " Source:" + content.ToHexString(' '));
+				return new OperateResult<byte[]>($"{ex.Message} Source:{content.ToHexString(' ')}");
 			}
 		}
 
@@ -365,7 +374,6 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 			};
 		}
 
-		/// <inheritdoc />
 		public override string ToString()
 		{
 			return $"AllenBradleyDF1Serial[{base.PortName}:{base.BaudRate}]";

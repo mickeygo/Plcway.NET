@@ -135,7 +135,7 @@ namespace Plcway.Communication.Infrastructure.ConnectPool
 			{
 				for (int num = _connectors.Count - 1; num >= 0; num--)
 				{
-					if ((DateTime.Now - _connectors[num].LatestTime).TotalSeconds > (double)ConectionExpireTime && !_connectors[num].IsUsing)
+					if ((DateTime.Now - _connectors[num].LatestTime).TotalSeconds > ConectionExpireTime && !_connectors[num].IsUsing)
 					{
 						_connectors[num].Close();
 						_connectors.RemoveAt(num);

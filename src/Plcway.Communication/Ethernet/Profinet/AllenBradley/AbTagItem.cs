@@ -29,7 +29,7 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 			set
 			{
 				symbolType = value;
-				ArrayDimension = (((symbolType & 0x4000) == 16384) ? 2 : (((symbolType & 0x2000) == 8192) ? 1 : 0));
+				ArrayDimension = ((symbolType & 0x4000) == 16384) ? 2 : (((symbolType & 0x2000) == 8192) ? 1 : 0);
 				IsStruct = (symbolType & 0x8000) == 32768;
 			}
 		}

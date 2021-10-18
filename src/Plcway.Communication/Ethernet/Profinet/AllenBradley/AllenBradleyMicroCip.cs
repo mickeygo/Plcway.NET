@@ -1,8 +1,7 @@
 namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 {
 	/// <summary>
-	/// AB PLC的cip通信实现类，适用Micro800系列控制系统<br />
-	/// AB PLC's cip communication implementation class, suitable for Micro800 series control system
+	/// AB PLC的cip通信实现类，适用Micro800系列控制系统。
 	/// </summary>
 	public class AllenBradleyMicroCip : AllenBradleyNet
 	{

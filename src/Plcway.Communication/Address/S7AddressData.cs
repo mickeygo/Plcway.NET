@@ -137,7 +137,7 @@ namespace Plcway.Communication.Address
 				{
 					if (address[0] != 'V')
 					{
-						return new OperateResult<S7AddressData>("Not Supported DataType");
+						return new OperateResult<S7AddressData>(ErrorCode.NotSupportedDataType.Desc());
 					}
 
 					s7AddressData.DataCode = 132;

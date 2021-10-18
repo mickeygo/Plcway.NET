@@ -806,7 +806,7 @@ namespace Plcway.Communication.Core.Net
 			return OperateResult.CreateSuccessResult();
 		}
 
-		protected async Task<OperateResult<Socket>> CreateSocketAndConnectAsync(IPEndPoint endPoint, int timeOut, IPEndPoint local = null)
+		protected async Task<OperateResult<Socket>> CreateSocketAndConnectAsync(IPEndPoint endPoint, int timeOut, IPEndPoint? local = null)
 		{
 			int connectCount = 0;
 			while (true)
@@ -833,6 +833,7 @@ namespace Plcway.Communication.Core.Net
 					{
 						connectErrorCount++;
 					}
+
 					if (!(connectTimeout.GetConsumeTime() < TimeSpan.FromMilliseconds(500.0)) || connectCount >= 2)
 					{
 						if (connectTimeout.IsTimeout)
@@ -841,6 +842,7 @@ namespace Plcway.Communication.Core.Net
 						}
 						return new OperateResult<Socket>(-connectErrorCount, "Socket Exception -> " + ex.Message);
 					}
+
 					await Task.Delay(100);
 				}
 			}

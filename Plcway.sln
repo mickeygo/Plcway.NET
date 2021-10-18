@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plcway.Abstract.Tests", "te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plcway.Framework", "src\Plcway.Framework\Plcway.Framework.csproj", "{E0AE0400-9449-42C9-9881-1E1B8239F1FC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plcway.Benchmarks", "tests\Plcway.Benchmarks\Plcway.Benchmarks.csproj", "{83CD88BB-3C5E-4DEF-9790-507D12140A6F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{E0AE0400-9449-42C9-9881-1E1B8239F1FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E0AE0400-9449-42C9-9881-1E1B8239F1FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E0AE0400-9449-42C9-9881-1E1B8239F1FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83CD88BB-3C5E-4DEF-9790-507D12140A6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83CD88BB-3C5E-4DEF-9790-507D12140A6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83CD88BB-3C5E-4DEF-9790-507D12140A6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83CD88BB-3C5E-4DEF-9790-507D12140A6F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -62,6 +68,7 @@ Global
 		{79B73876-0FD1-4B56-BE3A-68D8074351A7} = {8E98A817-C717-4A96-A8D2-3906C1DD9FEF}
 		{72230BDE-23E5-42E2-A56A-1798D8D0A7F8} = {DB84F4CB-A2DC-41CC-9DC0-C6E6BBF751F4}
 		{E0AE0400-9449-42C9-9881-1E1B8239F1FC} = {FBD8A4C9-ED02-4B8B-91BB-9B58EA81FF3D}
+		{83CD88BB-3C5E-4DEF-9790-507D12140A6F} = {DB84F4CB-A2DC-41CC-9DC0-C6E6BBF751F4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {ED47786F-9F3E-439F-A1AA-E1757B65F89D}

@@ -10,10 +10,12 @@ namespace Plcway.Communication.Tests.Ethernet.Modbus
     /// </summary>
     public class ModbusTcpNet_Tests
     {
+        private readonly double[] _doubleArray5 = new[] { 10.1, 21.2, 32.3, 43.4, 54.5 };
+
         [Fact]
         public void Should_Read_Test()
         {
-            using var modbus = new ModbusTcpNet("127.0.0.1");
+            using var modbus = OpenAndConnectConn(true);
 
             var ret1 = modbus.ReadInt16("x=3;11");
             Assert.True(ret1.IsSuccess, ret1.Message);
@@ -53,17 +55,16 @@ namespace Plcway.Communication.Tests.Ethernet.Modbus
             Assert.True(ret9.Content == "abc123测试", ret9.Content);
 
             // 批量读取
-            var ret10 = modbus.ReadDouble("x=3;51", 5);
+            var ret10 = modbus.ReadDouble("x=3;51", 5);  // 从地址 51 开始，读取指定个数的数据
             Assert.True(ret10.IsSuccess, ret10.Message);
-            Assert.True(ArrayDeepEqual(ret10.Content, doubles), string.Join(", ", ret10.Content));
+            Assert.True(ArrayDeepEqual(ret10.Content, _doubleArray5), string.Join(", ", ret10.Content));
         }
-
-        private readonly double[] doubles = new[] { 10.1, 21.2, 32.3, 43.4, 54.5 };
 
         [Fact]
         public void Should_Write_Test()
         {
-            using var modbus = new ModbusTcpNet("127.0.0.1");
+            using var modbus = OpenAndConnectConn(true);
+
             modbus.Write("x=3;11", (short)11);
             modbus.Write("x=3;12", (ushort)12);
             modbus.Write("x=3;13", 13);
@@ -75,10 +76,22 @@ namespace Plcway.Communication.Tests.Ethernet.Modbus
 
             modbus.Write("x=3;41", "abc123测试", Encoding.Unicode);
 
-            modbus.Write("x=3;51", doubles);  // 批量写入
+            modbus.Write("x=3;51", _doubleArray5);  // 批量写入，从地址 51 开始
         }
 
-        static bool ArrayDeepEqual<T>(T[] arr1, T[] arr2) where T : IComparable
+        static ModbusTcpNet OpenAndConnectConn(bool useLongConnect = false)
+        {
+            var modbus = new ModbusTcpNet("127.0.0.1");
+            if (useLongConnect)
+            {
+                var ret = modbus.ConnectServer(); // 使用长连接
+                Assert.True(ret.IsSuccess, ret.Message);
+            }
+
+            return modbus;
+        }
+
+        static bool ArrayDeepEqual<T>(T[] arr1, T[] arr2) where T : IComparable<T>
         {
             if (arr1.Length != arr2.Length)
             {

@@ -166,18 +166,20 @@ namespace Plcway.Communication
 		internal static byte[] CommandBytes(int command, int customer, Guid token, byte[] data)
 		{
 			int value = ProtocolNoZipped;
-			int num = (data != null) ? data.Length : 0;
+			int num = data.Length;
 			byte[] array = new byte[32 + num];
 			BitConverter.GetBytes(command).CopyTo(array, 0);
 			BitConverter.GetBytes(customer).CopyTo(array, 4);
 			BitConverter.GetBytes(value).CopyTo(array, 8);
 			token.ToByteArray().CopyTo(array, 12);
+
 			if (num > 0)
 			{
 				BitConverter.GetBytes(num).CopyTo(array, 28);
 				Array.Copy(data, 0, array, 32, num);
 				HslSecurity.ByteEncrypt(array, 32, num);
 			}
+
 			return array;
 		}
 
@@ -189,17 +191,17 @@ namespace Plcway.Communication
 		/// <return>真实的数据内容</return>
 		internal static byte[] CommandAnalysis(byte[] head, byte[] content)
 		{
-			if (content != null)
+			if (content.Length == 0)
 			{
-				int num = BitConverter.ToInt32(head, 8);
-				if (num == ProtocolZipped)
-				{
-					content = SoftZipped.Decompress(content);
-				}
-				return HslSecurity.ByteDecrypt(content);
+				return Array.Empty<byte>();
 			}
 
-			return Array.Empty<byte>();
+			int num = BitConverter.ToInt32(head, 8);
+			if (num == ProtocolZipped)
+			{
+				content = SoftZipped.Decompress(content);
+			}
+			return HslSecurity.ByteDecrypt(content);
 		}
 
 		/// <summary>
@@ -221,11 +223,11 @@ namespace Plcway.Communication
 		/// <param name="token">令牌</param>
 		/// <param name="data">字符串数据信息</param>
 		/// <returns>包装后的指令信息</returns>
-		internal static byte[] CommandBytes(int customer, Guid token, string data)
+		internal static byte[] CommandBytes(int customer, Guid token, string? data)
 		{
 			if (data == null)
 			{
-				return CommandBytes(ProtocolUserString, customer, token, null);
+				return CommandBytes(ProtocolUserString, customer, token, Array.Empty<byte>());
 			}
 			return CommandBytes(ProtocolUserString, customer, token, Encoding.Unicode.GetBytes(data));
 		}
@@ -254,7 +256,7 @@ namespace Plcway.Communication
 		/// <returns>打包后的原始数据内容</returns>
 		internal static byte[] PackStringArrayToByte(string[] data)
 		{
-			if (data == null)
+			if (data.Length == 0)
 			{
 				data = Array.Empty<string>();
 			}
@@ -284,7 +286,7 @@ namespace Plcway.Communication
 		/// <returns>解析后的字符串内容</returns>
 		internal static string[] UnPackStringArrayFromByte(byte[] content)
 		{
-			if (content != null && content.Length < 4)
+			if (content.Length < 4)
 			{
 				return Array.Empty<string>();
 			}

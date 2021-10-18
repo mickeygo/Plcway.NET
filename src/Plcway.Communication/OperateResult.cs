@@ -18,14 +18,12 @@ namespace Plcway.Communication
 		/// <summary>
 		/// 具体的错误描述。
 		/// </summary>
-		public string Message { get; set; } = "Unknown Error";
-
+		public string Message { get; set; } = "Success";
 
 		/// <summary>
 		/// 具体的错误代码。
 		/// </summary>
-		public int ErrorCode { get; set; } = 10000;
-
+		public int ErrorCode { get; set; } = (int)Communication.ErrorCode.Success;
 
 		/// <summary>
 		/// 实例化一个默认的结果对象
@@ -55,8 +53,7 @@ namespace Plcway.Communication
 		}
 
 		/// <summary>
-		/// 获取错误代号及文本描述。<br />
-		/// Get the error code and text description.
+		/// 获取错误代号及文本描述。
 		/// </summary>
 		/// <returns>包含错误码及错误消息</returns>
 		public string ToMessageShowString()
@@ -335,8 +332,7 @@ namespace Plcway.Communication
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。.
 		/// </summary>
 		/// <typeparam name="T1">泛型参数一</typeparam>
 		/// <typeparam name="T2">泛型参数二</typeparam>
@@ -350,8 +346,7 @@ namespace Plcway.Communication
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="T1">泛型参数一</typeparam>
 		/// <typeparam name="T2">泛型参数二</typeparam>
@@ -366,8 +361,7 @@ namespace Plcway.Communication
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="T1">泛型参数一</typeparam>
 		/// <typeparam name="T2">泛型参数二</typeparam>
@@ -383,8 +377,7 @@ namespace Plcway.Communication
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="T1">泛型参数一</typeparam>
 		/// <typeparam name="T2">泛型参数二</typeparam>
@@ -535,8 +528,6 @@ namespace Plcway.Communication
 			return new OperateResult
 			{
 				IsSuccess = true,
-				ErrorCode = 0,
-				Message = "OK",
 			};
 		}
 
@@ -551,8 +542,6 @@ namespace Plcway.Communication
 			return new OperateResult<T>
 			{
 				IsSuccess = true,
-				ErrorCode = 0,
-				Message = "OK",
 				Content = value
 			};
 		}
@@ -570,8 +559,6 @@ namespace Plcway.Communication
 			return new OperateResult<T1, T2>
 			{
 				IsSuccess = true,
-				ErrorCode = 0,
-				Message = "OK",
 				Content1 = value1,
 				Content2 = value2
 			};
@@ -592,8 +579,6 @@ namespace Plcway.Communication
 			return new OperateResult<T1, T2, T3>
 			{
 				IsSuccess = true,
-				ErrorCode = 0,
-				Message = "OK",
 				Content1 = value1,
 				Content2 = value2,
 				Content3 = value3
@@ -617,8 +602,6 @@ namespace Plcway.Communication
 			return new OperateResult<T1, T2, T3, T4>
 			{
 				IsSuccess = true,
-				ErrorCode = 0,
-				Message = "OK",
 				Content1 = value1,
 				Content2 = value2,
 				Content3 = value3,
@@ -645,8 +628,6 @@ namespace Plcway.Communication
 			return new OperateResult<T1, T2, T3, T4, T5>
 			{
 				IsSuccess = true,
-				ErrorCode = 0,
-				Message = "OK",
 				Content1 = value1,
 				Content2 = value2,
 				Content3 = value3,
@@ -676,8 +657,6 @@ namespace Plcway.Communication
 			return new OperateResult<T1, T2, T3, T4, T5, T6>
 			{
 				IsSuccess = true,
-				ErrorCode = 0,
-				Message = "OK",
 				Content1 = value1,
 				Content2 = value2,
 				Content3 = value3,
@@ -710,8 +689,6 @@ namespace Plcway.Communication
 			return new OperateResult<T1, T2, T3, T4, T5, T6, T7>
 			{
 				IsSuccess = true,
-				ErrorCode = 0,
-				Message = "OK",
 				Content1 = value1,
 				Content2 = value2,
 				Content3 = value3,
@@ -761,18 +738,18 @@ namespace Plcway.Communication
 		}
 
 		/// <summary>
-		/// 返回一个检查结果对象，可以进行自定义的数据检查。<br />
-		/// Returns a check result object that allows you to perform custom data checks.
+		/// 返回一个检查结果对象，可以进行自定义的数据检查。
 		/// </summary>
 		/// <param name="check">检查的委托方法</param>
 		/// <param name="message">检查失败的错误消息</param>
 		/// <returns>如果检查成功，则返回对象本身，如果失败，返回错误信息。</returns>
 		public OperateResult<T> Check(Func<T, bool> check, string message = "All content data check failed")
 		{
-			if (!base.IsSuccess)
+			if (!IsSuccess)
 			{
 				return this;
 			}
+
 			if (check(Content))
 			{
 				return this;
@@ -781,8 +758,7 @@ namespace Plcway.Communication
 		}
 
 		/// <summary>
-		/// 返回一个检查结果对象，可以进行自定义的数据检查。<br />
-		/// Returns a check result object that allows you to perform custom data checks.
+		/// 返回一个检查结果对象，可以进行自定义的数据检查。
 		/// </summary>
 		/// <param name="check">检查的委托方法</param>
 		/// <returns>如果检查成功，则返回对象本身，如果失败，返回错误信息。</returns>
@@ -795,37 +771,34 @@ namespace Plcway.Communication
 			OperateResult operateResult = check(Content);
 			if (!operateResult.IsSuccess)
 			{
-				return OperateResult.CreateFailedResult<T>(operateResult);
+				return CreateFailedResult<T>(operateResult);
 			}
 			return this;
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <param name="func">等待当前对象成功后执行的内容</param>
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult Then(Func<T, OperateResult> func)
 		{
-			return base.IsSuccess ? func(Content) : this;
+			return IsSuccess ? func(Content) : this;
 		}
 
 		/// <summary>
 		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
 		/// </summary>
 		/// <typeparam name="TResult">泛型参数</typeparam>
 		/// <param name="func">等待当前对象成功后执行的内容</param>
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult> Then<TResult>(Func<T, OperateResult<TResult>> func)
 		{
-			return base.IsSuccess ? func(Content) : OperateResult.CreateFailedResult<TResult>(this);
+			return IsSuccess ? func(Content) : CreateFailedResult<TResult>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -833,12 +806,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2> Then<TResult1, TResult2>(Func<T, OperateResult<TResult1, TResult2>> func)
 		{
-			return base.IsSuccess ? func(Content) : OperateResult.CreateFailedResult<TResult1, TResult2>(this);
+			return IsSuccess ? func(Content) : CreateFailedResult<TResult1, TResult2>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -847,12 +819,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2, TResult3> Then<TResult1, TResult2, TResult3>(Func<T, OperateResult<TResult1, TResult2, TResult3>> func)
 		{
-			return base.IsSuccess ? func(Content) : OperateResult.CreateFailedResult<TResult1, TResult2, TResult3>(this);
+			return IsSuccess ? func(Content) : CreateFailedResult<TResult1, TResult2, TResult3>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -862,12 +833,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2, TResult3, TResult4> Then<TResult1, TResult2, TResult3, TResult4>(Func<T, OperateResult<TResult1, TResult2, TResult3, TResult4>> func)
 		{
-			return base.IsSuccess ? func(Content) : OperateResult.CreateFailedResult<TResult1, TResult2, TResult3, TResult4>(this);
+			return IsSuccess ? func(Content) : CreateFailedResult<TResult1, TResult2, TResult3, TResult4>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -878,12 +848,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5> Then<TResult1, TResult2, TResult3, TResult4, TResult5>(Func<T, OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5>> func)
 		{
-			return base.IsSuccess ? func(Content) : OperateResult.CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5>(this);
+			return IsSuccess ? func(Content) : CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -895,12 +864,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6> Then<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>(Func<T, OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>> func)
 		{
-			return base.IsSuccess ? func(Content) : OperateResult.CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>(this);
+			return IsSuccess ? func(Content) : CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -913,7 +881,7 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> Then<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>(Func<T, OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>> func)
 		{
-			return base.IsSuccess ? func(Content) : OperateResult.CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>(this);
+			return IsSuccess ? func(Content) : CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>(this);
 		}
 	}
 
@@ -961,15 +929,14 @@ namespace Plcway.Communication
 		}
 
 		/// <summary>
-		/// 返回一个检查结果对象，可以进行自定义的数据检查。<br />
-		/// Returns a check result object that allows you to perform custom data checks.
+		/// 返回一个检查结果对象，可以进行自定义的数据检查。
 		/// </summary>
 		/// <param name="check">检查的委托方法</param>
 		/// <param name="message">可以自由指定的错误信息</param>
 		/// <returns>如果检查成功，则返回对象本身，如果失败，返回错误信息。</returns>
 		public OperateResult<T1, T2> Check(Func<T1, T2, bool> check, string message = "All content data check failed")
 		{
-			if (!base.IsSuccess)
+			if (!IsSuccess)
 			{
 				return this;
 			}
@@ -981,34 +948,32 @@ namespace Plcway.Communication
 		}
 
 		/// <summary>
-		/// 返回一个检查结果对象，可以进行自定义的数据检查。<br />
-		/// Returns a check result object that allows you to perform custom data checks.
+		/// 返回一个检查结果对象，可以进行自定义的数据检查。
 		/// </summary>
 		/// <param name="check">检查的委托方法</param>
 		/// <returns>如果检查成功，则返回对象本身，如果失败，返回错误信息。</returns>
 		public OperateResult<T1, T2> Check(Func<T1, T2, OperateResult> check)
 		{
-			if (!base.IsSuccess)
+			if (!IsSuccess)
 			{
 				return this;
 			}
 			OperateResult operateResult = check(Content1, Content2);
 			if (!operateResult.IsSuccess)
 			{
-				return OperateResult.CreateFailedResult<T1, T2>(operateResult);
+				return CreateFailedResult<T1, T2>(operateResult);
 			}
 			return this;
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <param name="func">等待当前对象成功后执行的内容</param>
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult Then(Func<T1, T2, OperateResult> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2) : this;
+			return IsSuccess ? func(Content1, Content2) : this;
 		}
 
 		/// <summary>
@@ -1019,12 +984,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult> Then<TResult>(Func<T1, T2, OperateResult<TResult>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2) : OperateResult.CreateFailedResult<TResult>(this);
+			return IsSuccess ? func(Content1, Content2) : CreateFailedResult<TResult>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -1032,12 +996,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2> Then<TResult1, TResult2>(Func<T1, T2, OperateResult<TResult1, TResult2>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2) : OperateResult.CreateFailedResult<TResult1, TResult2>(this);
+			return IsSuccess ? func(Content1, Content2) : CreateFailedResult<TResult1, TResult2>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -1046,12 +1009,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2, TResult3> Then<TResult1, TResult2, TResult3>(Func<T1, T2, OperateResult<TResult1, TResult2, TResult3>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2) : OperateResult.CreateFailedResult<TResult1, TResult2, TResult3>(this);
+			return IsSuccess ? func(Content1, Content2) : CreateFailedResult<TResult1, TResult2, TResult3>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -1061,12 +1023,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2, TResult3, TResult4> Then<TResult1, TResult2, TResult3, TResult4>(Func<T1, T2, OperateResult<TResult1, TResult2, TResult3, TResult4>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2) : OperateResult.CreateFailedResult<TResult1, TResult2, TResult3, TResult4>(this);
+			return IsSuccess ? func(Content1, Content2) : CreateFailedResult<TResult1, TResult2, TResult3, TResult4>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -1077,12 +1038,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5> Then<TResult1, TResult2, TResult3, TResult4, TResult5>(Func<T1, T2, OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2) : OperateResult.CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5>(this);
+			return IsSuccess ? func(Content1, Content2) : CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -1094,12 +1054,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6> Then<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>(Func<T1, T2, OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2) : OperateResult.CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>(this);
+			return IsSuccess ? func(Content1, Content2) : CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -1112,7 +1071,7 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> Then<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>(Func<T1, T2, OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2) : OperateResult.CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>(this);
+			return IsSuccess ? func(Content1, Content2) : CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>(this);
 		}
 	}
 
@@ -1166,18 +1125,18 @@ namespace Plcway.Communication
 		}
 
 		/// <summary>
-		/// 返回一个检查结果对象，可以进行自定义的数据检查。<br />
-		/// Returns a check result object that allows you to perform custom data checks.
+		/// 返回一个检查结果对象，可以进行自定义的数据检查。
 		/// </summary>
 		/// <param name="check">检查的委托方法</param>
 		/// <param name="message">检查失败的错误消息</param>
 		/// <returns>如果检查成功，则返回对象本身，如果失败，返回错误信息。</returns>
 		public OperateResult<T1, T2, T3> Check(Func<T1, T2, T3, bool> check, string message = "All content data check failed")
 		{
-			if (!base.IsSuccess)
+			if (!IsSuccess)
 			{
 				return this;
 			}
+
 			if (check(Content1, Content2, Content3))
 			{
 				return this;
@@ -1186,17 +1145,17 @@ namespace Plcway.Communication
 		}
 
 		/// <summary>
-		/// 返回一个检查结果对象，可以进行自定义的数据检查。<br />
-		/// Returns a check result object that allows you to perform custom data checks.
+		/// 返回一个检查结果对象，可以进行自定义的数据检查。
 		/// </summary>
 		/// <param name="check">检查的委托方法</param>
 		/// <returns>如果检查成功，则返回对象本身，如果失败，返回错误信息。</returns>
 		public OperateResult<T1, T2, T3> Check(Func<T1, T2, T3, OperateResult> check)
 		{
-			if (!base.IsSuccess)
+			if (!IsSuccess)
 			{
 				return this;
 			}
+
 			OperateResult operateResult = check(Content1, Content2, Content3);
 			if (!operateResult.IsSuccess)
 			{
@@ -1206,14 +1165,13 @@ namespace Plcway.Communication
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <param name="func">等待当前对象成功后执行的内容</param>
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult Then(Func<T1, T2, T3, OperateResult> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2, Content3) : this;
+			return IsSuccess ? func(Content1, Content2, Content3) : this;
 		}
 
 		/// <summary>
@@ -1224,12 +1182,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult> Then<TResult>(Func<T1, T2, T3, OperateResult<TResult>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2, Content3) : OperateResult.CreateFailedResult<TResult>(this);
+			return IsSuccess ? func(Content1, Content2, Content3) : CreateFailedResult<TResult>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -1237,12 +1194,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2> Then<TResult1, TResult2>(Func<T1, T2, T3, OperateResult<TResult1, TResult2>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2, Content3) : OperateResult.CreateFailedResult<TResult1, TResult2>(this);
+			return IsSuccess ? func(Content1, Content2, Content3) : CreateFailedResult<TResult1, TResult2>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -1251,12 +1207,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2, TResult3> Then<TResult1, TResult2, TResult3>(Func<T1, T2, T3, OperateResult<TResult1, TResult2, TResult3>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2, Content3) : OperateResult.CreateFailedResult<TResult1, TResult2, TResult3>(this);
+			return IsSuccess ? func(Content1, Content2, Content3) : CreateFailedResult<TResult1, TResult2, TResult3>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -1266,12 +1221,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2, TResult3, TResult4> Then<TResult1, TResult2, TResult3, TResult4>(Func<T1, T2, T3, OperateResult<TResult1, TResult2, TResult3, TResult4>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2, Content3) : OperateResult.CreateFailedResult<TResult1, TResult2, TResult3, TResult4>(this);
+			return IsSuccess ? func(Content1, Content2, Content3) : CreateFailedResult<TResult1, TResult2, TResult3, TResult4>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -1282,12 +1236,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5> Then<TResult1, TResult2, TResult3, TResult4, TResult5>(Func<T1, T2, T3, OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2, Content3) : OperateResult.CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5>(this);
+			return IsSuccess ? func(Content1, Content2, Content3) : CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -1303,8 +1256,7 @@ namespace Plcway.Communication
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -1317,7 +1269,7 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> Then<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>(Func<T1, T2, T3, OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2, Content3) : OperateResult.CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>(this);
+			return IsSuccess ? func(Content1, Content2, Content3) : CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>(this);
 		}
 	}
 
@@ -1377,18 +1329,18 @@ namespace Plcway.Communication
 		}
 
 		/// <summary>
-		/// 返回一个检查结果对象，可以进行自定义的数据检查。<br />
-		/// Returns a check result object that allows you to perform custom data checks.
+		/// 返回一个检查结果对象，可以进行自定义的数据检查。
 		/// </summary>
 		/// <param name="check">检查的委托方法</param>
 		/// <param name="message">检查失败的错误消息</param>
 		/// <returns>如果检查成功，则返回对象本身，如果失败，返回错误信息。</returns>
 		public OperateResult<T1, T2, T3, T4> Check(Func<T1, T2, T3, T4, bool> check, string message = "All content data check failed")
 		{
-			if (!base.IsSuccess)
+			if (!IsSuccess)
 			{
 				return this;
 			}
+
 			if (check(Content1, Content2, Content3, Content4))
 			{
 				return this;
@@ -1397,28 +1349,27 @@ namespace Plcway.Communication
 		}
 
 		/// <summary>
-		/// 返回一个检查结果对象，可以进行自定义的数据检查。<br />
-		/// Returns a check result object that allows you to perform custom data checks.
+		/// 返回一个检查结果对象，可以进行自定义的数据检查。
 		/// </summary>
 		/// <param name="check">检查的委托方法</param>
 		/// <returns>如果检查成功，则返回对象本身，如果失败，返回错误信息。</returns>
 		public OperateResult<T1, T2, T3, T4> Check(Func<T1, T2, T3, T4, OperateResult> check)
 		{
-			if (!base.IsSuccess)
+			if (!IsSuccess)
 			{
 				return this;
 			}
+
 			OperateResult operateResult = check(Content1, Content2, Content3, Content4);
 			if (!operateResult.IsSuccess)
 			{
-				return OperateResult.CreateFailedResult<T1, T2, T3, T4>(operateResult);
+				return CreateFailedResult<T1, T2, T3, T4>(operateResult);
 			}
 			return this;
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <param name="func">等待当前对象成功后执行的内容</param>
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
@@ -1435,12 +1386,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult> Then<TResult>(Func<T1, T2, T3, T4, OperateResult<TResult>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2, Content3, Content4) : OperateResult.CreateFailedResult<TResult>(this);
+			return IsSuccess ? func(Content1, Content2, Content3, Content4) : CreateFailedResult<TResult>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -1448,12 +1398,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2> Then<TResult1, TResult2>(Func<T1, T2, T3, T4, OperateResult<TResult1, TResult2>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2, Content3, Content4) : OperateResult.CreateFailedResult<TResult1, TResult2>(this);
+			return IsSuccess ? func(Content1, Content2, Content3, Content4) : CreateFailedResult<TResult1, TResult2>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -1462,12 +1411,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2, TResult3> Then<TResult1, TResult2, TResult3>(Func<T1, T2, T3, T4, OperateResult<TResult1, TResult2, TResult3>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2, Content3, Content4) : OperateResult.CreateFailedResult<TResult1, TResult2, TResult3>(this);
+			return IsSuccess ? func(Content1, Content2, Content3, Content4) : CreateFailedResult<TResult1, TResult2, TResult3>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -1477,12 +1425,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2, TResult3, TResult4> Then<TResult1, TResult2, TResult3, TResult4>(Func<T1, T2, T3, T4, OperateResult<TResult1, TResult2, TResult3, TResult4>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2, Content3, Content4) : OperateResult.CreateFailedResult<TResult1, TResult2, TResult3, TResult4>(this);
+			return IsSuccess ? func(Content1, Content2, Content3, Content4) : CreateFailedResult<TResult1, TResult2, TResult3, TResult4>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -1493,12 +1440,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5> Then<TResult1, TResult2, TResult3, TResult4, TResult5>(Func<T1, T2, T3, T4, OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2, Content3, Content4) : OperateResult.CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5>(this);
+			return IsSuccess ? func(Content1, Content2, Content3, Content4) : CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -1510,12 +1456,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6> Then<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>(Func<T1, T2, T3, T4, OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2, Content3, Content4) : OperateResult.CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>(this);
+			return IsSuccess ? func(Content1, Content2, Content3, Content4) : CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -1528,7 +1473,7 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> Then<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>(Func<T1, T2, T3, T4, OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2, Content3, Content4) : OperateResult.CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>(this);
+			return IsSuccess ? func(Content1, Content2, Content3, Content4) : CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>(this);
 		}
 	}
 
@@ -1594,18 +1539,18 @@ namespace Plcway.Communication
 		}
 
 		/// <summary>
-		/// 返回一个检查结果对象，可以进行自定义的数据检查。<br />
-		/// Returns a check result object that allows you to perform custom data checks.
+		/// 返回一个检查结果对象，可以进行自定义的数据检查。
 		/// </summary>
 		/// <param name="check">检查的委托方法</param>
 		/// <param name="message">检查失败的错误消息</param>
 		/// <returns>如果检查成功，则返回对象本身，如果失败，返回错误信息。</returns>
 		public OperateResult<T1, T2, T3, T4, T5> Check(Func<T1, T2, T3, T4, T5, bool> check, string message = "All content data check failed")
 		{
-			if (!base.IsSuccess)
+			if (!IsSuccess)
 			{
 				return this;
 			}
+
 			if (check(Content1, Content2, Content3, Content4, Content5))
 			{
 				return this;
@@ -1614,34 +1559,33 @@ namespace Plcway.Communication
 		}
 
 		/// <summary>
-		/// 返回一个检查结果对象，可以进行自定义的数据检查。<br />
-		/// Returns a check result object that allows you to perform custom data checks.
+		/// 返回一个检查结果对象，可以进行自定义的数据检查。
 		/// </summary>
 		/// <param name="check">检查的委托方法</param>
 		/// <returns>如果检查成功，则返回对象本身，如果失败，返回错误信息。</returns>
 		public OperateResult<T1, T2, T3, T4, T5> Check(Func<T1, T2, T3, T4, T5, OperateResult> check)
 		{
-			if (!base.IsSuccess)
+			if (!IsSuccess)
 			{
 				return this;
 			}
+
 			OperateResult operateResult = check(Content1, Content2, Content3, Content4, Content5);
 			if (!operateResult.IsSuccess)
 			{
-				return OperateResult.CreateFailedResult<T1, T2, T3, T4, T5>(operateResult);
+				return CreateFailedResult<T1, T2, T3, T4, T5>(operateResult);
 			}
 			return this;
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <param name="func">等待当前对象成功后执行的内容</param>
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult Then(Func<T1, T2, T3, T4, T5, OperateResult> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2, Content3, Content4, Content5) : this;
+			return IsSuccess ? func(Content1, Content2, Content3, Content4, Content5) : this;
 		}
 
 		/// <summary>
@@ -1652,12 +1596,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult> Then<TResult>(Func<T1, T2, T3, T4, T5, OperateResult<TResult>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2, Content3, Content4, Content5) : OperateResult.CreateFailedResult<TResult>(this);
+			return IsSuccess ? func(Content1, Content2, Content3, Content4, Content5) : CreateFailedResult<TResult>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -1665,12 +1608,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2> Then<TResult1, TResult2>(Func<T1, T2, T3, T4, T5, OperateResult<TResult1, TResult2>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2, Content3, Content4, Content5) : OperateResult.CreateFailedResult<TResult1, TResult2>(this);
+			return IsSuccess ? func(Content1, Content2, Content3, Content4, Content5) : CreateFailedResult<TResult1, TResult2>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -1679,12 +1621,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2, TResult3> Then<TResult1, TResult2, TResult3>(Func<T1, T2, T3, T4, T5, OperateResult<TResult1, TResult2, TResult3>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2, Content3, Content4, Content5) : OperateResult.CreateFailedResult<TResult1, TResult2, TResult3>(this);
+			return IsSuccess ? func(Content1, Content2, Content3, Content4, Content5) : CreateFailedResult<TResult1, TResult2, TResult3>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -1694,12 +1635,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2, TResult3, TResult4> Then<TResult1, TResult2, TResult3, TResult4>(Func<T1, T2, T3, T4, T5, OperateResult<TResult1, TResult2, TResult3, TResult4>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2, Content3, Content4, Content5) : OperateResult.CreateFailedResult<TResult1, TResult2, TResult3, TResult4>(this);
+			return IsSuccess ? func(Content1, Content2, Content3, Content4, Content5) : CreateFailedResult<TResult1, TResult2, TResult3, TResult4>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -1710,12 +1650,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5> Then<TResult1, TResult2, TResult3, TResult4, TResult5>(Func<T1, T2, T3, T4, T5, OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2, Content3, Content4, Content5) : OperateResult.CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5>(this);
+			return IsSuccess ? func(Content1, Content2, Content3, Content4, Content5) : CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -1727,12 +1666,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6> Then<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>(Func<T1, T2, T3, T4, T5, OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2, Content3, Content4, Content5) : OperateResult.CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>(this);
+			return IsSuccess ? func(Content1, Content2, Content3, Content4, Content5) : CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -1745,7 +1683,7 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> Then<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>(Func<T1, T2, T3, T4, T5, OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2, Content3, Content4, Content5) : OperateResult.CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>(this);
+			return IsSuccess ? func(Content1, Content2, Content3, Content4, Content5) : CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>(this);
 		}
 	}
 
@@ -1817,18 +1755,18 @@ namespace Plcway.Communication
 		}
 
 		/// <summary>
-		/// 返回一个检查结果对象，可以进行自定义的数据检查。<br />
-		/// Returns a check result object that allows you to perform custom data checks.
+		/// 返回一个检查结果对象，可以进行自定义的数据检查。
 		/// </summary>
 		/// <param name="check">检查的委托方法</param>
 		/// <param name="message">检查失败的错误消息</param>
 		/// <returns>如果检查成功，则返回对象本身，如果失败，返回错误信息。</returns>
 		public OperateResult<T1, T2, T3, T4, T5, T6> Check(Func<T1, T2, T3, T4, T5, T6, bool> check, string message = "All content data check failed")
 		{
-			if (!base.IsSuccess)
+			if (!IsSuccess)
 			{
 				return this;
 			}
+
 			if (check(Content1, Content2, Content3, Content4, Content5, Content6))
 			{
 				return this;
@@ -1837,8 +1775,7 @@ namespace Plcway.Communication
 		}
 
 		/// <summary>
-		/// 返回一个检查结果对象，可以进行自定义的数据检查。<br />
-		/// Returns a check result object that allows you to perform custom data checks.
+		/// 返回一个检查结果对象，可以进行自定义的数据检查。
 		/// </summary>
 		/// <param name="check">检查的委托方法</param>
 		/// <returns>如果检查成功，则返回对象本身，如果失败，返回错误信息。</returns>
@@ -1848,23 +1785,23 @@ namespace Plcway.Communication
 			{
 				return this;
 			}
+
 			OperateResult operateResult = check(Content1, Content2, Content3, Content4, Content5, Content6);
 			if (!operateResult.IsSuccess)
 			{
-				return OperateResult.CreateFailedResult<T1, T2, T3, T4, T5, T6>(operateResult);
+				return CreateFailedResult<T1, T2, T3, T4, T5, T6>(operateResult);
 			}
 			return this;
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <param name="func">等待当前对象成功后执行的内容</param>
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult Then(Func<T1, T2, T3, T4, T5, T6, OperateResult> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2, Content3, Content4, Content5, Content6) : this;
+			return IsSuccess ? func(Content1, Content2, Content3, Content4, Content5, Content6) : this;
 		}
 
 		/// <summary>
@@ -1875,12 +1812,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult> Then<TResult>(Func<T1, T2, T3, T4, T5, T6, OperateResult<TResult>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2, Content3, Content4, Content5, Content6) : OperateResult.CreateFailedResult<TResult>(this);
+			return IsSuccess ? func(Content1, Content2, Content3, Content4, Content5, Content6) : CreateFailedResult<TResult>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -1888,12 +1824,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2> Then<TResult1, TResult2>(Func<T1, T2, T3, T4, T5, T6, OperateResult<TResult1, TResult2>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2, Content3, Content4, Content5, Content6) : OperateResult.CreateFailedResult<TResult1, TResult2>(this);
+			return IsSuccess ? func(Content1, Content2, Content3, Content4, Content5, Content6) : CreateFailedResult<TResult1, TResult2>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -1902,12 +1837,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2, TResult3> Then<TResult1, TResult2, TResult3>(Func<T1, T2, T3, T4, T5, T6, OperateResult<TResult1, TResult2, TResult3>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2, Content3, Content4, Content5, Content6) : OperateResult.CreateFailedResult<TResult1, TResult2, TResult3>(this);
+			return IsSuccess ? func(Content1, Content2, Content3, Content4, Content5, Content6) : CreateFailedResult<TResult1, TResult2, TResult3>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -1917,12 +1851,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2, TResult3, TResult4> Then<TResult1, TResult2, TResult3, TResult4>(Func<T1, T2, T3, T4, T5, T6, OperateResult<TResult1, TResult2, TResult3, TResult4>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2, Content3, Content4, Content5, Content6) : OperateResult.CreateFailedResult<TResult1, TResult2, TResult3, TResult4>(this);
+			return IsSuccess ? func(Content1, Content2, Content3, Content4, Content5, Content6) : CreateFailedResult<TResult1, TResult2, TResult3, TResult4>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -1933,12 +1866,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5> Then<TResult1, TResult2, TResult3, TResult4, TResult5>(Func<T1, T2, T3, T4, T5, T6, OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2, Content3, Content4, Content5, Content6) : OperateResult.CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5>(this);
+			return IsSuccess ? func(Content1, Content2, Content3, Content4, Content5, Content6) : CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -1950,12 +1882,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6> Then<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>(Func<T1, T2, T3, T4, T5, T6, OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2, Content3, Content4, Content5, Content6) : OperateResult.CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>(this);
+			return IsSuccess ? func(Content1, Content2, Content3, Content4, Content5, Content6) : CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -1968,7 +1899,7 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> Then<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>(Func<T1, T2, T3, T4, T5, T6, OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2, Content3, Content4, Content5, Content6) : OperateResult.CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>(this);
+			return IsSuccess ? func(Content1, Content2, Content3, Content4, Content5, Content6) : CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>(this);
 		}
 	}
 
@@ -2046,18 +1977,18 @@ namespace Plcway.Communication
 		}
 
 		/// <summary>
-		/// 返回一个检查结果对象，可以进行自定义的数据检查。<br />
-		/// Returns a check result object that allows you to perform custom data checks.
+		/// 返回一个检查结果对象，可以进行自定义的数据检查。
 		/// </summary>
 		/// <param name="check">检查的委托方法</param>
 		/// <param name="message">检查失败的错误消息</param>
 		/// <returns>如果检查成功，则返回对象本身，如果失败，返回错误信息。</returns>
 		public OperateResult<T1, T2, T3, T4, T5, T6, T7> Check(Func<T1, T2, T3, T4, T5, T6, T7, bool> check, string message = "All content data check failed")
 		{
-			if (!base.IsSuccess)
+			if (!IsSuccess)
 			{
 				return this;
 			}
+
 			if (check(Content1, Content2, Content3, Content4, Content5, Content6, Content7))
 			{
 				return this;
@@ -2066,34 +1997,33 @@ namespace Plcway.Communication
 		}
 
 		/// <summary>
-		/// 返回一个检查结果对象，可以进行自定义的数据检查。<br />
-		/// Returns a check result object that allows you to perform custom data checks.
+		/// 返回一个检查结果对象，可以进行自定义的数据检查。
 		/// </summary>
 		/// <param name="check">检查的委托方法</param>
 		/// <returns>如果检查成功，则返回对象本身，如果失败，返回错误信息。</returns>
 		public OperateResult<T1, T2, T3, T4, T5, T6, T7> Check(Func<T1, T2, T3, T4, T5, T6, T7, OperateResult> check)
 		{
-			if (!base.IsSuccess)
+			if (!IsSuccess)
 			{
 				return this;
 			}
+
 			OperateResult operateResult = check(Content1, Content2, Content3, Content4, Content5, Content6, Content7);
 			if (!operateResult.IsSuccess)
 			{
-				return OperateResult.CreateFailedResult<T1, T2, T3, T4, T5, T6, T7>(operateResult);
+				return CreateFailedResult<T1, T2, T3, T4, T5, T6, T7>(operateResult);
 			}
 			return this;
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <param name="func">等待当前对象成功后执行的内容</param>
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult Then(Func<T1, T2, T3, T4, T5, T6, T7, OperateResult> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2, Content3, Content4, Content5, Content6, Content7) : this;
+			return IsSuccess ? func(Content1, Content2, Content3, Content4, Content5, Content6, Content7) : this;
 		}
 
 		/// <summary>
@@ -2104,12 +2034,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult> Then<TResult>(Func<T1, T2, T3, T4, T5, T6, T7, OperateResult<TResult>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2, Content3, Content4, Content5, Content6, Content7) : OperateResult.CreateFailedResult<TResult>(this);
+			return IsSuccess ? func(Content1, Content2, Content3, Content4, Content5, Content6, Content7) : CreateFailedResult<TResult>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -2117,12 +2046,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2> Then<TResult1, TResult2>(Func<T1, T2, T3, T4, T5, T6, T7, OperateResult<TResult1, TResult2>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2, Content3, Content4, Content5, Content6, Content7) : OperateResult.CreateFailedResult<TResult1, TResult2>(this);
+			return IsSuccess ? func(Content1, Content2, Content3, Content4, Content5, Content6, Content7) : CreateFailedResult<TResult1, TResult2>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -2131,12 +2059,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2, TResult3> Then<TResult1, TResult2, TResult3>(Func<T1, T2, T3, T4, T5, T6, T7, OperateResult<TResult1, TResult2, TResult3>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2, Content3, Content4, Content5, Content6, Content7) : OperateResult.CreateFailedResult<TResult1, TResult2, TResult3>(this);
+			return IsSuccess ? func(Content1, Content2, Content3, Content4, Content5, Content6, Content7) : CreateFailedResult<TResult1, TResult2, TResult3>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -2146,12 +2073,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2, TResult3, TResult4> Then<TResult1, TResult2, TResult3, TResult4>(Func<T1, T2, T3, T4, T5, T6, T7, OperateResult<TResult1, TResult2, TResult3, TResult4>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2, Content3, Content4, Content5, Content6, Content7) : OperateResult.CreateFailedResult<TResult1, TResult2, TResult3, TResult4>(this);
+			return IsSuccess ? func(Content1, Content2, Content3, Content4, Content5, Content6, Content7) : CreateFailedResult<TResult1, TResult2, TResult3, TResult4>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -2162,12 +2088,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5> Then<TResult1, TResult2, TResult3, TResult4, TResult5>(Func<T1, T2, T3, T4, T5, T6, T7, OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2, Content3, Content4, Content5, Content6, Content7) : OperateResult.CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5>(this);
+			return IsSuccess ? func(Content1, Content2, Content3, Content4, Content5, Content6, Content7) : CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -2179,12 +2104,11 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6> Then<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>(Func<T1, T2, T3, T4, T5, T6, T7, OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2, Content3, Content4, Content5, Content6, Content7) : OperateResult.CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>(this);
+			return IsSuccess ? func(Content1, Content2, Content3, Content4, Content5, Content6, Content7) : CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>(this);
 		}
 
 		/// <summary>
-		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。<br />
-		/// Specify what you want to do next, return the result of the execution of the current object if it succeeds, and return the current object itself if it fails.
+		/// 指定接下来要做的是内容，当前对象如果成功，就返回接下来的执行结果，如果失败，就返回当前对象本身。
 		/// </summary>
 		/// <typeparam name="TResult1">泛型参数一</typeparam>
 		/// <typeparam name="TResult2">泛型参数二</typeparam>
@@ -2197,7 +2121,7 @@ namespace Plcway.Communication
 		/// <returns>返回整个方法链最终的成功失败结果</returns>
 		public OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> Then<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>(Func<T1, T2, T3, T4, T5, T6, T7, OperateResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>> func)
 		{
-			return base.IsSuccess ? func(Content1, Content2, Content3, Content4, Content5, Content6, Content7) : OperateResult.CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>(this);
+			return IsSuccess ? func(Content1, Content2, Content3, Content4, Content5, Content6, Content7) : CreateFailedResult<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>(this);
 		}
 	}
 }

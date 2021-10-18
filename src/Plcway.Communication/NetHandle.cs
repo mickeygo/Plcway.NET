@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 namespace Plcway.Communication
 {
 	/// <summary>
-	/// 用于网络传递的信息头，使用上等同于int
+	/// 用于网络传递的信息头，使用上等同于 int
 	/// </summary>
 	/// <remarks>
 	/// 通常用于<see cref="NetComplexServer" />和<see cref="NetComplexClient" />之间的通信，以及<see cref="NetSimplifyServer" />和<see cref="NetSimplifyClient" />通讯
@@ -216,37 +216,26 @@ namespace Plcway.Communication
 			return m_CodeValue.ToString();
 		}
 
-		/// <summary>
-		/// 判断两个实例是否相同
-		/// </summary>
-		/// <param name="obj">对比的对象</param>
-		/// <returns>相同返回<c>True</c>，否则返回<c>False</c></returns>
-		public override bool Equals(object? obj)
-		{
-			NetHandle netHandle = default;
-			int num;
-			if (obj is NetHandle)
-			{
-				netHandle = (NetHandle)obj;
-				num = 1;
-			}
-			else
-			{
-				num = 0;
+        /// <summary>
+        /// 判断两个实例是否相同
+        /// </summary>
+        /// <param name="obj">对比的对象</param>
+        /// <returns>相同返回<c>True</c>，否则返回<c>False</c></returns>
+        public override bool Equals(object? obj)
+        {
+            if (obj is NetHandle obj1)
+            {
+				return CodeValue.Equals(obj1.CodeValue);
 			}
 
-			if (num != 0)
-			{
-				return CodeValue.Equals(netHandle.CodeValue);
-			}
-			return false;
-		}
+            return false;
+        }
 
-		/// <summary>
-		/// 获取哈希值
-		/// </summary>
-		/// <returns>返回当前对象的哈希值</returns>
-		public override int GetHashCode()
+        /// <summary>
+        /// 获取哈希值
+        /// </summary>
+        /// <returns>返回当前对象的哈希值</returns>
+        public override int GetHashCode()
 		{
 			return base.GetHashCode();
 		}

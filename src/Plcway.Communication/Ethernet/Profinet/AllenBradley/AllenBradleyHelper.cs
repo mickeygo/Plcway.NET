@@ -133,7 +133,7 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 
 		private static byte[] BuildRequestPathCommand(string address, bool isConnectedAddress = false)
 		{
-			using MemoryStream memoryStream = new MemoryStream();
+			using var memoryStream = new MemoryStream();
 			string[] array = address.Split(new char[1] { '.' }, StringSplitOptions.RemoveEmptyEntries);
 			for (int i = 0; i < array.Length; i++)
 			{
@@ -145,6 +145,7 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 					text = array[i].Substring(num + 1, num2 - num - 1);
 					array[i] = array[i].Substring(0, num);
 				}
+
 				memoryStream.WriteByte(145);
 				byte[] bytes = Encoding.UTF8.GetBytes(array[i]);
 				memoryStream.WriteByte((byte)bytes.Length);
@@ -153,10 +154,12 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 				{
 					memoryStream.WriteByte(0);
 				}
+
 				if (string.IsNullOrEmpty(text))
 				{
 					continue;
 				}
+
 				string[] array2 = text.Split(new char[1] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 				for (int j = 0; j < array2.Length; j++)
 				{
@@ -167,6 +170,7 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 						memoryStream.WriteByte((byte)num3);
 						continue;
 					}
+
 					memoryStream.WriteByte(41);
 					memoryStream.WriteByte(0);
 					memoryStream.WriteByte(BitConverter.GetBytes(num3)[0]);
@@ -183,13 +187,14 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 		/// <returns>实际的地址</returns>
 		public static string ParseRequestPathCommand(byte[] pathCommand)
 		{
-			StringBuilder stringBuilder = new StringBuilder();
+			var stringBuilder = new StringBuilder();
 			for (int i = 0; i < pathCommand.Length; i++)
 			{
 				if (pathCommand[i] != 145)
 				{
 					continue;
 				}
+
 				string text = Encoding.UTF8.GetString(pathCommand, i + 2, pathCommand[i + 1]).TrimEnd(new char[1]);
 				stringBuilder.Append(text);
 				int num = 2 + text.Length;
@@ -208,9 +213,10 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 						stringBuilder.Append($"[{BitConverter.ToUInt16(pathCommand, i + num + 2)}]");
 					}
 				}
-				stringBuilder.Append(".");
+				stringBuilder.Append('.');
 			}
-			if (stringBuilder[stringBuilder.Length - 1] == '.')
+
+			if (stringBuilder[^1] == '.')
 			{
 				stringBuilder.Remove(stringBuilder.Length - 1, 1);
 			}
@@ -417,14 +423,16 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 			{
 				return address;
 			}
+
 			int num = address.LastIndexOf('[');
 			if (num < 0)
 			{
 				return address;
 			}
+
 			address = address.Remove(address.Length - 1);
-			arrayIndex = int.Parse(address.Substring(num + 1));
-			address = address.Substring(0, num);
+			arrayIndex = int.Parse(address[(num + 1)..]);
+			address = address[..num];
 			return address;
 		}
 
@@ -448,6 +456,7 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 			{
 				value3 = ~(1 << arrayIndex);
 			}
+
 			byte[] array = new byte[1024];
 			int num = 0;
 			array[num++] = 78;
@@ -475,7 +484,7 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 		/// <returns>包含服务的信息</returns>
 		public static byte[] PackCommandService(byte[] portSlot, params byte[][] cips)
 		{
-			MemoryStream memoryStream = new MemoryStream();
+			using var memoryStream = new MemoryStream();
 			memoryStream.WriteByte(178);
 			memoryStream.WriteByte(0);
 			memoryStream.WriteByte(0);
@@ -490,6 +499,7 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 			memoryStream.WriteByte(240);
 			memoryStream.WriteByte(0);
 			memoryStream.WriteByte(0);
+
 			int num = 0;
 			if (cips.Length == 1)
 			{
@@ -519,15 +529,17 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 					num += cips[j].Length;
 				}
 			}
+
 			memoryStream.WriteByte((byte)((portSlot.Length + 1) / 2));
 			memoryStream.WriteByte(0);
 			memoryStream.Write(portSlot, 0, portSlot.Length);
+
 			if (portSlot.Length % 2 == 1)
 			{
 				memoryStream.WriteByte(0);
 			}
+
 			byte[] array = memoryStream.ToArray();
-			memoryStream.Dispose();
 			BitConverter.GetBytes((short)num).CopyTo(array, 12);
 			BitConverter.GetBytes((short)(array.Length - 4)).CopyTo(array, 2);
 			return array;
@@ -541,11 +553,12 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 		/// <returns>包含服务的信息</returns>
 		public static byte[] PackCleanCommandService(byte[] portSlot, params byte[][] cips)
 		{
-			MemoryStream memoryStream = new MemoryStream();
+			using var memoryStream = new MemoryStream();
 			memoryStream.WriteByte(178);
 			memoryStream.WriteByte(0);
 			memoryStream.WriteByte(0);
 			memoryStream.WriteByte(0);
+
 			if (cips.Length == 1)
 			{
 				memoryStream.Write(cips[0], 0, cips[0].Length);
@@ -570,6 +583,7 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 					memoryStream.Write(cips[j], 0, cips[j].Length);
 				}
 			}
+
 			memoryStream.WriteByte((byte)((portSlot.Length + 1) / 2));
 			memoryStream.WriteByte(0);
 			memoryStream.Write(portSlot, 0, portSlot.Length);
@@ -577,8 +591,8 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 			{
 				memoryStream.WriteByte(0);
 			}
+
 			byte[] array = memoryStream.ToArray();
-			memoryStream.Dispose();
 			BitConverter.GetBytes((short)(array.Length - 4)).CopyTo(array, 2);
 			return array;
 		}
@@ -607,7 +621,7 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 			{
 				return new byte[6] { 0, 0, 4, 0, 0, 0 };
 			}
-			return SoftBasic.SpliceArray<byte>(new byte[6]
+			return SoftBasic.SpliceArray(new byte[6]
 			{
 				(byte)(isRead ? 204u : 205u),
 				0,
@@ -625,7 +639,7 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 		/// <returns>最终的指令值</returns>
 		public static byte[] PackCommandSpecificData(params byte[][] service)
 		{
-			MemoryStream memoryStream = new MemoryStream();
+			using var memoryStream = new MemoryStream();
 			memoryStream.WriteByte(0);
 			memoryStream.WriteByte(0);
 			memoryStream.WriteByte(0);
@@ -634,12 +648,13 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 			memoryStream.WriteByte(0);
 			memoryStream.WriteByte(BitConverter.GetBytes(service.Length)[0]);
 			memoryStream.WriteByte(BitConverter.GetBytes(service.Length)[1]);
+
 			for (int i = 0; i < service.Length; i++)
 			{
 				memoryStream.Write(service[i], 0, service[i].Length);
 			}
+
 			byte[] result = memoryStream.ToArray();
-			memoryStream.Dispose();
 			return result;
 		}
 
@@ -652,8 +667,9 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 		{
 			if (command == null)
 			{
-				command = new byte[0];
+				command = Array.Empty<byte>();
 			}
+
 			byte[] array = new byte[4 + command.Length];
 			array[0] = 178;
 			array[1] = 0;
@@ -664,10 +680,9 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 		}
 
 		/// <summary>
-		/// 向PLC注册会话ID的报文<br />
-		/// Register a message with the PLC for the session ID
+		/// 向PLC注册会话ID的报文。
 		/// </summary>
-		/// <returns>报文信息 -&gt; Message information </returns>
+		/// <returns>报文信息</returns>
 		public static byte[] RegisterSessionHandle()
 		{
 			byte[] commandSpecificData = new byte[4] { 1, 0, 0, 0 };
@@ -675,19 +690,17 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 		}
 
 		/// <summary>
-		/// 获取卸载一个已注册的会话的报文<br />
-		/// Get a message to uninstall a registered session
+		/// 获取卸载一个已注册的会话的报文。
 		/// </summary>
 		/// <param name="sessionHandle">当前会话的ID信息</param>
-		/// <returns>字节报文信息 -&gt; BYTE message information </returns>
+		/// <returns>字节报文信息</returns>
 		public static byte[] UnRegisterSessionHandle(uint sessionHandle)
 		{
 			return PackRequestHeader(102, sessionHandle, new byte[0]);
 		}
 
 		/// <summary>
-		/// 初步检查返回的CIP协议的报文是否正确<br />
-		/// Initially check whether the returned CIP protocol message is correct
+		/// 初步检查返回的CIP协议的报文是否正确。
 		/// </summary>
 		/// <param name="response">CIP的报文信息</param>
 		/// <returns>是否正确的结果信息</returns>
@@ -704,13 +717,13 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 				string empty = string.Empty;
 				return new OperateResult(num, num switch
 				{
-					1 => "发件人发出无效或不受支持的封装命令。",
-					2 => "接收器中的内存资源不足以处理命令。 这不是一个应用程序错误。相反，只有在封装层无法获得所需内存资源的情况下才会导致此问题。",
-					3 => "封装消息的数据部分中的数据形成不良或不正确。",
-					100 => "向目标发送封装消息时，始发者使用了无效的会话句柄。",
-					101 => "目标收到一个无效长度的信息。",
-					105 => "不支持的封装协议修订。",
-					_ => "UnknownError",
+					1 => ErrorCode.AllenBradleySessionStatus01.Desc(),
+					2 => ErrorCode.AllenBradleySessionStatus02.Desc(),
+					3 => ErrorCode.AllenBradleySessionStatus03.Desc(),
+					100 => ErrorCode.AllenBradleySessionStatus64.Desc(),
+					101 => ErrorCode.AllenBradleySessionStatus65.Desc(),
+					105 => ErrorCode.AllenBradleySessionStatus69.Desc(),
+					_ => ErrorCode.UnknownError.Desc(),
 				});
 			}
 			catch (Exception ex)
@@ -727,7 +740,7 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 		/// <returns>带有结果标识的最终数据</returns>
 		public static OperateResult<byte[], ushort, bool> ExtractActualData(byte[] response, bool isRead)
 		{
-			List<byte> list = new List<byte>();
+			var list = new List<byte>();
 			int num = 38;
 			bool value = false;
 			ushort value2 = 0;
@@ -747,13 +760,13 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 							return new OperateResult<byte[], ushort, bool>
 							{
 								ErrorCode = num6,
-								Message = "它没有正确生成或匹配标记不存在。",
+								Message = ErrorCode.AllenBradley04.Desc(),
 							};
 						case 5:
 							return new OperateResult<byte[], ushort, bool>
 							{
 								ErrorCode = num6,
-								Message = "引用的特定项（通常是实例）无法找到。",
+								Message = ErrorCode.AllenBradley05.Desc(),
 							};
 						case 6:
 							if (response[num + 2] == 210 || response[num + 2] == 204)
@@ -761,7 +774,7 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 								return new OperateResult<byte[], ushort, bool>
 								{
 									ErrorCode = num6,
-									Message = "请求的数据量不适合响应缓冲区。 发生了部分数据传输。",
+									Message = ErrorCode.AllenBradley06.Desc(),
 								};
 							}
 							break;
@@ -769,41 +782,42 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 							return new OperateResult<byte[], ushort, bool>
 							{
 								ErrorCode = num6,
-								Message = "尝试处理其中一个属性时发生错误。",
+								Message = ErrorCode.AllenBradley0A.Desc(),
 							};
 						case 19:
 							return new OperateResult<byte[], ushort, bool>
 							{
 								ErrorCode = num6,
-								Message = "命令中没有提供足够的命令数据/参数来执行所请求的服务。",
+								Message = ErrorCode.AllenBradley13.Desc(),
 							};
 						case 28:
 							return new OperateResult<byte[], ushort, bool>
 							{
 								ErrorCode = num6,
-								Message = "与属性计数相比，提供的属性数量不足。",
+								Message = ErrorCode.AllenBradley1C.Desc(),
 							};
 						case 30:
 							return new OperateResult<byte[], ushort, bool>
 							{
 								ErrorCode = num6,
-								Message = "此服务中的服务请求出错。",
+								Message = ErrorCode.AllenBradley1E.Desc(),
 							};
 						case 38:
 							return new OperateResult<byte[], ushort, bool>
 							{
 								ErrorCode = num6,
-								Message = "IOI字长与处理的IOI数量不匹配。",
+								Message = ErrorCode.AllenBradley26.Desc(),
 							};
 						default:
 							return new OperateResult<byte[], ushort, bool>
 							{
 								ErrorCode = num6,
-								Message = "UnknownError",
+								Message = ErrorCode.UnknownError.Desc(),
 							};
 						case 0:
 							break;
 					}
+
 					if (isRead)
 					{
 						for (int j = num4 + 6; j < num5; j++)
@@ -822,13 +836,13 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 						return new OperateResult<byte[], ushort, bool>
 						{
 							ErrorCode = b,
-							Message = "它没有正确生成或匹配标记不存在。",
+							Message = ErrorCode.AllenBradley04.Desc(),
 						};
 					case 5:
 						return new OperateResult<byte[], ushort, bool>
 						{
 							ErrorCode = b,
-							Message = "引用的特定项（通常是实例）无法找到。",
+							Message = ErrorCode.AllenBradley05.Desc(),
 						};
 					case 6:
 						value = true;
@@ -837,51 +851,53 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 						return new OperateResult<byte[], ushort, bool>
 						{
 							ErrorCode = b,
-							Message = "尝试处理其中一个属性时发生错误。",
+							Message = ErrorCode.AllenBradley0A.Desc(),
 						};
 					case 19:
 						return new OperateResult<byte[], ushort, bool>
 						{
 							ErrorCode = b,
-							Message = "命令中没有提供足够的命令数据/参数来执行所请求的服务。",
+							Message = ErrorCode.AllenBradley13.Desc(),
 						};
 					case 28:
 						return new OperateResult<byte[], ushort, bool>
 						{
 							ErrorCode = b,
-							Message = "与属性计数相比，提供的属性数量不足。",
+							Message = ErrorCode.AllenBradley1C.Desc(),
 						};
 					case 30:
 						return new OperateResult<byte[], ushort, bool>
 						{
 							ErrorCode = b,
-							Message = "此服务中的服务请求出错。",
+							Message = ErrorCode.AllenBradley1E.Desc(),
 						};
 					case 32:
 						return new OperateResult<byte[], ushort, bool>
 						{
 							ErrorCode = b,
-							Message = "命令中参数的数据类型与实际参数的数据类型不一致。",
+							Message = ErrorCode.AllenBradley20.Desc(),
 						};
 					case 38:
 						return new OperateResult<byte[], ushort, bool>
 						{
 							ErrorCode = b,
-							Message = "IOI字长与处理的IOI数量不匹配。",
+							Message = ErrorCode.AllenBradley26.Desc(),
 						};
 					default:
 						return new OperateResult<byte[], ushort, bool>
 						{
 							ErrorCode = b,
-							Message = "UnknownError",
+							Message = ErrorCode.UnknownError.Desc(),
 						};
 					case 0:
 						break;
 				}
+
 				if (response[num + 2] == 205 || response[num + 2] == 211)
 				{
 					return OperateResult.CreateSuccessResult(list.ToArray(), value2, value);
 				}
+
 				if (response[num + 2] == 204 || response[num + 2] == 210)
 				{
 					for (int k = num + 8; k < num + 2 + num2; k++)
@@ -898,6 +914,7 @@ namespace Plcway.Communication.Ethernet.Profinet.AllenBradley
 					}
 				}
 			}
+
 			return OperateResult.CreateSuccessResult(list.ToArray(), value2, value);
 		}
 	}

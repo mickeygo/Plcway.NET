@@ -7,27 +7,26 @@ using Newtonsoft.Json;
 namespace Plcway.Communication
 {
 	/// <summary>
-	/// 超时操作的类<br />
-	/// a class use to indicate the time-out of the connection
+	/// 超时操作的类。
 	/// </summary>
 	/// <remarks>
 	/// 本类自动启动一个静态线程来处理
 	/// </remarks>
 	public class HslTimeOut
 	{
-		private static long hslTimeoutId;
+		private static long hslTimeoutId = 0L;
 
-		private static List<HslTimeOut> WaitHandleTimeOut;
+		private static readonly List<HslTimeOut> WaitHandleTimeOut = new(128);
 
-		private static object listLock;
+		private static readonly object listLock = new();
 
 		private static Thread threadCheckTimeOut;
 
-		private static long threadUniqueId;
+		private static long threadUniqueId = 0L;
 
 		private static DateTime threadActiveTime;
 
-		private static int activeDisableCount;
+		private static int activeDisableCount = 0;
 
 		/// <summary>
 		/// 当前超时对象的唯一ID信息，没实例化一个对象，id信息就会自增1
@@ -35,8 +34,7 @@ namespace Plcway.Communication
 		public long UniqueId { get; private set; }
 
 		/// <summary>
-		/// 操作的开始时间<br />
-		/// Start time of operation
+		/// 操作的开始时间
 		/// </summary>
 		public DateTime StartTime { get; set; }
 
@@ -46,20 +44,18 @@ namespace Plcway.Communication
 		public bool IsSuccessful { get; set; }
 
 		/// <summary>
-		/// 延时的时间，单位毫秒<br />
-		/// Delay time, in milliseconds
+		/// 延时的时间，单位毫秒。
 		/// </summary>
 		public int DelayTime { get; set; }
 
 		/// <summary>
 		/// 连接超时用的Socket，本超时对象主要针对套接字的连接，接收数据的超时检测，也可以设置为空，用作其他用途的超时检测。
-		/// It can also be set to empty for other purposes.
 		/// </summary>
 		[JsonIgnore]
 		public Socket WorkSocket { get; set; }
 
 		/// <summary>
-		/// 是否发生了超时的操作，当调用方因为异常结束的时候，需要对<see cref="IsTimeout" />进行判断，是否因为发送了超时导致的异常
+		/// 是否发生了超时的操作，当调用方因为异常结束的时候，需要对<see cref="IsTimeout" />进行判断，是否因为发送了超时导致的异常。
 		/// </summary>
 		public bool IsTimeout { get; set; }
 
@@ -79,9 +75,13 @@ namespace Plcway.Communication
 			IsTimeout = false;
 		}
 
+		static HslTimeOut()
+		{
+			CreateTimeoutCheckThread();
+		}
+
 		/// <summary>
-		/// 获取到目前为止所花费的时间<br />
-		/// Get the time spent so far
+		/// 获取到目前为止所花费的时间。
 		/// </summary>
 		/// <returns>时间信息</returns>
 		public TimeSpan GetConsumeTime()
@@ -96,7 +96,7 @@ namespace Plcway.Communication
 		}
 
 		/// <summary>
-		/// 新增一个超时检测的对象，当操作完成的时候，需要自行标记<see cref="T:HslCommunication.HslTimeOut" />对象的<see cref="IsSuccessful" />为<c>True</c>
+		/// 新增一个超时检测的对象，当操作完成的时候，需要自行标记<see cref="HslTimeOut" />对象的<see cref="IsSuccessful" />为<c>True</c>
 		/// </summary>
 		/// <param name="timeOut">超时对象</param>
 		public static void HandleTimeOutCheck(HslTimeOut timeOut)
@@ -134,13 +134,14 @@ namespace Plcway.Communication
 		/// <param name="timeout">超时时间，单位为毫秒</param>
 		public static HslTimeOut HandleTimeOutCheck(Socket socket, int timeout)
 		{
-			HslTimeOut hslTimeOut = new HslTimeOut
+			var hslTimeOut = new HslTimeOut
 			{
 				DelayTime = timeout,
 				IsSuccessful = false,
 				StartTime = DateTime.Now,
 				WorkSocket = socket
 			};
+
 			if (timeout > 0)
 			{
 				HandleTimeOutCheck(hslTimeOut);
@@ -148,28 +149,19 @@ namespace Plcway.Communication
 			return hslTimeOut;
 		}
 
-		static HslTimeOut()
-		{
-			hslTimeoutId = 0L;
-			WaitHandleTimeOut = new List<HslTimeOut>(128);
-			listLock = new object();
-			threadUniqueId = 0L;
-			activeDisableCount = 0;
-			CreateTimeoutCheckThread();
-		}
-
 		private static void CreateTimeoutCheckThread()
 		{
 			threadActiveTime = DateTime.Now;
-			threadCheckTimeOut?.Abort();
-			threadCheckTimeOut = new Thread(CheckTimeOut);
-			threadCheckTimeOut.IsBackground = true;
-			threadCheckTimeOut.Priority = ThreadPriority.AboveNormal;
-			threadCheckTimeOut.Start(Interlocked.Increment(ref threadUniqueId));
+			threadCheckTimeOut = new Thread(CheckTimeOut)
+            {
+                IsBackground = true,
+                Priority = ThreadPriority.AboveNormal,
+            };
+            threadCheckTimeOut.Start(Interlocked.Increment(ref threadUniqueId));
 		}
 
 		/// <summary>
-		/// 整个HslCommunication的检测超时的核心方法，由一个单独的线程运行，线程的优先级很高，当前其他所有的超时信息都可以放到这里处理
+		/// 检测超时的核心方法，由一个单独的线程运行，线程的优先级很高，当前其他所有的超时信息都可以放到这里处理
 		/// </summary>
 		/// <param name="obj">需要传入线程的id信息</param>
 		private static void CheckTimeOut(object obj)

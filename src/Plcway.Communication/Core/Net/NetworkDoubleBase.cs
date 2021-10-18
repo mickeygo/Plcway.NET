@@ -228,7 +228,7 @@ namespace Plcway.Communication.Core.Net
 			}
 
 			CoreSocket = operateResult.Content;
-			Logger.LogDebug(ToString() + " -- NetEngineStart");
+			Logger?.LogDebug(ToString() + " -- NetEngineStart");
 			return operateResult;
 		}
 
@@ -434,6 +434,7 @@ namespace Plcway.Communication.Core.Net
 					}
 					return OperateResult.CreateSuccessResult(CoreSocket);
 				}
+
 				if (IsSocketError || CoreSocket == null)
 				{
 					OperateResult connect = await ConnectServerAsync();
@@ -534,7 +535,9 @@ namespace Plcway.Communication.Core.Net
 			if (netMessage != null && !netMessage.CheckHeadBytesLegal(base.Token.ToByteArray()))
 			{
 				socket?.Close();
-				return new OperateResult<byte[]>($"CommandHeadCodeCheckFailed{Environment.NewLine}Send: {SoftBasic.ByteToHexString(sendValue, ' ')}{Environment.NewLine} Receive: {SoftBasic.ByteToHexString(resultReceive.Content, ' ')}");
+				return new OperateResult<byte[]>($"CommandHeadCodeCheckFailed{Environment.NewLine}" +
+					$"Send: {SoftBasic.ByteToHexString(sendValue, ' ')}{Environment.NewLine}" +
+					$"Receive: {SoftBasic.ByteToHexString(resultReceive.Content, ' ')}");
 			}
 
 			return usePackAndUnpack ? UnpackResponseContent(sendValue, resultReceive.Content) : resultReceive;
@@ -695,11 +698,11 @@ namespace Plcway.Communication.Core.Net
 			}
 			if (receiveTimeOut < 0)
 			{
-				return OperateResult.CreateSuccessResult(new byte[0]);
+				return OperateResult.CreateSuccessResult(Array.Empty<byte>());
 			}
 			if (!hasResponseData)
 			{
-				return OperateResult.CreateSuccessResult(new byte[0]);
+				return OperateResult.CreateSuccessResult(Array.Empty<byte>());
 			}
 
 			if (SleepTime > 0)
@@ -717,12 +720,13 @@ namespace Plcway.Communication.Core.Net
 			if (newNetMessage != null && !newNetMessage.CheckHeadBytesLegal(base.Token.ToByteArray()))
 			{
 				socket?.Close();
-				return new OperateResult<byte[]>($"CommandHeadCodeCheckFailed {Environment.NewLine}Send: {SoftBasic.ByteToHexString(array, ' ')}{Environment.NewLine}Receive: {SoftBasic.ByteToHexString(operateResult2.Content, ' ')}");
+				return new OperateResult<byte[]>($"CommandHeadCodeCheckFailed {Environment.NewLine}" +
+					$"Send: {SoftBasic.ByteToHexString(array, ' ')}{Environment.NewLine}" +
+					$"Receive: {SoftBasic.ByteToHexString(operateResult2.Content, ' ')}");
 			}
 			return usePackAndUnpack ? UnpackResponseContent(array, operateResult2.Content) : OperateResult.CreateSuccessResult(operateResult2.Content);
 		}
 
-		/// <inheritdoc cref="M:HslCommunication.Core.Net.NetworkDoubleBase.ReadFromCoreServer(System.Byte[],System.Boolean,System.Boolean)" />
 		public OperateResult<byte[]> ReadFromCoreServer(byte[] send)
 		{
 			return ReadFromCoreServer(send, hasResponseData: true);
