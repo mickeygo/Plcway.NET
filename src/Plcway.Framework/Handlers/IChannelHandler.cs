@@ -12,7 +12,7 @@ namespace Plcway.Framework.Handlers
         /// 处理数据
         /// </summary>
         /// <param name="context">数据上下文</param>
-        /// <returns></returns>
-        Task ExecuteAsync(ChannelContext context);
+        /// <returns>返回的数据会回写到 PLC 触发信号地址</returns>
+        Task<int> ExecuteAsync(ChannelContext context);
     }
 }

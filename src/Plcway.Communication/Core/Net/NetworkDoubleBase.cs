@@ -422,6 +422,10 @@ namespace Plcway.Communication.Core.Net
 			return result;
 		}
 
+		/// <summary>
+		/// Core 获取可用的 Socket 对象。
+		/// </summary>
+		/// <returns></returns>
 		protected async Task<OperateResult<Socket>> GetAvailableSocketAsync()
 		{
 			if (isPersistentConn)
@@ -430,7 +434,7 @@ namespace Plcway.Communication.Core.Net
 				{
 					if (IsSocketError)
 					{
-						return new OperateResult<Socket>("ConnectionIsNotAvailable");
+						return new OperateResult<Socket>(ErrorCode.ConnectionIsNotAvailable.Desc());
 					}
 					return OperateResult.CreateSuccessResult(CoreSocket);
 				}
@@ -449,6 +453,8 @@ namespace Plcway.Communication.Core.Net
 				}
 				return OperateResult.CreateSuccessResult(CoreSocket);
 			}
+
+			// 非长连接，每个请求都会创建一个新的 Socket。
 			return await CreateSocketAndInitialicationAsync();
 		}
 

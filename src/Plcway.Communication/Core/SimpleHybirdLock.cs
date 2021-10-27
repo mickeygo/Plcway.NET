@@ -21,7 +21,7 @@ namespace Plcway.Communication.Core
 		/// <summary>
 		/// 基元内核模式构造同步锁
 		/// </summary>
-		private readonly Lazy<AutoResetEvent> m_waiterLock = new(() => new AutoResetEvent(initialState: false));
+		private readonly Lazy<AutoResetEvent> m_waiterLock = new(() => new AutoResetEvent(false));
 
 		private static long simpleHybirdLockCount;
 
@@ -81,7 +81,7 @@ namespace Plcway.Communication.Core
 			if (Interlocked.Decrement(ref m_waiters) != 0)
 			{
 				Interlocked.Decrement(ref simpleHybirdLockWaitCount);
-				m_waiterLock.Value.Set();
+				m_waiterLock.Value.Set();  // 设置事件信号，一次只允许执行一个线程, 其它线程继续 WaitOne 。
 			}
 		}
 	}

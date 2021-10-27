@@ -186,7 +186,7 @@ namespace Plcway.Communication
 						{
 							WaitHandleTimeOut.RemoveAt(num2);
 						}
-						else if ((DateTime.Now - hslTimeOut.StartTime).TotalMilliseconds > (double)hslTimeOut.DelayTime)
+						else if ((DateTime.Now - hslTimeOut.StartTime).TotalMilliseconds > hslTimeOut.DelayTime)
 						{
 							if (!hslTimeOut.IsSuccessful)
 							{

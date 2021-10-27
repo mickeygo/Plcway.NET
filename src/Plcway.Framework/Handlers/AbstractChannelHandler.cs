@@ -8,11 +8,6 @@ namespace Plcway.Framework.Handlers
     /// </summary>
     public abstract class AbstractChannelHandler : IChannelHandler
     {
-        /// <summary>
-        /// 执行上下文任务
-        /// </summary>
-        /// <param name="context">上下文对象</param>
-        /// <returns></returns>
-        public abstract Task ExecuteAsync(ChannelContext context);
+        public abstract Task<int> ExecuteAsync(ChannelContext context);
     }
 }

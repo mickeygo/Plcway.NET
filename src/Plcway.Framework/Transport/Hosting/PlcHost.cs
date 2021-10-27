@@ -14,7 +14,7 @@ namespace Plcway.Framework.Transport.Hosting
     public class PlcHost : IHost
     {
         private readonly HostOptions _hostOptions;
-        private readonly IPipeChannel _pipelineChannel;
+        private readonly IPipelineChannel _pipelineChannel;
         private readonly ILogger _logger;
 
         private readonly CancellationTokenSource _stopCts = new();
@@ -23,7 +23,7 @@ namespace Plcway.Framework.Transport.Hosting
 
         public HostState State { get; private set; } = HostState.Init;
 
-        public PlcHost(IOptions<HostOptions> hostOptions, IPipeChannel pipelineChannel, ILogger<PlcHost> logger)
+        public PlcHost(IOptions<HostOptions> hostOptions, IPipelineChannel pipelineChannel, ILogger<PlcHost> logger)
         {
             _hostOptions = hostOptions.Value;
             _pipelineChannel = pipelineChannel;
@@ -36,6 +36,7 @@ namespace Plcway.Framework.Transport.Hosting
             {
                 throw new InvalidOperationException("[Host] server has run.");
             }
+
             _hasRun = true;
 
             if (State == HostState.Running)
@@ -44,10 +45,10 @@ namespace Plcway.Framework.Transport.Hosting
             }
 
             State = HostState.Running;
-            var canelCts = CancellationTokenSource.CreateLinkedTokenSource(_stopCts.Token, cancellationToken);
+            var cancelCts = CancellationTokenSource.CreateLinkedTokenSource(_stopCts.Token, cancellationToken);
 
-            _ = Task.Run(async () => await AcceptAsync(canelCts.Token), canelCts.Token);
-            _ = Task.Run(async () => await CallbackAsync(canelCts.Token), canelCts.Token);
+            _ = Task.Run(async () => await AcceptAsync(cancelCts.Token), cancelCts.Token);
+            _ = Task.Run(async () => await CallbackAsync(cancelCts.Token), cancelCts.Token);
             
             return Task.CompletedTask;
         }
@@ -117,7 +118,7 @@ namespace Plcway.Framework.Transport.Hosting
             // 回调请求，这里和主机状态无关
             while (await _pipelineChannel.Pusher.Reader.WaitToReadAsync(cancellationToken))
             {
-                if (!_pipelineChannel.Pusher.Reader.TryRead(out ChannelContext ctx))
+                if (!_pipelineChannel.Pusher.Reader.TryRead(out var ctx))
                 {
                     _logger.LogError("[Host] Read data from PusherChannel to callback fail");
                     continue;

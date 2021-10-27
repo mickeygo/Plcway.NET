@@ -26,17 +26,17 @@ namespace Plcway.Communication.Core.Net
 
 		public virtual OperateResult<byte[]> Read(string address, ushort length)
 		{
-			return new OperateResult<byte[]>("NotSupportedFunction");
+			return new OperateResult<byte[]>(ErrorCode.NotSupportedFunction.Desc());
 		}
 
 		public virtual OperateResult Write(string address, byte[] value)
 		{
-			return new OperateResult("NotSupportedFunction");
+			return new OperateResult(ErrorCode.NotSupportedFunction.Desc());
 		}
 
 		public virtual OperateResult<bool[]> ReadBool(string address, ushort length)
 		{
-			return new OperateResult<bool[]>("NotSupportedFunction");
+			return new OperateResult<bool[]>(ErrorCode.NotSupportedFunction.Desc());
 		}
 
 		public virtual OperateResult<bool> ReadBool(string address)
@@ -46,7 +46,7 @@ namespace Plcway.Communication.Core.Net
 
 		public virtual OperateResult Write(string address, bool[] value)
 		{
-			return new OperateResult("NotSupportedFunction");
+			return new OperateResult(ErrorCode.NotSupportedFunction.Desc());
 		}
 
 		public virtual OperateResult Write(string address, bool value)

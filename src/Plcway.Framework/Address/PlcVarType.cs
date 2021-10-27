@@ -6,78 +6,68 @@
     public enum PlcVarType
     {
         /// <summary>
-        /// (bool)
+        /// bool
         /// </summary>
-        Bit = 0,
+        Bit,
 
         /// <summary>
-        /// (8 bits)
+        /// byte (8 bits)
         /// </summary>
-        Byte = 1,
+        Byte,
 
         /// <summary>
-        /// (16 bits, 2 bytes)
+        /// ushort (16 bits)
         /// </summary>
-        Word = 2,
+        Word ,
 
         /// <summary>
-        /// (32 bits, 4 bytes)
+        /// Double Word, ulong  (64 bits)
         /// </summary>
-        DWord = 3,
+        DWord,
 
         /// <summary>
-        /// (16 bits, 2 bytes)
+        /// ushort (16 bits)
         /// </summary>
-        Int = 4,
+        Int,
 
         /// <summary>
-        /// DInt variable type (32 bits, 4 bytes)
+        /// long (32 bits)
         /// </summary>
-        DInt = 5,
+        DInt,
 
         /// <summary>
-        /// Real variable type (32 bits, 4 bytes)
+        /// float (32 bits)
         /// </summary>
-        Real = 6,
+        Real,
 
         /// <summary>
-        /// LReal variable type (64 bits, 8 bytes)
+        /// LReal (64 bits)
         /// </summary>
-        LReal = 7,
+        LReal,
 
         /// <summary>
-        /// Char Array / C-String variable type (variable)
+        /// string (include S7String, S7WString）
         /// </summary>
-        String = 8,
-
-        /// <summary>
-        /// S7 String variable type (variable)
-        /// </summary>
-        S7String = 9,
-
-        /// <summary>
-        /// (variable)
-        /// </summary>
-        S7WString = 10,
+        String,
 
         /// <summary>
         /// Timer variable type
         /// </summary>
-        Timer = 11,
+        Timer,
 
         /// <summary>
-        /// Counter variable type
+        /// Counter
         /// </summary>
-        Counter = 12,
+        Counter,
 
         /// <summary>
-        /// DateTIme variable type
+        /// DateTIme
         /// </summary>
-        DateTime = 13,
-
         /// <summary>
-        /// DateTimeLong variable type
+        DateTime,
+
+        /// DateTimeLong
         /// </summary>
-        DateTimeLong = 14,
+        DateTimeLong,
     }
 }

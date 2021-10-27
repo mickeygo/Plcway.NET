@@ -17,8 +17,8 @@ namespace Plcway.Communication
         [Description("连接失败")]
         ConnectedFailed = 10101,
 
-        [Description("连接超时")]
-        ConnectTimeout,
+        [Description("当前的连接不可用")]
+        ConnectionIsNotAvailable,
 
         [Description("当前的功能逻辑不支持，或是当前的功能没有实现")]
         NotSupportedFunction,
@@ -28,6 +28,36 @@ namespace Plcway.Communication
 
         [Description("不支持的数据类型错误")]
         NotSupportedDataType,
+
+        [Description("连接超时")]
+        ConnectTimeout,
+
+        [Description("接收数据超时")]
+        ReceiveDataTimeout,
+
+        [Description("等待检查数据时发生了超时")]
+        CheckDataTimeout,
+
+        [Description("心跳验证超时")]
+        NetHeartCheckTimeout,
+
+        [Description("接收的数据长度太短")]
+        ReceiveDataLengthTooShort,
+
+        [Description("Ip地址格式不正确")]
+        IpAddressError,
+
+        [Description("服务器承载上限，收到超出的请求连接")]
+        NetClientFull,
+
+        [Description("异常掉线")]
+        NetClientBreak,
+
+        [Description("数据转换失败")]
+        DataTransformError,
+
+        [Description("命令头校验失败")]
+        CommandHeadCodeCheckFailed,
 
         [Description("套接字传送数据异常")]
         SocketIOException = 10201,
@@ -64,9 +94,6 @@ namespace Plcway.Communication
 
         [Description("远程主机强迫关闭了一个现有的连接")]
         SocketRemoteCloseException,
-
-        [Description("接收的数据长度太短")]
-        ReceiveDataLengthTooShort = 10301,
 
         [Description("DB块数据无法大于255")]
         SiemensDBAddressNotAllowedLargerThan255 = 20101,

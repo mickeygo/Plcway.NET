@@ -16,62 +16,53 @@ namespace Plcway.Communication.Core.Net
 	/// 本系统所有网络类的基类，该类为抽象类，无法进行实例化，如果想使用里面的方法来实现自定义的网络通信，请通过继承使用。
 	/// </summary>
 	/// <remarks>
-	/// 本类提供了丰富的底层数据的收发支持，包含<see cref="INetMessage" />消息的接收，
-	/// <c>MQTT</c>以及<c>Redis</c>,<c>websocket</c>协议的实现
+	/// 本类提供了丰富的底层数据的收发支持，包含<see cref="INetMessage" />消息的接收。
 	/// </remarks>
 	public abstract class NetworkBase
 	{
 		/// <summary>
-		/// 对客户端而言是的通讯用的套接字，对服务器来说是用于侦听的套接字<br />
-		/// A communication socket for the client, or a listening socket for the server
+		/// 对客户端而言是的通讯用的套接字，对服务器来说是用于侦听的套接字。
 		/// </summary>
 		protected Socket? CoreSocket = null;
 
 		/// <summary>
-		/// 文件传输的时候的缓存大小，直接影响传输的速度，值越大，传输速度越快，越占内存，默认为100K大小<br />
+		/// 文件传输的时候的缓存大小，直接影响传输的速度，值越大，传输速度越快，越占内存，默认为100K大小。
 		/// </summary>
 		protected int fileCacheSize = 102400;
 
 		private int connectErrorCount = 0;
 
 		/// <summary>
-		/// 组件的日志工具，支持日志记录，只要实例化后，当前网络的基本信息，就以DEBUG等级进行输出<br />
+		/// 组件的日志工具，支持日志记录，只要实例化后，当前网络的基本信息，就以DEBUG等级进行输出。
 		/// </summary>
 		/// <remarks>
-		/// 只要实例化即可以记录日志，实例化的对象需要实现接口 <see cref="ILogger" /> ，本组件提供了三个日志记录类，
+		/// 只要实例化即可以记录日志，实例化的对象需要实现接口 <see cref="ILogger" /> ，
 		/// 你可以实现基于 <see cref="ILogger" />  的对象。
 		/// </remarks>
 		public ILogger Logger { get; set; }
 
 		/// <summary>
-		/// 网络类的身份令牌，在hsl协议的模式下会有效，在和设备进行通信的时候是无效的
+		/// 网络类的身份令牌，在hsl协议的模式下会有效，在和设备进行通信的时候是无效的。
 		/// </summary>
 		/// <remarks>
 		/// 适用于Hsl协议相关的网络通信类，不适用于设备交互类。
 		/// </remarks>
-		public Guid Token { get; set; }
-
-		/// <summary>
-		/// 实例化一个NetworkBase对象，令牌的默认值为空，都是0x00
-		/// </summary>
-		public NetworkBase()
-		{
-			Token = Guid.Empty;
-		}
+		public Guid Token { get; set; } = Guid.Empty;
 
 		/// <summary>
 		/// 接收固定长度的字节数组，允许指定超时时间，默认为60秒，当length大于0时，接收固定长度的数据内容，当length小于0时，接收不大于2048长度的随机数据信息
 		/// </summary>
 		/// <param name="socket">网络通讯的套接字</param>
-		/// <param name="length">准备接收的数据长度，当length大于0时，接收固定长度的数据内容，当length小于0时，接收不大于1024长度的随机数据信息</param>
+		/// <param name="length">准备接收的数据长度，当length大于0时，接收固定长度的数据内容，当length小于0时，接收不大于2048长度的随机数据信息</param>
 		/// <param name="timeOut">单位：毫秒，超时时间，默认为60秒，如果设置小于0，则不检查超时时间</param>
 		/// <param name="reportProgress">当前接收数据的进度报告，有些协议支持传输非常大的数据内容，可以给与进度提示的功能</param>
 		/// <returns>包含了字节数据的结果类</returns>
+		/// <exception cref="RemoteCloseException"></exception>
 		protected OperateResult<byte[]> Receive(Socket socket, int length, int timeOut = 60000, Action<long, long> reportProgress = null)
 		{
 			if (length == 0)
 			{
-				return OperateResult.CreateSuccessResult(new byte[0]);
+				return OperateResult.CreateSuccessResult(Array.Empty<byte>());
 			}
 	
 			try
@@ -82,12 +73,14 @@ namespace Plcway.Communication.Core.Net
 					byte[] value = NetSupport.ReadBytesFromSocket(socket, length, reportProgress);
 					return OperateResult.CreateSuccessResult(value);
 				}
+
 				byte[] array = new byte[2048];
 				int num = socket.Receive(array);
 				if (num == 0)
 				{
 					throw new RemoteCloseException();
 				}
+
 				return OperateResult.CreateSuccessResult(SoftBasic.ArraySelectBegin(array, num));
 			}
 			catch (RemoteCloseException)
@@ -133,6 +126,7 @@ namespace Plcway.Communication.Core.Net
 						{
 							return operateResult;
 						}
+
 						list.AddRange(operateResult.Content);
 						if (operateResult.Content[0] == endCode)
 						{
@@ -141,9 +135,10 @@ namespace Plcway.Communication.Core.Net
 						}
 					}
 				}
+
 				if (!flag)
 				{
-					return new OperateResult<byte[]>("ReceiveDataTimeout");
+					return new OperateResult<byte[]>(ErrorCode.ReceiveDataTimeout.Desc());
 				}
 				return OperateResult.CreateSuccessResult(list.ToArray());
 			}
@@ -164,7 +159,7 @@ namespace Plcway.Communication.Core.Net
 		/// <returns>带有结果对象的数据信息</returns>
 		protected OperateResult<byte[]> ReceiveCommandLineFromSocket(Socket socket, byte endCode1, byte endCode2, int timeout = 60000)
 		{
-			List<byte> list = new List<byte>();
+			var list = new List<byte>();
 			try
 			{
 				DateTime now = DateTime.Now;
@@ -190,7 +185,7 @@ namespace Plcway.Communication.Core.Net
 
 				if (!flag)
 				{
-					return new OperateResult<byte[]>("ReceiveDataTimeout");
+					return new OperateResult<byte[]>(ErrorCode.ReceiveDataTimeout.Desc());
 				}
 				return OperateResult.CreateSuccessResult(list.ToArray());
 			}
@@ -806,6 +801,13 @@ namespace Plcway.Communication.Core.Net
 			return OperateResult.CreateSuccessResult();
 		}
 
+		/// <summary>
+		/// 创建 Socket，并连接远程主机。
+		/// </summary>
+		/// <param name="endPoint">终结点</param>
+		/// <param name="timeOut"></param>
+		/// <param name="local">不为 null 时，表示该 Socket 是一个 Bind 的侦听套接字</param>
+		/// <returns></returns>
 		protected async Task<OperateResult<Socket>> CreateSocketAndConnectAsync(IPEndPoint endPoint, int timeOut, IPEndPoint? local = null)
 		{
 			int connectCount = 0;
@@ -997,7 +999,7 @@ namespace Plcway.Communication.Core.Net
 
 				if (!bOK)
 				{
-					return new OperateResult<byte[]>("ReceiveDataTimeout");
+					return new OperateResult<byte[]>(ErrorCode.ReceiveDataTimeout.Desc());
 				}
 				return OperateResult.CreateSuccessResult(bufferArray.ToArray());
 			}
@@ -1034,6 +1036,7 @@ namespace Plcway.Communication.Core.Net
 					offset += count;
 				}
 				while (alreadyCount < size);
+
 				return OperateResult.CreateSuccessResult();
 			}
 			catch (Exception ex)
@@ -1069,7 +1072,7 @@ namespace Plcway.Communication.Core.Net
 			}
 
 			netMessage.ContentBytes = contentResult.Content;
-			return OperateResult.CreateSuccessResult(SoftBasic.SpliceArray<byte>(headResult.Content, contentResult.Content));
+			return OperateResult.CreateSuccessResult(SoftBasic.SpliceArray(headResult.Content, contentResult.Content));
 		}
 
 		protected async Task<OperateResult<int>> ReadStreamAsync(Stream stream, byte[] buffer)
@@ -1117,8 +1120,8 @@ namespace Plcway.Communication.Core.Net
 
 		protected async Task<OperateResult> SendBaseAndCheckReceiveAsync(Socket socket, int headCode, int customer, byte[] send)
 		{
-			send = HslProtocol.CommandBytes(headCode, customer, Token, send);
-			OperateResult sendResult = await SendAsync(socket, send);
+			var send0 = HslProtocol.CommandBytes(headCode, customer, Token, send);
+			OperateResult sendResult = await SendAsync(socket, send0);
 			if (!sendResult.IsSuccess)
 			{
 				return sendResult;
@@ -1130,7 +1133,7 @@ namespace Plcway.Communication.Core.Net
 				return checkResult;
 			}
 
-			if (checkResult.Content != send.Length)
+			if (checkResult.Content != send0.Length)
 			{
 				socket?.Close();
 				return new OperateResult("CommandLengthCheckFailed");
@@ -1145,7 +1148,7 @@ namespace Plcway.Communication.Core.Net
 
 		protected async Task<OperateResult> SendStringAndCheckReceiveAsync(Socket socket, int customer, string send)
 		{
-			byte[] data = string.IsNullOrEmpty(send) ? null : Encoding.Unicode.GetBytes(send);
+			byte[] data = string.IsNullOrEmpty(send) ? Array.Empty<byte>() : Encoding.Unicode.GetBytes(send);
 			return await SendBaseAndCheckReceiveAsync(socket, 1001, customer, data);
 		}
 

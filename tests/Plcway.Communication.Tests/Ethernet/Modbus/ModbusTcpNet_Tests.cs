@@ -2,6 +2,7 @@
 using System.Text;
 using Xunit;
 using Plcway.Communication.Ethernet.Modbus;
+using Plcway.Abstract.Tests.Utils;
 
 namespace Plcway.Communication.Tests.Ethernet.Modbus
 {
@@ -57,7 +58,7 @@ namespace Plcway.Communication.Tests.Ethernet.Modbus
             // 批量读取
             var ret10 = modbus.ReadDouble("x=3;51", 5);  // 从地址 51 开始，读取指定个数的数据
             Assert.True(ret10.IsSuccess, ret10.Message);
-            Assert.True(ArrayDeepEqual(ret10.Content, _doubleArray5), string.Join(", ", ret10.Content));
+            Assert.True(CollectionHelper.ArrayDeepEqual(ret10.Content, _doubleArray5), string.Join(", ", ret10.Content));
         }
 
         [Fact]
@@ -89,24 +90,6 @@ namespace Plcway.Communication.Tests.Ethernet.Modbus
             }
 
             return modbus;
-        }
-
-        static bool ArrayDeepEqual<T>(T[] arr1, T[] arr2) where T : IComparable<T>
-        {
-            if (arr1.Length != arr2.Length)
-            {
-                return false;
-            }
-
-            for (int i = 0; i < arr1.Length; i++)
-            {
-                if (arr1[i].CompareTo(arr2[i]) != 0)
-                {
-                    return false;
-                }
-            }
-
-            return true;
         }
     }
 }

@@ -1,6 +1,6 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using BenchmarkDotNet.Attributes;
+using Plcway.Abstract.Tests.Utils;
 using Plcway.Communication.Ethernet.Modbus;
 
 namespace Plcway.Benchmarks.Communication.Modbus
@@ -25,7 +25,7 @@ namespace Plcway.Benchmarks.Communication.Modbus
         public bool RunMultiRead5()
         {
             var ret = _modbus.ReadDouble("x=3;51", 5);  // 从地址 51 开始，读取指定个数的数据
-            return ret.IsSuccess && ArrayDeepEqual(ret.Content, _doubleArray5);
+            return ret.IsSuccess && CollectionHelper.ArrayDeepEqual(ret.Content, _doubleArray5);
         }
 
         [Benchmark]
@@ -46,24 +46,6 @@ namespace Plcway.Benchmarks.Communication.Modbus
         public void Cleanup()
         {
             _modbus.Dispose();
-        }
-
-        static bool ArrayDeepEqual<T>(T[] arr1, T[] arr2) where T : IComparable<T>
-        {
-            if (arr1.Length != arr2.Length)
-            {
-                return false;
-            }
-
-            for (int i = 0; i < arr1.Length; i++)
-            {
-                if (arr1[i].CompareTo(arr2[i]) != 0)
-                {
-                    return false;
-                }
-            }
-
-            return true;
         }
     }
 }
