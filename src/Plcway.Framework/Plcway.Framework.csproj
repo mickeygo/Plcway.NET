@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
 	<Nullable>enable</Nullable>
 	<Authors>Plcway</Authors>
 	<RepositoryUrl>https://github.com/mickeygo/Plcway.NET</RepositoryUrl>
@@ -19,6 +19,7 @@
     <Folder Include="Codecs\Mqtt\" />
     <Folder Include="Codecs\Protobuf\" />
     <Folder Include="Metrics\" />
+    <Folder Include="Tracing\" />
   </ItemGroup>
 
   <ItemGroup>
