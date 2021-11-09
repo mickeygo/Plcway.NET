@@ -92,7 +92,10 @@ namespace Plcway.Framework.Transport.Hosting
             // think：处于 Stop 状态时，可使用 ManualResetEvent 来阻塞线程执行。
             while (!cancellationToken.IsCancellationRequested)
             {
-                await Task.Delay(_hostOptions.Interval, cancellationToken);  // 延迟
+                if (_hostOptions.Interval > 0)
+                {
+                    await Task.Delay(_hostOptions.Interval, cancellationToken);  // 延迟
+                }
 
                 // 主机非运行状态时，不会去读取请求数据
                 if (State != HostState.Running)
@@ -101,6 +104,12 @@ namespace Plcway.Framework.Transport.Hosting
                 }
 
                 var ctx = BuildChannelContext();
+
+                // TODO: 思考，是否要阻塞，直到通道有可用的数据空间？
+                //if (await _pipelineChannel.Puller.Writer.WaitToWriteAsync(cancellationToken))
+                //{
+                //}
+
                 if (!_pipelineChannel.Puller.Writer.TryWrite(ctx))  // think，当 channel 满了时是否要丢弃数据？
                 {
                     _logger.LogError($"[Host] Try write to PullerChannel fail, transId:{ctx.TransactionId}, request:{JsonHelper.Serialize(ctx.Request)}");
@@ -128,7 +137,11 @@ namespace Plcway.Framework.Transport.Hosting
             }
         }
 
-        public void Dispose() => Shutdown();
+        public void Dispose()
+        {
+            Shutdown();
+            GC.SuppressFinalize(this);
+        }
 
         #region privates
 

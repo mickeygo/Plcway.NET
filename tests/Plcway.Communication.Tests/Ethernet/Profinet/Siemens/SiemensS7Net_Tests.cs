@@ -16,6 +16,36 @@ namespace Plcway.Communication.Tests.Ethernet.Profinet.Siemens
         // DB块寄存器地址读取
         // DB块寄存器地址格式：DB{X}.{XX}
         [Fact]
+        public void Should_DB_ReadOne_Test()
+        {
+            using var s7 = OpenAndConnectConn(true);
+
+            var v1 = s7.ReadInt16("DB1.DBW0");  // DB55.DBD744
+            Assert.True(v1.IsSuccess, v1.Message);
+            Assert.True(v1.Content == 1, v1.Content.ToString());
+
+            var v2 = s7.ReadInt16("DB1.0");
+            Assert.True(v2.IsSuccess, v2.Message);
+            Assert.True(v2.Content == 1, v2.Content.ToString());
+
+            var v3 = s7.ReadInt16("DB1.8");
+            Assert.True(v3.IsSuccess, v3.Message);
+            Assert.True(v3.Content == 1, v3.Content.ToString());
+        }
+
+        [Fact]
+        public void Should_DB_ReadString_Test()
+        {
+            using var s7 = OpenAndConnectConn(true);
+
+            var v1 = s7.ReadWString("DB1.32");
+            Assert.True(v1.IsSuccess, v1.Message);
+            Assert.True(v1.Content == "abc123测试", v1.Content.ToString());
+        }
+
+        // DB块寄存器地址读取
+        // DB块寄存器地址格式：DB{X}.{XX}
+        [Fact]
         public void Should_DB_Read_Test()
         {
             using var s7 = OpenAndConnectConn(true);
@@ -73,30 +103,31 @@ namespace Plcway.Communication.Tests.Ethernet.Profinet.Siemens
         {
             using var s7 = OpenAndConnectConn(true);
 
-            s7.Write("DB1.11", (short)11);
-            s7.Write("DB1.12", (ushort)12);
-            s7.Write("DB1.13", 13);
-            s7.Write("DB1.15", (uint)15);
-            s7.Write("DB1.17", 17L);
-            s7.Write("DB1.21", 21UL);
-            s7.Write("DB1.25", 25.01f);
-            s7.Write("DB1.27", 27.01d);
+            var opt1 = s7.Write("DB1.11", (short)11);
+            Assert.True(opt1.IsSuccess, opt1.Message);
+        }
 
-            s7.Write("x=3;41", "abc123测试", Encoding.Unicode);
+        [Fact]
+        public void Should_DB_WriteString_Test()
+        {
+            using var s7 = OpenAndConnectConn(true);
+            var opt1 = s7.WriteWString("DB1.32", "abc123测试");  // 仅含有 ASCII 码字符串，可使用 Write 方法
+            Assert.True(opt1.IsSuccess, opt1.Message);
 
-            s7.Write("x=3;51", _doubleArray5);  // 批量写入，从地址 51 开始
+            //var opt2 = s7.WriteWString("DB1.32", "abc");  // 测试同一字符串地址，后续写入部分值，会不会出现上一次部分值滞留的问题（经测试不会出现）
+            //Assert.True(opt2.IsSuccess, opt2.Message);
         }
 
         static SiemensS7Net OpenAndConnectConn(bool useLongConnect = false)
         {
-            var modbus = new SiemensS7Net(SiemensPLCS.S1200, "127.0.0.1");
+            var s7 = new SiemensS7Net(SiemensPLCS.S1200, "10.1.0.181");
             if (useLongConnect)
             {
-                var ret = modbus.ConnectServer(); // 使用长连接
+                var ret = s7.ConnectServer(); // 使用长连接
                 Assert.True(ret.IsSuccess, ret.Message);
             }
 
-            return modbus;
+            return s7;
         }
     }
 }

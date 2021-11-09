@@ -41,7 +41,7 @@
         Real,
 
         /// <summary>
-        /// LReal (64 bits)
+        /// Double (64 bits)
         /// </summary>
         LReal,
 

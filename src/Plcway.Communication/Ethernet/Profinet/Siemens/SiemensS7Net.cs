@@ -12,113 +12,113 @@ using Plcway.Communication.Extensions;
 
 namespace Plcway.Communication.Ethernet.Profinet.Siemens
 {
-	/// <summary>
-	/// 一个西门子的客户端类，使用S7协议来进行数据交互，对于s300,s400需要关注<see cref="SiemensS7Net.Slot" />
-	/// 和<see cref="SiemensS7Net.Rack" />的设置值，
-	/// 对于s200，需要关注<see cref="SiemensS7Net.LocalTSAP" />
-	/// 和<see cref="SiemensS7Net.DestTSAP" />的设置值，详细参考demo的设置。 <br />
-	/// <remarks>
-	/// 暂时不支持bool[]的批量写入操作，请使用 Write(string, byte[]) 替换。<br />
-	/// <note type="important">对于200smartPLC的V区，就是DB1.X，例如，V100=DB1.100，当然了你也可以输入V100</note>
-	/// </remarks>
-	/// <example>
-	/// 地址支持的列表如下：
-	/// <list type="table">
-	///   <listheader>
-	///     <term>地址名称</term>
-	///     <term>地址代号</term>
-	///     <term>示例</term>
-	///     <term>地址进制</term>
-	///     <term>字操作</term>
-	///     <term>位操作</term>
-	///     <term>备注</term>
-	///   </listheader>
-	///   <item>
-	///     <term>中间寄存器</term>
-	///     <term>M</term>
-	///     <term>M100,M200</term>
-	///     <term>10</term>
-	///     <term>√</term>
-	///     <term>√</term>
-	///     <term></term>
-	///   </item>
-	///   <item>
-	///     <term>输入寄存器</term>
-	///     <term>I</term>
-	///     <term>I100,I200</term>
-	///     <term>10</term>
-	///     <term>√</term>
-	///     <term>√</term>
-	///     <term></term>
-	///   </item>
-	///   <item>
-	///     <term>输出寄存器</term>
-	///     <term>Q</term>
-	///     <term>Q100,Q200</term>
-	///     <term>10</term>
-	///     <term>√</term>
-	///     <term>√</term>
-	///     <term></term>
-	///   </item>
-	///   <item>
-	///     <term>DB块寄存器</term>
-	///     <term>DB</term>
-	///     <term>DB1.100,DB1.200</term>
-	///     <term>10</term>
-	///     <term>√</term>
-	///     <term>√</term>
-	///     <term></term>
-	///   </item>
-	///   <item>
-	///     <term>V寄存器</term>
-	///     <term>V</term>
-	///     <term>V100,V200</term>
-	///     <term>10</term>
-	///     <term>√</term>
-	///     <term>√</term>
-	///     <term>V寄存器本质就是DB块1</term>
-	///   </item>
-	///   <item>
-	///     <term>定时器的值</term>
-	///     <term>T</term>
-	///     <term>T100,T200</term>
-	///     <term>10</term>
-	///     <term>√</term>
-	///     <term>√</term>
-	///     <term>仅在200smart测试通过</term>
-	///   </item>
-	///   <item>
-	///     <term>计数器的值</term>
-	///     <term>C</term>
-	///     <term>C100,C200</term>
-	///     <term>10</term>
-	///     <term>√</term>
-	///     <term>√</term>
-	///     <term>仅在200smart测试通过</term>
-	///   </item>
-	///   <item>
-	///     <term>智能输入寄存器</term>
-	///     <term>AI</term>
-	///     <term>AI100,AI200</term>
-	///     <term>10</term>
-	///     <term>√</term>
-	///     <term>√</term>
-	///     <term></term>
-	///   </item>
-	///   <item>
-	///     <term>智能输出寄存器</term>
-	///     <term>AQ</term>
-	///     <term>AQ100,AQ200</term>
-	///     <term>10</term>
-	///     <term>√</term>
-	///     <term>√</term>
-	///     <term></term>
-	///   </item>
-	/// </list>
-	/// <note type="important">对于200smartPLC的V区，就是DB1.X，例如，V100=DB1.100</note>
-	/// 假设起始地址为M100，M100存储了温度，100.6℃值为1006，M102存储了压力，1.23Mpa值为123，M104，M105，M106，M107存储了产量计数，读取如下：
-	/// </example>
-	public class SiemensS7Net : NetworkDeviceBase
+    /// <summary>
+    /// 一个西门子的客户端类，使用S7协议来进行数据交互，对于s300,s400需要关注<see cref="Slot" />
+    /// 和<see cref="Rack" />的设置值，
+    /// 对于s200，需要关注<see cref="LocalTSAP" />
+    /// 和<see cref="DestTSAP" />的设置值，详细参考demo的设置。 <br />
+    /// <remarks>
+    /// 暂时不支持bool[]的批量写入操作，请使用 Write(string, byte[]) 替换。<br />
+    /// <note type="important">对于200smartPLC的V区，就是DB1.X，例如，V100=DB1.100，当然了你也可以输入V100</note>
+    /// </remarks>
+    /// <example>
+    /// 地址支持的列表如下：
+    /// <list type="table">
+    ///   <listheader>
+    ///     <term>地址名称</term>
+    ///     <term>地址代号</term>
+    ///     <term>示例</term>
+    ///     <term>地址进制</term>
+    ///     <term>字操作</term>
+    ///     <term>位操作</term>
+    ///     <term>备注</term>
+    ///   </listheader>
+    ///   <item>
+    ///     <term>中间寄存器</term>
+    ///     <term>M</term>
+    ///     <term>M100,M200</term>
+    ///     <term>10</term>
+    ///     <term>√</term>
+    ///     <term>√</term>
+    ///     <term></term>
+    ///   </item>
+    ///   <item>
+    ///     <term>输入寄存器</term>
+    ///     <term>I</term>
+    ///     <term>I100,I200</term>
+    ///     <term>10</term>
+    ///     <term>√</term>
+    ///     <term>√</term>
+    ///     <term></term>
+    ///   </item>
+    ///   <item>
+    ///     <term>输出寄存器</term>
+    ///     <term>Q</term>
+    ///     <term>Q100,Q200</term>
+    ///     <term>10</term>
+    ///     <term>√</term>
+    ///     <term>√</term>
+    ///     <term></term>
+    ///   </item>
+    ///   <item>
+    ///     <term>DB块寄存器</term>
+    ///     <term>DB</term>
+    ///     <term>DB1.100,DB1.200</term>
+    ///     <term>10</term>
+    ///     <term>√</term>
+    ///     <term>√</term>
+    ///     <term></term>
+    ///   </item>
+    ///   <item>
+    ///     <term>V寄存器</term>
+    ///     <term>V</term>
+    ///     <term>V100,V200</term>
+    ///     <term>10</term>
+    ///     <term>√</term>
+    ///     <term>√</term>
+    ///     <term>V寄存器本质就是DB块1</term>
+    ///   </item>
+    ///   <item>
+    ///     <term>定时器的值</term>
+    ///     <term>T</term>
+    ///     <term>T100,T200</term>
+    ///     <term>10</term>
+    ///     <term>√</term>
+    ///     <term>√</term>
+    ///     <term>仅在200smart测试通过</term>
+    ///   </item>
+    ///   <item>
+    ///     <term>计数器的值</term>
+    ///     <term>C</term>
+    ///     <term>C100,C200</term>
+    ///     <term>10</term>
+    ///     <term>√</term>
+    ///     <term>√</term>
+    ///     <term>仅在200smart测试通过</term>
+    ///   </item>
+    ///   <item>
+    ///     <term>智能输入寄存器</term>
+    ///     <term>AI</term>
+    ///     <term>AI100,AI200</term>
+    ///     <term>10</term>
+    ///     <term>√</term>
+    ///     <term>√</term>
+    ///     <term></term>
+    ///   </item>
+    ///   <item>
+    ///     <term>智能输出寄存器</term>
+    ///     <term>AQ</term>
+    ///     <term>AQ100,AQ200</term>
+    ///     <term>10</term>
+    ///     <term>√</term>
+    ///     <term>√</term>
+    ///     <term></term>
+    ///   </item>
+    /// </list>
+    /// <note type="important">对于200smartPLC的V区，就是DB1.X，例如，V100=DB1.100</note>
+    /// 假设起始地址为M100，M100存储了温度，100.6℃值为1006，M102存储了压力，1.23Mpa值为123，M104，M105，M106，M107存储了产量计数，读取如下：
+    /// </example>
+    public class SiemensS7Net : NetworkDeviceBase
 	{
 		private byte[] plcHead1 = new byte[22]
 		{
@@ -203,8 +203,7 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 		private int pdu_length = 0;
 
         /// <summary>
-        /// PLC的槽号，针对S7-400的PLC设置的<br />
-        /// The slot number of PLC is set for PLC of s7-400
+        /// PLC的槽号，针对S7-400的PLC设置的。
         /// </summary>
         public byte Slot
 		{
@@ -220,8 +219,7 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 		}
 
 		/// <summary>
-		/// PLC的机架号，针对S7-400的PLC设置的<br />
-		/// The frame number of the PLC is set for the PLC of s7-400
+		/// PLC的机架号，针对S7-400的PLC设置的。
 		/// </summary>
 		public byte Rack
 		{
@@ -237,8 +235,7 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 		}
 
 		/// <summary>
-		/// 获取或设置当前PLC的连接方式，PG: 0x01，OP: 0x02，S7Basic: 0x03...0x10<br />
-		/// Get or set the current PLC connection mode, PG: 0x01, OP: 0x02, S7Basic: 0x03...0x10
+		/// 获取或设置当前PLC的连接方式，PG: 0x01，OP: 0x02，S7Basic: 0x03...0x10。
 		/// </summary>
 		public byte ConnectionType
 		{
@@ -256,8 +253,7 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 		}
 
 		/// <summary>
-		/// 西门子相关的本地TSAP参数信息<br />
-		/// A parameter information related to Siemens
+		/// 西门子相关的本地TSAP参数信息。
 		/// </summary>
 		public int LocalTSAP
 		{
@@ -314,14 +310,12 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 		}
 
 		/// <summary>
-		/// 获取当前西门子的PDU的长度信息，不同型号PLC的值会不一样。<br />
-		/// Get the length information of the current Siemens PDU, the value of different types of PLC will be different.
+		/// 获取当前西门子的PDU的长度信息，不同型号PLC的值会不一样。
 		/// </summary>
 		public int PDULength => pdu_length;
 
 		/// <summary>
-		/// 实例化一个西门子的S7协议的通讯对象 <br />
-		/// Instantiate a communication object for a Siemens S7 protocol
+		/// 实例化一个西门子的S7协议的通讯对象。
 		/// </summary>
 		/// <param name="siemens">指定西门子的型号</param>
 		public SiemensS7Net(SiemensPLCS siemens)
@@ -330,8 +324,7 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 		}
 
 		/// <summary>
-		/// 实例化一个西门子的S7协议的通讯对象并指定Ip地址 <br />
-		/// Instantiate a communication object for a Siemens S7 protocol and specify an IP address
+		/// 实例化一个西门子的S7协议的通讯对象并指定Ip地址。
 		/// </summary>
 		/// <param name="siemens">指定西门子的型号</param>
 		/// <param name="ipAddress">Ip地址</param>
@@ -346,11 +339,10 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 		}
 
 		/// <summary>
-		/// 初始化方法<br />
-		/// Initialize method
+		/// 初始化方法。
 		/// </summary>
-		/// <param name="siemens">指定西门子的型号 -&gt; Designation of Siemens</param>
-		/// <param name="ipAddress">Ip地址 -&gt; IpAddress</param>
+		/// <param name="siemens">指定西门子的型号</param>
+		/// <param name="ipAddress">Ip地址</param>
 		private void Initialization(SiemensPLCS siemens, string ipAddress)
 		{
 			base.WordLength = 2;
@@ -550,22 +542,13 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 		}
 
 		/// <summary>
-		/// 从PLC读取原始的字节数据，地址格式为I100，Q100，DB20.100，M100，长度参数以字节为单位<br />
-		/// Read the original byte data from the PLC, the address format is I100, Q100, DB20.100, M100, length parameters in bytes
+		/// 从PLC读取原始的字节数据，地址格式为I100，Q100，DB20.100，M100，长度参数以字节为单位。
 		/// </summary>
-		/// <param name="address">起始地址，格式为I100，M100，Q100，DB20.100<br />
-		/// Starting address, formatted as I100,M100,Q100,DB20.100</param>
-		/// <param name="length">读取的数量，以字节为单位<br />
-		/// The number of reads, in bytes</param>
+		/// <param name="address">起始地址，格式为I100，M100，Q100，DB20.100。</param>
+		/// <param name="length">读取的数量，以字节为单位。</param>
 		/// <returns>
-		/// 是否读取成功的结果对象 <br />
-		/// Whether to read the successful result object</returns>
-		/// <remarks>
-		/// <inheritdoc cref="T:HslCommunication.Profinet.Siemens.SiemensS7Net" path="note" />
-		/// </remarks>
-		/// <example>
-		/// 假设起始地址为M100，M100存储了温度，100.6℃值为1006，M102存储了压力，1.23Mpa值为123，M104，M105，M106，M107存储了产量计数，读取如下：
-		/// </example>
+		/// 是否读取成功的结果对象。
+		/// </returns>
 		public override OperateResult<byte[]> Read(string address, ushort length)
 		{
 			var operateResult = S7AddressData.ParseFrom(address, length);
@@ -600,12 +583,10 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 		}
 
 		/// <summary>
-		/// 从PLC读取数据，地址格式为I100，Q100，DB20.100，M100，以位为单位 -&gt;
-		/// Read the data from the PLC, the address format is I100，Q100，DB20.100，M100, in bits units
+		/// 从PLC读取数据，地址格式为I100，Q100，DB20.100，M100，以位为单位。
 		/// </summary>
-		/// <param name="address">起始地址，格式为I100，M100，Q100，DB20.100 -&gt;
-		/// Starting address, formatted as I100,M100,Q100,DB20.100</param>
-		/// <returns>是否读取成功的结果对象 -&gt; Whether to read the successful result object</returns>
+		/// <param name="address">起始地址，格式为I100，M100，Q100，DB20.100。</param>
+		/// <returns>是否读取成功的结果对象。</returns>
 		private OperateResult<byte[]> ReadBitFromPLC(string address)
 		{
 			var operateResult = BuildBitReadCommand(address);
@@ -625,11 +606,9 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 		/// <summary>
 		/// 一次性从PLC获取所有的数据，按照先后顺序返回一个统一的Buffer，需要按照顺序处理，两个数组长度必须一致，数组长度无限制
 		/// </summary>
-		/// <param name="address">起始地址，格式为I100，M100，Q100，DB20.100<br />
-		/// Starting address, formatted as I100,M100,Q100,DB20.100</param>
-		/// <param name="length">数据长度数组<br />
-		/// Array of data Lengths</param>
-		/// <returns>是否读取成功的结果对象 -&gt; Whether to read the successful result object</returns>
+		/// <param name="address">起始地址，格式为I100，M100，Q100，DB20.100。</param>
+		/// <param name="length">数据长度数组。</param>
+		/// <returns>是否读取成功的结果对象。</returns>
 		/// <exception cref="T:System.NullReferenceException"></exception>
 		/// <remarks>
 		/// <note type="warning">原先的批量的长度为19，现在已经内部自动处理整合，目前的长度为任意和长度。</note>
@@ -653,9 +632,8 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 		/// 读取西门子的地址数据信息，支持任意个数的数据读取
 		/// </summary>
 		/// <param name="s7Addresses">
-		/// 西门子的数据地址<br />
-		/// Siemens data address</param>
-		/// <returns>返回的结果对象信息 -&gt; Whether to read the successful result object</returns>
+		/// 西门子的数据地址。</param>
+		/// <returns>返回的结果对象信息。</returns>
 		public OperateResult<byte[]> Read(S7AddressData[] s7Addresses)
 		{
 			if (s7Addresses.Length > 19)
@@ -698,24 +676,21 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 		}
 
 		/// <summary>
-		/// 基础的写入数据的操作支持<br />
-		/// Operational support for the underlying write data
+		/// 基础的写入数据的操作支持。
 		/// </summary>
-		/// <param name="entireValue">完整的字节数据 -&gt; Full byte data</param>
-		/// <returns>是否写入成功的结果对象 -&gt; Whether to write a successful result object</returns>
+		/// <param name="entireValue">完整的字节数据。</param>
+		/// <returns>是否写入成功的结果对象。</returns>
 		private OperateResult WriteBase(byte[] entireValue)
 		{
 			return ByteTransformHelper.GetResultFromOther(ReadFromCoreServer(entireValue), AnalysisWrite);
 		}
 
 		/// <summary>
-		/// 将数据写入到PLC数据，地址格式为I100，Q100，DB20.100，M100，以字节为单位<br />
-		/// Writes data to the PLC data, in the address format I100,Q100,DB20.100,M100, in bytes
+		/// 将数据写入到PLC数据，地址格式为I100，Q100，DB20.100，M100，以字节为单位。
 		/// </summary>
-		/// <param name="address">起始地址，格式为I100，M100，Q100，DB20.100 -&gt;
-		/// Starting address, formatted as I100,M100,Q100,DB20.100</param>
-		/// <param name="value">写入的原始数据 -&gt; Raw data written to</param>
-		/// <returns>是否写入成功的结果对象 -&gt; Whether to write a successful result object</returns>
+		/// <param name="address">起始地址，格式为I100，M100，Q100，DB20.100</param>
+		/// <param name="value">写入的原始数据</param>
+		/// <returns>是否写入成功的结果对象</returns>
 		/// <example>
 		/// 假设起始地址为M100，M100,M101存储了温度，100.6℃值为1006，M102,M103存储了压力，1.23Mpa值为123，M104-M107存储了产量计数
 		/// </example>
@@ -888,12 +863,10 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 		}
 
 		/// <summary>
-		/// 读取指定地址的bool数据，地址格式为I100，M100，Q100，DB20.100<br />
-		/// reads bool data for the specified address in the format I100，M100，Q100，DB20.100
+		/// 读取指定地址的bool数据，地址格式为I100，M100，Q100，DB20.100。
 		/// </summary>
-		/// <param name="address">起始地址，格式为I100，M100，Q100，DB20.100 -&gt;
-		/// Starting address, formatted as I100,M100,Q100,DB20.100</param>
-		/// <returns>是否读取成功的结果对象 -&gt; Whether to read the successful result object</returns>
+		/// <param name="address">起始地址，格式为I100，M100，Q100，DB20.100</param>
+		/// <returns>是否读取成功的结果对象</returns>
 		/// <remarks>
 		/// <note type="important">
 		/// 对于200smartPLC的V区，就是DB1.X，例如，V100=DB1.100
@@ -908,13 +881,11 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 		}
 
 		/// <summary>
-		/// 读取指定地址的bool数组，地址格式为I100，M100，Q100，DB20.100<br />
-		/// reads bool array data for the specified address in the format I100，M100，Q100，DB20.100
+		/// 读取指定地址的bool数组，地址格式为I100，M100，Q100，DB20.100。
 		/// </summary>
-		/// <param name="address">起始地址，格式为I100，M100，Q100，DB20.100 -&gt;
-		/// Starting address, formatted as I100,M100,Q100,DB20.100</param>
+		/// <param name="address">起始地址，格式为I100，M100，Q100，DB20.100</param>
 		/// <param name="length">读取的长度信息</param>
-		/// <returns>是否读取成功的结果对象 -&gt; Whether to read the successful result object</returns>
+		/// <returns>是否读取成功的结果对象</returns>
 		/// <remarks>
 		/// <note type="important">
 		/// 对于200smartPLC的V区，就是DB1.X，例如，V100=DB1.100
@@ -942,10 +913,9 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 		/// <summary>
 		/// 写入PLC的一个位，例如"M100.6"，"I100.7"，"Q100.0"，"DB20.100.0"，如果只写了"M100"默认为"M100.0"
 		/// </summary>
-		/// <param name="address">起始地址，格式为"M100.6",  "I100.7",  "Q100.0",  "DB20.100.0" -&gt;
-		/// Start address, format  "M100.6",  "I100.7",  "Q100.0",  "DB20.100.0"</param>
-		/// <param name="value">写入的数据，True或是False -&gt; Writes the data, either True or False</param>
-		/// <returns>是否写入成功的结果对象 -&gt; Whether to write a successful result object</returns>
+		/// <param name="address">起始地址，格式为"M100.6",  "I100.7",  "Q100.0",  "DB20.100.0"</param>
+		/// <param name="value">写入的数据，True或是False</param>
+		/// <returns>是否写入成功的结果对象</returns>
 		public override OperateResult Write(string address, bool value)
 		{
 			var operateResult = BuildWriteBitCommand(address, value);
@@ -959,14 +929,12 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 		/// <summary>
 		/// [危险] 向PLC中写入bool数组，比如你写入M100,那么data[0]对应M100.0
 		/// </summary>
-		/// <param name="address">起始地址，格式为I100，M100，Q100，DB20.100 -&gt; Starting address, formatted as I100,mM100,Q100,DB20.100</param>
-		/// <param name="values">要写入的bool数组，长度为8的倍数 -&gt; The bool array to write, a multiple of 8 in length</param>
-		/// <returns>是否写入成功的结果对象 -&gt; Whether to write a successful result object</returns>
+		/// <param name="address">起始地址，格式为I100，M100，Q100，DB20.100</param>
+		/// <param name="values">要写入的bool数组，长度为8的倍数</param>
+		/// <returns>是否写入成功的结果对象</returns>
 		/// <remarks>
 		/// <note type="warning">
-		/// 批量写入bool数组存在一定的风险，原因是只能批量写入长度为8的倍数的数组，否则会影响其他的位的数据，请谨慎使用。<br />
-		/// There is a certain risk in batch writing to bool arrays, because you can only batch write arrays whose length is a multiple of 8, 
-		/// otherwise it will affect other bit data. Please use it with caution.
+		/// 批量写入bool数组存在一定的风险，原因是只能批量写入长度为8的倍数的数组，否则会影响其他的位的数据，请谨慎使用。
 		/// </note>
 		/// </remarks>
 		public override OperateResult Write(string address, bool[] values)
@@ -1016,9 +984,8 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 		/// <summary>
 		/// 读取指定地址的byte数据，地址格式I100，M100，Q100，DB20.100
 		/// </summary>
-		/// <param name="address">起始地址，格式为I100，M100，Q100，DB20.100 -&gt;
-		/// Starting address, formatted as I100,M100,Q100,DB20.100</param>
-		/// <returns>是否读取成功的结果对象 -&gt; Whether to read the successful result object</returns>
+		/// <param name="address">起始地址，格式为I100，M100，Q100，DB20.100</param>
+		/// <returns>是否读取成功的结果对象</returns>
 		public OperateResult<byte> ReadByte(string address)
 		{
 			return ByteTransformHelper.GetResultFromArray(Read(address, 1));
@@ -1027,9 +994,9 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 		/// <summary>
 		/// 向PLC中写入byte数据，返回值说明
 		/// </summary>
-		/// <param name="address">起始地址，格式为I100，M100，Q100，DB20.100 -&gt; Starting address, formatted as I100,mM100,Q100,DB20.100</param>
-		/// <param name="value">byte数据 -&gt; Byte data</param>
-		/// <returns>是否写入成功的结果对象 -&gt; Whether to write a successful result object</returns>
+		/// <param name="address">起始地址，格式为I100，M100，Q100，DB20.100</param>
+		/// <param name="value">byte数据</param>
+		/// <returns>是否写入成功的结果对象</returns>
 		public OperateResult Write(string address, byte value)
 		{
 			return Write(address, new byte[1] { value });
@@ -1051,6 +1018,7 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 			{
 				value = string.Empty;
 			}
+
 			byte[] array = encoding.GetBytes(value);
 			if (encoding == Encoding.Unicode)
 			{
@@ -1065,7 +1033,7 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 				}
 				if (operateResult.Content[0] == byte.MaxValue)
 				{
-					return new OperateResult<string>("Value in plc is not string type");
+					return new OperateResult<string>(ErrorCode.SiemensValueOfPlcIsNotStringType.Desc());
 				}
 				if (operateResult.Content[0] == 0)
 				{
@@ -1073,7 +1041,7 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 				}
 				if (value.Length > operateResult.Content[0])
 				{
-					return new OperateResult<string>("String length is too long than plc defined");
+					return new OperateResult<string>(ErrorCode.SiemensStringlengthIsToolongThanPlcDefined.Desc());
 				}
 				return Write(address, SoftBasic.SpliceArray(new byte[2]
 				{
@@ -1087,7 +1055,7 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 		/// <summary>
 		/// 使用双字节编码的方式，将字符串以 Unicode 编码写入到PLC的地址里，可以使用中文。
 		/// </summary>
-		/// <param name="address">起始地址，格式为I100，M100，Q100，DB20.100 -&gt; Starting address, formatted as I100,mM100,Q100,DB20.100</param>
+		/// <param name="address">起始地址，格式为I100，M100，Q100，DB20.100</param>
 		/// <param name="value">字符串的值</param>
 		/// <returns>是否写入成功的结果对象</returns>
 		public OperateResult WriteWString(string address, string value)
@@ -1113,14 +1081,14 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 		{
 			if (CurrentPlc != SiemensPLCS.S200Smart)
 			{
-				var operateResult = Read(address, 2);
+				var operateResult = Read(address, 2);  // TODO: 如何避免字符串每次请求的预读校验？
 				if (!operateResult.IsSuccess)
 				{
 					return OperateResult.CreateFailedResult<string>(operateResult);
 				}
 				if (operateResult.Content[0] == 0 || operateResult.Content[0] == byte.MaxValue)
 				{
-					return new OperateResult<string>("Value in plc is not string type");
+					return new OperateResult<string>(ErrorCode.SiemensValueOfPlcIsNotStringType.Desc());
 				}
 
 				var operateResult2 = Read(address, (ushort)(2 + operateResult.Content[1]));
@@ -1154,7 +1122,7 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 		{
 			if (CurrentPlc != SiemensPLCS.S200Smart)
 			{
-				var operateResult = Read(address, 2);
+				var operateResult = Read(address, 2);  // TODO: 如何避免字符串每次请求的预读校验？
 				if (!operateResult.IsSuccess)
 				{
 					return OperateResult.CreateFailedResult<string>(operateResult);
@@ -1162,7 +1130,7 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 
 				if (operateResult.Content[0] == 0 || operateResult.Content[0] == byte.MaxValue)
 				{
-					return new OperateResult<string>("Value in plc is not string type");
+					return new OperateResult<string>(ErrorCode.SiemensValueOfPlcIsNotStringType.Desc());
 				}
 
 				var operateResult2 = Read(address, (ushort)(2 + operateResult.Content[1] * 2));
@@ -1208,7 +1176,7 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 				}
 				if (readLength.Content[0] == byte.MaxValue)
 				{
-					return new OperateResult<string>("Value in plc is not string type");
+					return new OperateResult<string>(ErrorCode.SiemensValueOfPlcIsNotStringType.Desc());
 				}
 				if (readLength.Content[0] == 0)
 				{
@@ -1216,15 +1184,16 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 				}
 				if (value.Length > readLength.Content[0])
 				{
-					return new OperateResult<string>("String length is too long than plc defined");
+					return new OperateResult<string>(ErrorCode.SiemensStringlengthIsToolongThanPlcDefined.Desc());
 				}
+
 				return await WriteAsync(address, SoftBasic.SpliceArray(new byte[2]
 				{
 					readLength.Content[0],
 					(byte)value.Length
 				}, buffer));
 			}
-			return await WriteAsync(address, SoftBasic.SpliceArray<byte>(new byte[1] { (byte)value.Length }, buffer));
+			return await WriteAsync(address, SoftBasic.SpliceArray(new byte[1] { (byte)value.Length }, buffer));
 		}
 
 		public async Task<OperateResult> WriteWStringAsync(string address, string value)
@@ -1252,7 +1221,7 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 				}
 				if (read2.Content[0] == 0 || read2.Content[0] == byte.MaxValue)
 				{
-					return new OperateResult<string>("Value in plc is not string type");
+					return new OperateResult<string>(ErrorCode.SiemensValueOfPlcIsNotStringType.Desc());
 				}
 
 				OperateResult<byte[]> readString2 = await ReadAsync(address, (ushort)(2 + read2.Content[1]));
@@ -1288,7 +1257,7 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 				}
 				if (read2.Content[0] == 0 || read2.Content[0] == byte.MaxValue)
 				{
-					return new OperateResult<string>("Value in plc is not string type");
+					return new OperateResult<string>(ErrorCode.SiemensValueOfPlcIsNotStringType.Desc());
 				}
 
 				var readString2 = await ReadAsync(address, (ushort)(2 + read2.Content[1] * 2));
@@ -1362,7 +1331,7 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 			}
 			if (s7Addresses.Length > 19)
 			{
-				throw new Exception("SiemensReadLengthCannotLargerThan19");
+				throw new Exception(ErrorCode.SiemensReadLengthCannotLargerThan19.Desc());
 			}
 
 			int num = s7Addresses.Length;
@@ -1394,23 +1363,23 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 				if (s7Addresses[i].DataCode == 30 || s7Addresses[i].DataCode == 31)
 				{
 					array[22 + i * 12] = s7Addresses[i].DataCode;
-					array[23 + i * 12] = (byte)((int)s7Addresses[i].Length / 2 / 256);
-					array[24 + i * 12] = (byte)((int)s7Addresses[i].Length / 2 % 256);
+					array[23 + i * 12] = (byte)(s7Addresses[i].Length / 2 / 256);
+					array[24 + i * 12] = (byte)(s7Addresses[i].Length / 2 % 256);
 				}
 				else if ((s7Addresses[i].DataCode == 6) | (s7Addresses[i].DataCode == 7))
 				{
 					array[22 + i * 12] = 4;
-					array[23 + i * 12] = (byte)((int)s7Addresses[i].Length / 2 / 256);
-					array[24 + i * 12] = (byte)((int)s7Addresses[i].Length / 2 % 256);
+					array[23 + i * 12] = (byte)(s7Addresses[i].Length / 2 / 256);
+					array[24 + i * 12] = (byte)(s7Addresses[i].Length / 2 % 256);
 				}
 				else
 				{
 					array[22 + i * 12] = 2;
-					array[23 + i * 12] = (byte)((int)s7Addresses[i].Length / 256);
-					array[24 + i * 12] = (byte)((int)s7Addresses[i].Length % 256);
+					array[23 + i * 12] = (byte)(s7Addresses[i].Length / 256);
+					array[24 + i * 12] = (byte)(s7Addresses[i].Length % 256);
 				}
-				array[25 + i * 12] = (byte)((int)s7Addresses[i].DbBlock / 256);
-				array[26 + i * 12] = (byte)((int)s7Addresses[i].DbBlock % 256);
+				array[25 + i * 12] = (byte)(s7Addresses[i].DbBlock / 256);
+				array[26 + i * 12] = (byte)(s7Addresses[i].DbBlock % 256);
 				array[27 + i * 12] = s7Addresses[i].DataCode;
 				array[28 + i * 12] = (byte)(s7Addresses[i].AddressStart / 256 / 256 % 256);
 				array[29 + i * 12] = (byte)(s7Addresses[i].AddressStart / 256 % 256);
@@ -1420,13 +1389,10 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 		}
 
 		/// <summary>
-		/// 生成一个位读取数据指令头的通用方法 -&gt;
-		/// A general method for generating a bit-read-Data instruction header
+		/// 生成一个位读取数据指令头的通用方法。
 		/// </summary>
-		/// <param name="address">起始地址，例如M100.0，I0.1，Q0.1，DB2.100.2 -&gt;
-		/// Start address, such as M100.0,I0.1,Q0.1,DB2.100.2
-		/// </param>
-		/// <returns>包含结果对象的报文 -&gt; Message containing the result object</returns>
+		/// <param name="address">起始地址，例如M100.0，I0.1，Q0.1，DB2.100.2</param>
+		/// <returns>包含结果对象的报文</returns>
 		public static OperateResult<byte[]> BuildBitReadCommand(string address)
 		{
 			OperateResult<S7AddressData> operateResult = S7AddressData.ParseFrom(address);
@@ -1461,8 +1427,8 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 			array[22] = 1;
 			array[23] = 0;
 			array[24] = 1;
-			array[25] = (byte)((int)operateResult.Content.DbBlock / 256);
-			array[26] = (byte)((int)operateResult.Content.DbBlock % 256);
+			array[25] = (byte)(operateResult.Content.DbBlock / 256);
+			array[26] = (byte)(operateResult.Content.DbBlock % 256);
 			array[27] = operateResult.Content.DataCode;
 			array[28] = (byte)(operateResult.Content.AddressStart / 256 / 256 % 256);
 			array[29] = (byte)(operateResult.Content.AddressStart / 256 % 256);
@@ -1471,11 +1437,11 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 		}
 
 		/// <summary>
-		/// 生成一个写入字节数据的指令 -&gt; Generate an instruction to write byte data
+		/// 生成一个写入字节数据的指令。
 		/// </summary>
-		/// <param name="analysis">起始地址，示例M100,I100,Q100,DB1.100 -&gt; Start Address, example M100,I100,Q100,DB1.100</param>
-		/// <param name="data">原始的字节数据 -&gt; Raw byte data</param>
-		/// <returns>包含结果对象的报文 -&gt; Message containing the result object</returns>
+		/// <param name="analysis">起始地址，示例M100,I100,Q100,DB1.100</param>
+		/// <param name="data">原始的字节数据</param>
+		/// <returns>包含结果对象的报文</returns>
 		public static OperateResult<byte[]> BuildWriteByteCommand(OperateResult<S7AddressData> analysis, byte[] data)
 		{
 			byte[] array = new byte[35 + data.Length];
@@ -1513,8 +1479,8 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 				array[23] = (byte)(data.Length / 256);
 				array[24] = (byte)(data.Length % 256);
 			}
-			array[25] = (byte)((int)analysis.Content.DbBlock / 256);
-			array[26] = (byte)((int)analysis.Content.DbBlock % 256);
+			array[25] = (byte)(analysis.Content.DbBlock / 256);
+			array[26] = (byte)(analysis.Content.DbBlock % 256);
 			array[27] = analysis.Content.DataCode;
 			array[28] = (byte)(analysis.Content.AddressStart / 256 / 256 % 256);
 			array[29] = (byte)(analysis.Content.AddressStart / 256 % 256);
@@ -1528,11 +1494,11 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 		}
 
 		/// <summary>
-		/// 生成一个写入位数据的指令 -&gt; Generate an instruction to write bit data
+		/// 生成一个写入位数据的指令。
 		/// </summary>
-		/// <param name="address">起始地址，示例M100,I100,Q100,DB1.100 -&gt; Start Address, example M100,I100,Q100,DB1.100</param>
-		/// <param name="data">是否通断 -&gt; Power on or off</param>
-		/// <returns>包含结果对象的报文 -&gt; Message containing the result object</returns>
+		/// <param name="address">起始地址，示例M100,I100,Q100,DB1.100</param>
+		/// <param name="data">是否通断</param>
+		/// <returns>包含结果对象的报文</returns>
 		public static OperateResult<byte[]> BuildWriteBitCommand(string address, bool data)
 		{
 			OperateResult<S7AddressData> operateResult = S7AddressData.ParseFrom(address);
@@ -1568,8 +1534,8 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 			array2[22] = 1;
 			array2[23] = (byte)(array.Length / 256);
 			array2[24] = (byte)(array.Length % 256);
-			array2[25] = (byte)((int)operateResult.Content.DbBlock / 256);
-			array2[26] = (byte)((int)operateResult.Content.DbBlock % 256);
+			array2[25] = (byte)(operateResult.Content.DbBlock / 256);
+			array2[26] = (byte)(operateResult.Content.DbBlock % 256);
 			array2[27] = operateResult.Content.DataCode;
 			array2[28] = (byte)(operateResult.Content.AddressStart / 256 / 256);
 			array2[29] = (byte)(operateResult.Content.AddressStart / 256);
@@ -1590,7 +1556,9 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 			return OperateResult.CreateSuccessResult(array2);
 		}
 
-		private static OperateResult<byte[]> AnalysisReadByte(S7AddressData[] s7Addresses, byte[] content)
+        #region privates
+
+        private static OperateResult<byte[]> AnalysisReadByte(S7AddressData[] s7Addresses, byte[] content)
 		{
 			int num = 0;
 			for (int i = 0; i < s7Addresses.Length; i++)
@@ -1642,21 +1610,22 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 					{
 						if (content[j] == 5 && content[j + 1] == 0)
 						{
-							return new OperateResult<byte[]>(content[j], "SiemensReadLengthOverPlcAssign");
+							return new OperateResult<byte[]>(content[j], ErrorCode.SiemensReadLengthOverPlcAssign.Desc());
 						}
 						if (content[j] == 6 && content[j + 1] == 0)
 						{
-							return new OperateResult<byte[]>(content[j], "SiemensError0006");
+							return new OperateResult<byte[]>(content[j], ErrorCode.SiemensError0006.Desc());
 						}
 						if (content[j] == 10 && content[j + 1] == 0)
 						{
-							return new OperateResult<byte[]>(content[j], "SiemensError000A");
+							return new OperateResult<byte[]>(content[j], ErrorCode.SiemensError000A.Desc());
 						}
 					}
 				}
 				return OperateResult.CreateSuccessResult(array);
 			}
-			return new OperateResult<byte[]>($"SiemensDataLengthCheckFailed, Msg: {SoftBasic.ByteToHexString(content, ' ')}");
+
+			return new OperateResult<byte[]>($"{ErrorCode.SiemensDataLengthCheckFailed.Desc()}, Msg: {SoftBasic.ByteToHexString(content, ' ')}");
 		}
 
 		private static OperateResult<byte[]> AnalysisReadBit(byte[] content)
@@ -1671,7 +1640,7 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 				}
 				return OperateResult.CreateSuccessResult(array);
 			}
-			return new OperateResult<byte[]>("SiemensDataLengthCheckFailed");
+			return new OperateResult<byte[]>(ErrorCode.SiemensDataLengthCheckFailed.Desc());
 		}
 
 		private static OperateResult AnalysisWrite(byte[] content)
@@ -1683,5 +1652,7 @@ namespace Plcway.Communication.Ethernet.Profinet.Siemens
 			}
 			return OperateResult.CreateSuccessResult();
 		}
-	}
+
+        #endregion
+    }
 }

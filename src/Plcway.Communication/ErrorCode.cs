@@ -110,6 +110,12 @@ namespace Plcway.Communication
         [Description("数据块长度校验失败，请检查是否开启put/get以及关闭db块优化")]
         SiemensDataLengthCheckFailed,
 
+        [Description("值在 PLC 中不是 String 类型")]
+        SiemensValueOfPlcIsNotStringType,
+
+        [Description("写入的 String 长度超过了在 PLC 中定义的长度")]
+        SiemensStringlengthIsToolongThanPlcDefined,
+
         [Description("发生了异常，具体信息查找Fetch/Write协议文档")]
         SiemensFWError,
 

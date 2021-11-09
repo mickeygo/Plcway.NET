@@ -702,13 +702,13 @@ namespace Plcway.Communication.Reflection
 		}
 
 		/// <summary>
-		/// 从设备里读取支持Hsl特性的数据内容，该特性为<see cref="T:HslCommunication.Reflection.HslDeviceAddressAttribute" />，详细参考论坛的操作说明。
+		/// 从设备里读取支持Hsl特性的数据内容，该特性为<see cref="HslDeviceAddressAttribute" />，详细参考论坛的操作说明。
 		/// </summary>
 		/// <typeparam name="T">自定义的数据类型对象</typeparam>
 		/// <param name="data">自定义的数据对象</param>
 		/// <param name="readWrite">数据读写对象</param>
 		/// <returns>包含是否成功的结果对象</returns>
-		/// <exception cref="T:System.ArgumentNullException"></exception>
+		/// <exception cref="ArgumentNullException"></exception>
 		public static async Task<OperateResult> WriteAsync<T>(T data, IReadWriteNet readWrite) where T : class, new()
 		{
 			if (data == null)
@@ -900,157 +900,8 @@ namespace Plcway.Communication.Reflection
 					}
 				}
 			}
+
 			return OperateResult.CreateSuccessResult(data);
-		}
-
-		internal static void SetPropertyObjectValue(PropertyInfo property, object obj, string value)
-		{
-			Type propertyType = property.PropertyType;
-			if (propertyType == typeof(short))
-			{
-				property.SetValue(obj, short.Parse(value), null);
-			}
-			else if (propertyType == typeof(ushort))
-			{
-				property.SetValue(obj, ushort.Parse(value), null);
-			}
-			else if (propertyType == typeof(int))
-			{
-				property.SetValue(obj, int.Parse(value), null);
-			}
-			else if (propertyType == typeof(uint))
-			{
-				property.SetValue(obj, uint.Parse(value), null);
-			}
-			else if (propertyType == typeof(long))
-			{
-				property.SetValue(obj, long.Parse(value), null);
-			}
-			else if (propertyType == typeof(ulong))
-			{
-				property.SetValue(obj, ulong.Parse(value), null);
-			}
-			else if (propertyType == typeof(float))
-			{
-				property.SetValue(obj, float.Parse(value), null);
-			}
-			else if (propertyType == typeof(double))
-			{
-				property.SetValue(obj, double.Parse(value), null);
-			}
-			else if (propertyType == typeof(string))
-			{
-				property.SetValue(obj, value, null);
-			}
-			else if (propertyType == typeof(byte))
-			{
-				property.SetValue(obj, byte.Parse(value), null);
-			}
-			else if (propertyType == typeof(bool))
-			{
-				property.SetValue(obj, bool.Parse(value), null);
-			}
-			else
-			{
-				property.SetValue(obj, value, null);
-			}
-		}
-
-		internal static void SetPropertyObjectValueArray(PropertyInfo property, object obj, string[] values)
-		{
-			Type propertyType = property.PropertyType;
-			if (propertyType == typeof(short[]))
-			{
-				property.SetValue(obj, values.Select((string m) => short.Parse(m)).ToArray(), null);
-			}
-			else if (propertyType == typeof(List<short>))
-			{
-				property.SetValue(obj, values.Select((string m) => short.Parse(m)).ToList(), null);
-			}
-			else if (propertyType == typeof(ushort[]))
-			{
-				property.SetValue(obj, values.Select((string m) => ushort.Parse(m)).ToArray(), null);
-			}
-			else if (propertyType == typeof(List<ushort>))
-			{
-				property.SetValue(obj, values.Select((string m) => ushort.Parse(m)).ToList(), null);
-			}
-			else if (propertyType == typeof(int[]))
-			{
-				property.SetValue(obj, values.Select((string m) => int.Parse(m)).ToArray(), null);
-			}
-			else if (propertyType == typeof(List<int>))
-			{
-				property.SetValue(obj, values.Select((string m) => int.Parse(m)).ToList(), null);
-			}
-			else if (propertyType == typeof(uint[]))
-			{
-				property.SetValue(obj, values.Select((string m) => uint.Parse(m)).ToArray(), null);
-			}
-			else if (propertyType == typeof(List<uint>))
-			{
-				property.SetValue(obj, values.Select((string m) => uint.Parse(m)).ToList(), null);
-			}
-			else if (propertyType == typeof(long[]))
-			{
-				property.SetValue(obj, values.Select((string m) => long.Parse(m)).ToArray(), null);
-			}
-			else if (propertyType == typeof(List<long>))
-			{
-				property.SetValue(obj, values.Select((string m) => long.Parse(m)).ToList(), null);
-			}
-			else if (propertyType == typeof(ulong[]))
-			{
-				property.SetValue(obj, values.Select((string m) => ulong.Parse(m)).ToArray(), null);
-			}
-			else if (propertyType == typeof(List<ulong>))
-			{
-				property.SetValue(obj, values.Select((string m) => ulong.Parse(m)).ToList(), null);
-			}
-			else if (propertyType == typeof(float[]))
-			{
-				property.SetValue(obj, values.Select((string m) => float.Parse(m)).ToArray(), null);
-			}
-			else if (propertyType == typeof(List<float>))
-			{
-				property.SetValue(obj, values.Select((string m) => float.Parse(m)).ToList(), null);
-			}
-			else if (propertyType == typeof(double[]))
-			{
-				property.SetValue(obj, values.Select((string m) => double.Parse(m)).ToArray(), null);
-			}
-			else if (propertyType == typeof(double[]))
-			{
-				property.SetValue(obj, values.Select((string m) => double.Parse(m)).ToList(), null);
-			}
-			else if (propertyType == typeof(string[]))
-			{
-				property.SetValue(obj, values, null);
-			}
-			else if (propertyType == typeof(List<string>))
-			{
-				property.SetValue(obj, new List<string>(values), null);
-			}
-			else if (propertyType == typeof(byte[]))
-			{
-				property.SetValue(obj, values.Select((string m) => byte.Parse(m)).ToArray(), null);
-			}
-			else if (propertyType == typeof(List<byte>))
-			{
-				property.SetValue(obj, values.Select((string m) => byte.Parse(m)).ToList(), null);
-			}
-			else if (propertyType == typeof(bool[]))
-			{
-				property.SetValue(obj, values.Select((string m) => bool.Parse(m)).ToArray(), null);
-			}
-			else if (propertyType == typeof(List<bool>))
-			{
-				property.SetValue(obj, values.Select((string m) => bool.Parse(m)).ToList(), null);
-			}
-			else
-			{
-				property.SetValue(obj, values, null);
-			}
 		}
 	}
 }

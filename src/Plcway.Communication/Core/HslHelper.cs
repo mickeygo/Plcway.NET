@@ -1,23 +1,18 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Net;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Text.RegularExpressions;
 using Plcway.Communication.Basic;
 
 namespace Plcway.Communication.Core
 {
 	/// <summary>
-	/// HslCommunication的一些静态辅助方法<br />
-	/// Some static auxiliary methods of HslCommunication
+	/// HslCommunication的一些静态辅助方法。
 	/// </summary>
 	public class HslHelper
 	{
 		/// <summary>
-		/// 解析地址的附加参数方法，比如你的地址是s=100;D100，可以提取出"s"的值的同时，修改地址本身，如果"s"不存在的话，返回给定的默认值<br />
-		/// The method of parsing additional parameters of the address, for example, if your address is s=100;D100, you can extract the value of "s" and modify the address itself. If "s" does not exist, return the given default value
+		/// 解析地址的附加参数方法，比如你的地址是s=100;D100，可以提取出"s"的值的同时，修改地址本身，如果"s"不存在的话，返回给定的默认值。
 		/// </summary>
 		/// <param name="address">复杂的地址格式，比如：s=100;D100</param>
 		/// <param name="paraName">等待提取的参数名称</param>
@@ -30,9 +25,7 @@ namespace Plcway.Communication.Core
 		}
 
 		/// <summary>
-		/// 解析地址的附加参数方法，比如你的地址是s=100;D100，可以提取出"s"的值的同时，修改地址本身，如果"s"不存在的话，返回错误的消息内容<br />
-		/// The method of parsing additional parameters of the address, for example, if your address is s=100;D100, you can extract the value of "s" and modify the address itself. 
-		/// If "s" does not exist, return the wrong message content
+		/// 解析地址的附加参数方法，比如你的地址是s=100;D100，可以提取出"s"的值的同时，修改地址本身，如果"s"不存在的话，返回错误的消息内容。
 		/// </summary>
 		/// <param name="address">复杂的地址格式，比如：s=100;D100</param>
 		/// <param name="paraName">等待提取的参数名称</param>
@@ -41,26 +34,25 @@ namespace Plcway.Communication.Core
 		{
 			try
 			{
-				Match match = Regex.Match(address, paraName + "=[0-9A-Fa-fx]+;");
+				Match match = Regex.Match(address, $"{paraName}=[0-9A-Fa-fx]+;");
 				if (!match.Success)
 				{
-					return new OperateResult<int>("Address [" + address + "] can't find [" + paraName + "] Parameters. for example : " + paraName + "=1;100");
+					return new OperateResult<int>($"Address [{address}] can't find [{paraName}] Parameters. for example: {paraName}=1;100");
 				}
+
 				string text = match.Value.Substring(paraName.Length + 1, match.Value.Length - paraName.Length - 2);
-				int value = (text.StartsWith("0x") ? Convert.ToInt32(text[2..], 16) : (text.StartsWith("0") ? Convert.ToInt32(text, 8) : Convert.ToInt32(text)));
+				int value = text.StartsWith("0x") ? Convert.ToInt32(text[2..], 16) : (text.StartsWith("0") ? Convert.ToInt32(text, 8) : Convert.ToInt32(text));
 				address = address.Replace(match.Value, "");
 				return OperateResult.CreateSuccessResult(value);
 			}
 			catch (Exception ex)
 			{
-				return new OperateResult<int>("Address [" + address + "] Get [" + paraName + "] Parameters failed: " + ex.Message);
+				return new OperateResult<int>($"Address [{address}] Get [{paraName}] Parameters failed: {ex.Message}");
 			}
 		}
 
 		/// <summary>
-		/// 解析地址的起始地址的方法，比如你的地址是 A[1] , 那么将会返回 1，地址修改为 A，如果不存在起始地址，那么就不修改地址，返回 -1<br />
-		/// The method of parsing the starting address of the address, for example, if your address is A[1], then it will return 1, 
-		/// and the address will be changed to A. If the starting address does not exist, then the address will not be changed and return -1
+		/// 解析地址的起始地址的方法，比如你的地址是 A[1] , 那么将会返回 1，地址修改为 A，如果不存在起始地址，那么就不修改地址，返回 -1。
 		/// </summary>
 		/// <param name="address">复杂的地址格式，比如：A[0] </param>
 		/// <returns>如果存在，就起始位置，不存在就返回 -1</returns>
@@ -73,7 +65,8 @@ namespace Plcway.Communication.Core
 				{
 					return -1;
 				}
-				string value = match.Value.Substring(1, match.Value.Length - 2);
+
+				string value = match.Value[1..^1];
 				int result = Convert.ToInt32(value);
 				address = address.Remove(address.Length - match.Value.Length);
 				return result;
@@ -85,10 +78,8 @@ namespace Plcway.Communication.Core
 		}
 
 		/// <summary>
-		/// 解析地址的附加<see cref="T:HslCommunication.Core.DataFormat" />参数方法，比如你的地址是format=ABCD;D100，可以提取出"format"的值的同时，修改地址本身，如果"format"不存在的话，返回默认的<see cref="T:HslCommunication.Core.IByteTransform" />对象<br />
-		/// Parse the additional <see cref="T:HslCommunication.Core.DataFormat" /> parameter method of the address. For example, if your address is format=ABCD;D100,
-		/// you can extract the value of "format" and modify the address itself. If "format" does not exist, 
-		/// Return the default <see cref="T:HslCommunication.Core.IByteTransform" /> object
+		/// 解析地址的附加<see cref="DataFormat" />参数方法，比如你的地址是format=ABCD;D100，可以提取出"format"的值的同时，修改地址本身，
+		/// 如果"format"不存在的话，返回默认的<see cref="IByteTransform" />对象。
 		/// </summary>
 		/// <param name="address">复杂的地址格式，比如：format=ABCD;D100</param>
 		/// <param name="defaultTransform">默认的数据转换信息</param>
@@ -98,11 +89,12 @@ namespace Plcway.Communication.Core
 			try
 			{
 				string text = "format";
-				Match match = Regex.Match(address, text + "=(ABCD|BADC|DCBA|CDAB);", RegexOptions.IgnoreCase);
+				Match match = Regex.Match(address, $"{text}=(ABCD|BADC|DCBA|CDAB);", RegexOptions.IgnoreCase);
 				if (!match.Success)
 				{
 					return defaultTransform;
 				}
+
 				string text2 = match.Value.Substring(text.Length + 1, match.Value.Length - text.Length - 2);
 				DataFormat dataFormat = defaultTransform.DataFormat;
 				switch (text2.ToUpper())
@@ -134,9 +126,7 @@ namespace Plcway.Communication.Core
 		}
 
 		/// <summary>
-		/// 切割当前的地址数据信息，根据读取的长度来分割成多次不同的读取内容，需要指定地址，总的读取长度，切割读取长度<br />
-		/// Cut the current address data information, and divide it into multiple different read contents according to the read length. 
-		/// You need to specify the address, the total read length, and the cut read length
+		/// 切割当前的地址数据信息，根据读取的长度来分割成多次不同的读取内容，需要指定地址，总的读取长度，切割读取长度。
 		/// </summary>
 		/// <param name="address">整数的地址信息</param>
 		/// <param name="length">读取长度信息</param>
@@ -161,54 +151,7 @@ namespace Plcway.Communication.Core
 		}
 
 		/// <summary>
-		/// 根据指定的长度切割数据数组，返回地址偏移量信息和数据分割信息
-		/// </summary>
-		/// <typeparam name="T">数组类型</typeparam>
-		/// <param name="address">起始的地址</param>
-		/// <param name="value">实际的数据信息</param>
-		/// <param name="segment">分割的基本长度</param>
-		/// <param name="addressLength">一个地址代表的数据长度</param>
-		/// <returns>切割结果内容</returns>
-		public static OperateResult<int[], List<T[]>> SplitWriteData<T>(int address, T[] value, ushort segment, int addressLength)
-		{
-			List<T[]> list = SoftBasic.ArraySplitByLength(value, segment * addressLength);
-			int[] array = new int[list.Count];
-			for (int i = 0; i < array.Length; i++)
-			{
-				if (i == 0)
-				{
-					array[i] = address;
-				}
-				else
-				{
-					array[i] = array[i - 1] + list[i - 1].Length / addressLength;
-				}
-			}
-			return OperateResult.CreateSuccessResult(array, list);
-		}
-
-		/// <summary>
-		/// 获取地址信息的位索引，在地址最后一个小数点的位置
-		/// </summary>
-		/// <param name="address">地址信息</param>
-		/// <returns>位索引的位置</returns>
-		public static int GetBitIndexInformation(ref string address)
-		{
-			int result = 0;
-			int num = address.LastIndexOf('.');
-			if (num > 0 && num < address.Length - 1)
-			{
-				string text = address[(num + 1)..];
-				result = (!text.Contains("A") && !text.Contains("B") && !text.Contains("C") && !text.Contains("D") && !text.Contains("E") && !text.Contains("F")) ? Convert.ToInt32(text) : Convert.ToInt32(text, 16);
-				address = address.Substring(0, num);
-			}
-			return result;
-		}
-
-		/// <summary>
-		/// 从当前的字符串信息获取IP地址数据，如果是ip地址直接返回，如果是域名，会自动解析IP地址，否则抛出异常<br />
-		/// Get the IP address data from the current string information, if it is an ip address, return directly, 
-		/// if it is a domain name, it will automatically resolve the IP address, otherwise an exception will be thrown
+		/// 从当前的字符串信息获取IP地址数据，如果是ip地址直接返回，如果是域名，会自动解析IP地址，否则抛出异常。
 		/// </summary>
 		/// <param name="value">输入的字符串信息</param>
 		/// <returns>真实的IP地址信息</returns>
@@ -224,6 +167,7 @@ namespace Plcway.Communication.Core
 					}
 					return value;
 				}
+
 				IPHostEntry hostEntry = Dns.GetHostEntry(value);
 				IPAddress[] addressList = hostEntry.AddressList;
 				if (addressList.Length != 0)
@@ -235,100 +179,7 @@ namespace Plcway.Communication.Core
 		}
 
 		/// <summary>
-		/// 从流中接收指定长度的字节数组
-		/// </summary>
-		/// <param name="stream">流</param>
-		/// <param name="length">数据长度</param>
-		/// <returns>二进制的字节数组</returns>
-		public static byte[] ReadSpecifiedLengthFromStream(Stream stream, int length)
-		{
-			byte[] array = new byte[length];
-			int num = 0;
-			while (num < length)
-			{
-				int num2 = stream.Read(array, num, array.Length - num);
-				num += num2;
-				if (num2 == 0)
-				{
-					break;
-				}
-			}
-			return array;
-		}
-
-		/// <summary>
-		/// 将字符串的内容写入到流中去
-		/// </summary>
-		/// <param name="stream">数据流</param>
-		/// <param name="value">字符串内容</param>
-		public static void WriteStringToStream(Stream stream, string value)
-		{
-			byte[] value2 = string.IsNullOrEmpty(value) ? Array.Empty<byte>() : Encoding.UTF8.GetBytes(value);
-			WriteBinaryToStream(stream, value2);
-		}
-
-		/// <summary>
-		/// 从流中读取一个字符串内容
-		/// </summary>
-		/// <param name="stream">数据流</param>
-		/// <returns>字符串信息</returns>
-		public static string ReadStringFromStream(Stream stream)
-		{
-			byte[] bytes = ReadBinaryFromStream(stream);
-			return Encoding.UTF8.GetString(bytes);
-		}
-
-		/// <summary>
-		/// 将二进制的内容写入到数据流之中
-		/// </summary>
-		/// <param name="stream">数据流</param>
-		/// <param name="value">原始字节数组</param>
-		public static void WriteBinaryToStream(Stream stream, byte[] value)
-		{
-			stream.Write(BitConverter.GetBytes(value.Length), 0, 4);
-			stream.Write(value, 0, value.Length);
-		}
-
-		/// <summary>
-		/// 从流中读取二进制的内容
-		/// </summary>
-		/// <param name="stream">数据流</param>
-		/// <returns>字节数组</returns>
-		public static byte[] ReadBinaryFromStream(Stream stream)
-		{
-			byte[] value = ReadSpecifiedLengthFromStream(stream, 4);
-			int num = BitConverter.ToInt32(value, 0);
-			if (num <= 0)
-			{
-				return new byte[0];
-			}
-			return ReadSpecifiedLengthFromStream(stream, num);
-		}
-
-		/// <summary>
-		/// 从字符串的内容提取UTF8编码的字节，加了对空的校验
-		/// </summary>
-		/// <param name="message">字符串内容</param>
-		/// <returns>结果</returns>
-		public static byte[] GetUTF8Bytes(string message)
-		{
-			return string.IsNullOrEmpty(message) ? new byte[0] : Encoding.UTF8.GetBytes(message);
-		}
-
-		/// <summary>
-		/// 将多个路径合成一个更完整的路径，这个方法是多平台适用的
-		/// </summary>
-		/// <param name="paths">路径的集合</param>
-		/// <returns>总路径信息</returns>
-		public static string PathCombine(params string[] paths)
-		{
-			return Path.Combine(paths);
-		}
-
-		/// <summary>
-		/// <b>[商业授权]</b> 将原始的字节数组，转换成实际的结构体对象，需要事先定义好结构体内容，否则会转换失败<br />
-		/// <b>[Authorization]</b> To convert the original byte array into an actual structure object, 
-		/// the structure content needs to be defined in advance, otherwise the conversion will fail
+		/// <b>[商业授权]</b> 将原始的字节数组，转换成实际的结构体对象，需要事先定义好结构体内容，否则会转换失败。
 		/// </summary>
 		/// <typeparam name="T">自定义的结构体</typeparam>
 		/// <param name="content">原始的字节内容</param>
@@ -373,10 +224,12 @@ namespace Plcway.Communication.Core
 		/// <returns>结束数据</returns>
 		public static int CalculateBitStartIndex(string bit)
 		{
-			if (bit.Contains("A") || bit.Contains("B") || bit.Contains("C") || bit.Contains("D") || bit.Contains("E") || bit.Contains("F"))
+			Span<char> arr = stackalloc char[] { 'A', 'B', 'C', 'D', 'E', 'F' };
+			if (bit.AsSpan().IndexOfAny(arr) != -1)
 			{
 				return Convert.ToInt32(bit, 16);
 			}
+
 			return Convert.ToInt32(bit);
 		}
 

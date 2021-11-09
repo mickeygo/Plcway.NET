@@ -18,7 +18,8 @@ namespace Plcway.Communication.Address
         public T Schema { get; set; }
 
         /// <summary>
-        /// PLC 地址分片集合
+        /// PLC 地址分片集合。
+        /// 为了提升数据扫描的性能，需要将标识为请求的地址按顺序排列。
         /// </summary>
         public ICollection<PlcSpan> Spans { get; set; }
     }

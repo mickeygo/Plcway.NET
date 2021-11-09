@@ -2,8 +2,8 @@
 using System.Diagnostics.Contracts;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Plcway.Communication.Handlers;
-using Plcway.Communication.Transport.Hosting;
+using Plcway.Framework.Handlers;
+using Plcway.Framework.Transport.Hosting;
 
 namespace Plcway.Framework.Transport.BootStrapping
 {
