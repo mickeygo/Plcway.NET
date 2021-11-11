@@ -80,7 +80,7 @@ namespace Plcway.Communication.Core.Net
 		public virtual OperateResult<byte[]> ReadFromCoreServer(byte[] send, bool hasResponseData, bool usePackAndUnpack)
 		{
 			byte[] array = (usePackAndUnpack ? PackCommandWithHeader(send) : send);
-			Logger.LogDebug($"{ToString()} Send: {SoftBasic.ByteToHexString(array)}");
+			Logger?.LogDebug($"{ToString()} Send: {SoftBasic.ByteToHexString(array)}");
 
 			hybirdLock.Enter();
 			try
@@ -111,7 +111,7 @@ namespace Plcway.Communication.Core.Net
 				byte[] array3 = array2.SelectBegin(length);
 				hybirdLock.Leave();
 
-				Logger.LogDebug($"{ToString()} Receive: {SoftBasic.ByteToHexString(array3)}");
+				Logger?.LogDebug($"{ToString()} Receive: {SoftBasic.ByteToHexString(array3)}");
 				connectErrorCount = 0;
 				return usePackAndUnpack ? UnpackResponseContent(array, array3) : OperateResult.CreateSuccessResult(array3);
 			}

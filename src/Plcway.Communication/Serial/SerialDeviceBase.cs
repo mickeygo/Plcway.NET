@@ -64,17 +64,17 @@ namespace Plcway.Communication.Serial
 
 		public virtual OperateResult<byte[]> Read(string address, ushort length)
 		{
-			return new OperateResult<byte[]>("NotSupportedFunction");
+			return new OperateResult<byte[]>(ErrorCode.NotSupportedFunction.Desc());
 		}
 
 		public virtual OperateResult Write(string address, byte[] value)
 		{
-			return new OperateResult("NotSupportedFunction");
+			return new OperateResult(ErrorCode.NotSupportedFunction.Desc());
 		}
 
 		public virtual OperateResult<bool[]> ReadBool(string address, ushort length)
 		{
-			return new OperateResult<bool[]>("NotSupportedFunction");
+			return new OperateResult<bool[]>(ErrorCode.NotSupportedFunction.Desc());
 		}
 
 		public virtual OperateResult<bool> ReadBool(string address)
@@ -84,7 +84,7 @@ namespace Plcway.Communication.Serial
 
 		public virtual OperateResult Write(string address, bool[] value)
 		{
-			return new OperateResult("NotSupportedFunction");
+			return new OperateResult(ErrorCode.NotSupportedFunction.Desc());
 		}
 
 		public virtual OperateResult Write(string address, bool value)
@@ -118,12 +118,12 @@ namespace Plcway.Communication.Serial
 
 		public virtual OperateResult<T> Read<T>() where T : class, new()
 		{
-			return HslReflectionHelper.Read<T>(this);
+			return ReflectionHelper.Read<T>(this);
 		}
 
 		public virtual OperateResult Write<T>(T data) where T : class, new()
 		{
-			return HslReflectionHelper.Write(data, this);
+			return ReflectionHelper.Write(data, this);
 		}
 
 		public OperateResult<short> ReadInt16(string address)
@@ -392,12 +392,12 @@ namespace Plcway.Communication.Serial
 
 		public virtual async Task<OperateResult<T>> ReadAsync<T>() where T : class, new()
 		{
-			return await HslReflectionHelper.ReadAsync<T>(this);
+			return await ReflectionHelper.ReadAsync<T>(this);
 		}
 
 		public virtual async Task<OperateResult> WriteAsync<T>(T data) where T : class, new()
 		{
-			return await HslReflectionHelper.WriteAsync(data, this);
+			return await ReflectionHelper.WriteAsync(data, this);
 		}
 
 		public async Task<OperateResult<short>> ReadInt16Async(string address)

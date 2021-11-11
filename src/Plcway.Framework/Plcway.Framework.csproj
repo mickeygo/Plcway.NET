@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-	<Nullable>enable</Nullable>
+	<!--<Nullable>enable</Nullable>-->
 	<Authors>Plcway</Authors>
 	<RepositoryUrl>https://github.com/mickeygo/Plcway.NET</RepositoryUrl>
 	<Company>Plcway</Company>
@@ -23,7 +23,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Threading.Channels" Version="5.0.0" />
+	 <PackageReference Include="Microsoft.Extensions.DiagnosticAdapter" Version="3.1.21" />
+	 <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.0">
+		<PrivateAssets>all</PrivateAssets>
+		<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
+    <PackageReference Include="System.Threading.Channels" Version="6.0.0" />
   </ItemGroup>
 
 </Project>

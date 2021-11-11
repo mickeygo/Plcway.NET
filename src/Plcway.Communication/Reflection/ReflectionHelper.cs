@@ -1,9 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
+using Plcway.Communication.Attributes;
 using Plcway.Communication.Core;
 
 namespace Plcway.Communication.Reflection
@@ -11,10 +11,10 @@ namespace Plcway.Communication.Reflection
 	/// <summary>
 	/// 反射的辅助类
 	/// </summary>
-	public class HslReflectionHelper
+	public class ReflectionHelper
 	{
 		/// <summary>
-		/// 从设备里读取支持Hsl特性的数据内容，该特性为<see cref="HslDeviceAddressAttribute" />，详细参考论坛的操作说明。
+		/// 从设备里读取支持Hsl特性的数据内容，该特性为<see cref="DeviceAddressAttribute" />，详细参考论坛的操作说明。
 		/// </summary>
 		/// <typeparam name="T">自定义的数据类型对象</typeparam>
 		/// <param name="readWrite">读写接口的实现</param>
@@ -22,42 +22,41 @@ namespace Plcway.Communication.Reflection
 		public static OperateResult<T> Read<T>(IReadWriteNet readWrite) where T : class, new()
 		{
 			Type typeFromHandle = typeof(T);
-			object obj = typeFromHandle.Assembly.CreateInstance(typeFromHandle.FullName);
+			var obj = new T();
 			PropertyInfo[] properties = typeFromHandle.GetProperties(BindingFlags.Instance | BindingFlags.Public);
-			PropertyInfo[] array = properties;
-			foreach (PropertyInfo propertyInfo in array)
+			foreach (PropertyInfo propertyInfo in properties)
 			{
-				object[] customAttributes = propertyInfo.GetCustomAttributes(typeof(HslDeviceAddressAttribute), inherit: false);
+				object[] customAttributes = propertyInfo.GetCustomAttributes(typeof(DeviceAddressAttribute), inherit: false);
 				if (customAttributes == null)
 				{
 					continue;
 				}
 
-				HslDeviceAddressAttribute? hslDeviceAddressAttribute = null;
+				DeviceAddressAttribute? attr = null;
 				for (int j = 0; j < customAttributes.Length; j++)
 				{
-					HslDeviceAddressAttribute hslDeviceAddressAttribute2 = (HslDeviceAddressAttribute)customAttributes[j];
-					if (hslDeviceAddressAttribute2.DeviceType != null && hslDeviceAddressAttribute2.DeviceType == readWrite.GetType())
+					var attr2 = (DeviceAddressAttribute)customAttributes[j];
+					if (attr2.DeviceType != null && attr2.DeviceType == readWrite.GetType())
 					{
-						hslDeviceAddressAttribute = hslDeviceAddressAttribute2;
+						attr = attr2;
 						break;
 					}
 				}
 
-				if (hslDeviceAddressAttribute == null)
+				if (attr == null)
 				{
 					for (int k = 0; k < customAttributes.Length; k++)
 					{
-						HslDeviceAddressAttribute hslDeviceAddressAttribute3 = (HslDeviceAddressAttribute)customAttributes[k];
-						if (hslDeviceAddressAttribute3.DeviceType == null)
+						var attr3 = (DeviceAddressAttribute)customAttributes[k];
+						if (attr3.DeviceType == null)
 						{
-							hslDeviceAddressAttribute = hslDeviceAddressAttribute3;
+							attr = attr3;
 							break;
 						}
 					}
 				}
 
-				if (hslDeviceAddressAttribute == null)
+				if (attr == null)
 				{
 					continue;
 				}
@@ -65,7 +64,7 @@ namespace Plcway.Communication.Reflection
 				Type propertyType = propertyInfo.PropertyType;
 				if (propertyType == typeof(short))
 				{
-					OperateResult<short> operateResult = readWrite.ReadInt16(hslDeviceAddressAttribute.Address);
+					OperateResult<short> operateResult = readWrite.ReadInt16(attr.Address);
 					if (!operateResult.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(operateResult);
@@ -74,7 +73,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(short[]))
 				{
-					var operateResult2 = readWrite.ReadInt16(hslDeviceAddressAttribute.Address, (ushort)((hslDeviceAddressAttribute.Length <= 0) ? 1u : ((uint)hslDeviceAddressAttribute.Length)));
+					var operateResult2 = readWrite.ReadInt16(attr.Address, (ushort)((attr.Length <= 0) ? 1u : ((uint)attr.Length)));
 					if (!operateResult2.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(operateResult2);
@@ -83,7 +82,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(ushort))
 				{
-					OperateResult<ushort> operateResult3 = readWrite.ReadUInt16(hslDeviceAddressAttribute.Address);
+					OperateResult<ushort> operateResult3 = readWrite.ReadUInt16(attr.Address);
 					if (!operateResult3.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(operateResult3);
@@ -92,7 +91,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(ushort[]))
 				{
-					var operateResult4 = readWrite.ReadUInt16(hslDeviceAddressAttribute.Address, (ushort)((hslDeviceAddressAttribute.Length <= 0) ? 1u : ((uint)hslDeviceAddressAttribute.Length)));
+					var operateResult4 = readWrite.ReadUInt16(attr.Address, (ushort)((attr.Length <= 0) ? 1u : ((uint)attr.Length)));
 					if (!operateResult4.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(operateResult4);
@@ -101,7 +100,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(int))
 				{
-					OperateResult<int> operateResult5 = readWrite.ReadInt32(hslDeviceAddressAttribute.Address);
+					OperateResult<int> operateResult5 = readWrite.ReadInt32(attr.Address);
 					if (!operateResult5.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(operateResult5);
@@ -110,7 +109,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(int[]))
 				{
-					var operateResult6 = readWrite.ReadInt32(hslDeviceAddressAttribute.Address, (ushort)((hslDeviceAddressAttribute.Length <= 0) ? 1u : ((uint)hslDeviceAddressAttribute.Length)));
+					var operateResult6 = readWrite.ReadInt32(attr.Address, (ushort)((attr.Length <= 0) ? 1u : ((uint)attr.Length)));
 					if (!operateResult6.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(operateResult6);
@@ -119,7 +118,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(uint))
 				{
-					OperateResult<uint> operateResult7 = readWrite.ReadUInt32(hslDeviceAddressAttribute.Address);
+					OperateResult<uint> operateResult7 = readWrite.ReadUInt32(attr.Address);
 					if (!operateResult7.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(operateResult7);
@@ -128,7 +127,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(uint[]))
 				{
-					OperateResult<uint[]> operateResult8 = readWrite.ReadUInt32(hslDeviceAddressAttribute.Address, (ushort)((hslDeviceAddressAttribute.Length <= 0) ? 1u : ((uint)hslDeviceAddressAttribute.Length)));
+					OperateResult<uint[]> operateResult8 = readWrite.ReadUInt32(attr.Address, (ushort)((attr.Length <= 0) ? 1u : ((uint)attr.Length)));
 					if (!operateResult8.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(operateResult8);
@@ -137,7 +136,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(long))
 				{
-					OperateResult<long> operateResult9 = readWrite.ReadInt64(hslDeviceAddressAttribute.Address);
+					OperateResult<long> operateResult9 = readWrite.ReadInt64(attr.Address);
 					if (!operateResult9.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(operateResult9);
@@ -146,7 +145,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(long[]))
 				{
-					OperateResult<long[]> operateResult10 = readWrite.ReadInt64(hslDeviceAddressAttribute.Address, (ushort)((hslDeviceAddressAttribute.Length <= 0) ? 1u : ((uint)hslDeviceAddressAttribute.Length)));
+					OperateResult<long[]> operateResult10 = readWrite.ReadInt64(attr.Address, (ushort)((attr.Length <= 0) ? 1u : ((uint)attr.Length)));
 					if (!operateResult10.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(operateResult10);
@@ -155,7 +154,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(ulong))
 				{
-					OperateResult<ulong> operateResult11 = readWrite.ReadUInt64(hslDeviceAddressAttribute.Address);
+					OperateResult<ulong> operateResult11 = readWrite.ReadUInt64(attr.Address);
 					if (!operateResult11.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(operateResult11);
@@ -164,7 +163,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(ulong[]))
 				{
-					OperateResult<ulong[]> operateResult12 = readWrite.ReadUInt64(hslDeviceAddressAttribute.Address, (ushort)((hslDeviceAddressAttribute.Length <= 0) ? 1u : ((uint)hslDeviceAddressAttribute.Length)));
+					OperateResult<ulong[]> operateResult12 = readWrite.ReadUInt64(attr.Address, (ushort)((attr.Length <= 0) ? 1u : ((uint)attr.Length)));
 					if (!operateResult12.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(operateResult12);
@@ -173,7 +172,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(float))
 				{
-					OperateResult<float> operateResult13 = readWrite.ReadFloat(hslDeviceAddressAttribute.Address);
+					OperateResult<float> operateResult13 = readWrite.ReadFloat(attr.Address);
 					if (!operateResult13.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(operateResult13);
@@ -182,7 +181,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(float[]))
 				{
-					OperateResult<float[]> operateResult14 = readWrite.ReadFloat(hslDeviceAddressAttribute.Address, (ushort)((hslDeviceAddressAttribute.Length <= 0) ? 1u : ((uint)hslDeviceAddressAttribute.Length)));
+					OperateResult<float[]> operateResult14 = readWrite.ReadFloat(attr.Address, (ushort)((attr.Length <= 0) ? 1u : ((uint)attr.Length)));
 					if (!operateResult14.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(operateResult14);
@@ -191,7 +190,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(double))
 				{
-					OperateResult<double> operateResult15 = readWrite.ReadDouble(hslDeviceAddressAttribute.Address);
+					OperateResult<double> operateResult15 = readWrite.ReadDouble(attr.Address);
 					if (!operateResult15.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(operateResult15);
@@ -200,7 +199,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(double[]))
 				{
-					OperateResult<double[]> operateResult16 = readWrite.ReadDouble(hslDeviceAddressAttribute.Address, (ushort)((hslDeviceAddressAttribute.Length <= 0) ? 1u : ((uint)hslDeviceAddressAttribute.Length)));
+					OperateResult<double[]> operateResult16 = readWrite.ReadDouble(attr.Address, (ushort)((attr.Length <= 0) ? 1u : ((uint)attr.Length)));
 					if (!operateResult16.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(operateResult16);
@@ -209,7 +208,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(string))
 				{
-					OperateResult<string> operateResult17 = readWrite.ReadString(hslDeviceAddressAttribute.Address, (ushort)((hslDeviceAddressAttribute.Length <= 0) ? 1u : ((uint)hslDeviceAddressAttribute.Length)));
+					OperateResult<string> operateResult17 = readWrite.ReadString(attr.Address, (ushort)((attr.Length <= 0) ? 1u : ((uint)attr.Length)));
 					if (!operateResult17.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(operateResult17);
@@ -218,7 +217,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(byte[]))
 				{
-					OperateResult<byte[]> operateResult18 = readWrite.Read(hslDeviceAddressAttribute.Address, (ushort)((hslDeviceAddressAttribute.Length <= 0) ? 1u : ((uint)hslDeviceAddressAttribute.Length)));
+					OperateResult<byte[]> operateResult18 = readWrite.Read(attr.Address, (ushort)((attr.Length <= 0) ? 1u : ((uint)attr.Length)));
 					if (!operateResult18.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(operateResult18);
@@ -227,7 +226,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(bool))
 				{
-					OperateResult<bool> operateResult19 = readWrite.ReadBool(hslDeviceAddressAttribute.Address);
+					OperateResult<bool> operateResult19 = readWrite.ReadBool(attr.Address);
 					if (!operateResult19.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(operateResult19);
@@ -236,7 +235,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(bool[]))
 				{
-					OperateResult<bool[]> operateResult20 = readWrite.ReadBool(hslDeviceAddressAttribute.Address, (ushort)((hslDeviceAddressAttribute.Length <= 0) ? 1u : ((uint)hslDeviceAddressAttribute.Length)));
+					OperateResult<bool[]> operateResult20 = readWrite.ReadBool(attr.Address, (ushort)((attr.Length <= 0) ? 1u : ((uint)attr.Length)));
 					if (!operateResult20.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(operateResult20);
@@ -249,13 +248,13 @@ namespace Plcway.Communication.Reflection
 		}
 
 		/// <summary>
-		/// 从设备里读取支持Hsl特性的数据内容，该特性为<see cref="HslDeviceAddressAttribute" />，详细参考论坛的操作说明。
+		/// 从设备里读取支持Hsl特性的数据内容，该特性为<see cref="DeviceAddressAttribute" />，详细参考论坛的操作说明。
 		/// </summary>
 		/// <typeparam name="T">自定义的数据类型对象</typeparam>
 		/// <param name="data">自定义的数据对象</param>
 		/// <param name="readWrite">数据读写对象</param>
 		/// <returns>包含是否成功的结果对象</returns>
-		/// <exception cref="T:System.ArgumentNullException"></exception>
+		/// <exception cref="ArgumentNullException"></exception>
 		public static OperateResult Write<T>(T data, IReadWriteNet readWrite) where T : class, new()
 		{
 			if (data == null)
@@ -265,22 +264,21 @@ namespace Plcway.Communication.Reflection
 
 			Type typeFromHandle = typeof(T);
 			var properties = typeFromHandle.GetProperties(BindingFlags.Instance | BindingFlags.Public);
-			var array = properties;
-			foreach (PropertyInfo propertyInfo in array)
+			foreach (PropertyInfo propertyInfo in properties)
 			{
-				var customAttributes = propertyInfo.GetCustomAttributes<HslDeviceAddressAttribute>(false);
+				var customAttributes = propertyInfo.GetCustomAttributes<DeviceAddressAttribute>(false);
 				if (!customAttributes.Any())
 				{
 					continue;
 				}
 
-				var hslDeviceAddressAttribute = customAttributes.FirstOrDefault(s => s.DeviceType == readWrite.GetType());
-				if (hslDeviceAddressAttribute == null)
+				var attr = customAttributes.FirstOrDefault(s => s.DeviceType == readWrite.GetType());
+				if (attr == null)
 				{
-					hslDeviceAddressAttribute = customAttributes.FirstOrDefault(s => s.DeviceType == null);
+					attr = customAttributes.FirstOrDefault(s => s.DeviceType == null);
 				}
 
-				if (hslDeviceAddressAttribute == null)
+				if (attr == null)
 				{
 					continue;
 				}
@@ -289,7 +287,7 @@ namespace Plcway.Communication.Reflection
 				if (propertyType == typeof(short))
 				{
 					short value = (short)propertyInfo.GetValue(data, null);
-					OperateResult operateResult = readWrite.Write(hslDeviceAddressAttribute.Address, value);
+					OperateResult operateResult = readWrite.Write(attr.Address, value);
 					if (!operateResult.IsSuccess)
 					{
 						return operateResult;
@@ -298,7 +296,7 @@ namespace Plcway.Communication.Reflection
 				else if (propertyType == typeof(short[]))
 				{
 					short[] values = (short[])propertyInfo.GetValue(data, null);
-					OperateResult operateResult2 = readWrite.Write(hslDeviceAddressAttribute.Address, values);
+					OperateResult operateResult2 = readWrite.Write(attr.Address, values);
 					if (!operateResult2.IsSuccess)
 					{
 						return operateResult2;
@@ -307,7 +305,7 @@ namespace Plcway.Communication.Reflection
 				else if (propertyType == typeof(ushort))
 				{
 					ushort value2 = (ushort)propertyInfo.GetValue(data, null);
-					OperateResult operateResult3 = readWrite.Write(hslDeviceAddressAttribute.Address, value2);
+					OperateResult operateResult3 = readWrite.Write(attr.Address, value2);
 					if (!operateResult3.IsSuccess)
 					{
 						return operateResult3;
@@ -316,7 +314,7 @@ namespace Plcway.Communication.Reflection
 				else if (propertyType == typeof(ushort[]))
 				{
 					ushort[] values2 = (ushort[])propertyInfo.GetValue(data, null);
-					OperateResult operateResult4 = readWrite.Write(hslDeviceAddressAttribute.Address, values2);
+					OperateResult operateResult4 = readWrite.Write(attr.Address, values2);
 					if (!operateResult4.IsSuccess)
 					{
 						return operateResult4;
@@ -325,7 +323,7 @@ namespace Plcway.Communication.Reflection
 				else if (propertyType == typeof(int))
 				{
 					int value3 = (int)propertyInfo.GetValue(data, null);
-					OperateResult operateResult5 = readWrite.Write(hslDeviceAddressAttribute.Address, value3);
+					OperateResult operateResult5 = readWrite.Write(attr.Address, value3);
 					if (!operateResult5.IsSuccess)
 					{
 						return operateResult5;
@@ -334,7 +332,7 @@ namespace Plcway.Communication.Reflection
 				else if (propertyType == typeof(int[]))
 				{
 					int[] values3 = (int[])propertyInfo.GetValue(data, null);
-					OperateResult operateResult6 = readWrite.Write(hslDeviceAddressAttribute.Address, values3);
+					OperateResult operateResult6 = readWrite.Write(attr.Address, values3);
 					if (!operateResult6.IsSuccess)
 					{
 						return operateResult6;
@@ -343,7 +341,7 @@ namespace Plcway.Communication.Reflection
 				else if (propertyType == typeof(uint))
 				{
 					uint value4 = (uint)propertyInfo.GetValue(data, null);
-					OperateResult operateResult7 = readWrite.Write(hslDeviceAddressAttribute.Address, value4);
+					OperateResult operateResult7 = readWrite.Write(attr.Address, value4);
 					if (!operateResult7.IsSuccess)
 					{
 						return operateResult7;
@@ -352,7 +350,7 @@ namespace Plcway.Communication.Reflection
 				else if (propertyType == typeof(uint[]))
 				{
 					uint[] values4 = (uint[])propertyInfo.GetValue(data, null);
-					OperateResult operateResult8 = readWrite.Write(hslDeviceAddressAttribute.Address, values4);
+					OperateResult operateResult8 = readWrite.Write(attr.Address, values4);
 					if (!operateResult8.IsSuccess)
 					{
 						return operateResult8;
@@ -361,7 +359,7 @@ namespace Plcway.Communication.Reflection
 				else if (propertyType == typeof(long))
 				{
 					long value5 = (long)propertyInfo.GetValue(data, null);
-					OperateResult operateResult9 = readWrite.Write(hslDeviceAddressAttribute.Address, value5);
+					OperateResult operateResult9 = readWrite.Write(attr.Address, value5);
 					if (!operateResult9.IsSuccess)
 					{
 						return operateResult9;
@@ -370,7 +368,7 @@ namespace Plcway.Communication.Reflection
 				else if (propertyType == typeof(long[]))
 				{
 					long[] values5 = (long[])propertyInfo.GetValue(data, null);
-					OperateResult operateResult10 = readWrite.Write(hslDeviceAddressAttribute.Address, values5);
+					OperateResult operateResult10 = readWrite.Write(attr.Address, values5);
 					if (!operateResult10.IsSuccess)
 					{
 						return operateResult10;
@@ -379,7 +377,7 @@ namespace Plcway.Communication.Reflection
 				else if (propertyType == typeof(ulong))
 				{
 					ulong value6 = (ulong)propertyInfo.GetValue(data, null);
-					OperateResult operateResult11 = readWrite.Write(hslDeviceAddressAttribute.Address, value6);
+					OperateResult operateResult11 = readWrite.Write(attr.Address, value6);
 					if (!operateResult11.IsSuccess)
 					{
 						return operateResult11;
@@ -388,7 +386,7 @@ namespace Plcway.Communication.Reflection
 				else if (propertyType == typeof(ulong[]))
 				{
 					ulong[] values6 = (ulong[])propertyInfo.GetValue(data, null);
-					OperateResult operateResult12 = readWrite.Write(hslDeviceAddressAttribute.Address, values6);
+					OperateResult operateResult12 = readWrite.Write(attr.Address, values6);
 					if (!operateResult12.IsSuccess)
 					{
 						return operateResult12;
@@ -397,7 +395,7 @@ namespace Plcway.Communication.Reflection
 				else if (propertyType == typeof(float))
 				{
 					float value7 = (float)propertyInfo.GetValue(data, null);
-					OperateResult operateResult13 = readWrite.Write(hslDeviceAddressAttribute.Address, value7);
+					OperateResult operateResult13 = readWrite.Write(attr.Address, value7);
 					if (!operateResult13.IsSuccess)
 					{
 						return operateResult13;
@@ -406,7 +404,7 @@ namespace Plcway.Communication.Reflection
 				else if (propertyType == typeof(float[]))
 				{
 					float[] values7 = (float[])propertyInfo.GetValue(data, null);
-					OperateResult operateResult14 = readWrite.Write(hslDeviceAddressAttribute.Address, values7);
+					OperateResult operateResult14 = readWrite.Write(attr.Address, values7);
 					if (!operateResult14.IsSuccess)
 					{
 						return operateResult14;
@@ -415,7 +413,7 @@ namespace Plcway.Communication.Reflection
 				else if (propertyType == typeof(double))
 				{
 					double value8 = (double)propertyInfo.GetValue(data, null);
-					OperateResult operateResult15 = readWrite.Write(hslDeviceAddressAttribute.Address, value8);
+					OperateResult operateResult15 = readWrite.Write(attr.Address, value8);
 					if (!operateResult15.IsSuccess)
 					{
 						return operateResult15;
@@ -424,7 +422,7 @@ namespace Plcway.Communication.Reflection
 				else if (propertyType == typeof(double[]))
 				{
 					double[] values8 = (double[])propertyInfo.GetValue(data, null);
-					OperateResult operateResult16 = readWrite.Write(hslDeviceAddressAttribute.Address, values8);
+					OperateResult operateResult16 = readWrite.Write(attr.Address, values8);
 					if (!operateResult16.IsSuccess)
 					{
 						return operateResult16;
@@ -433,7 +431,7 @@ namespace Plcway.Communication.Reflection
 				else if (propertyType == typeof(string))
 				{
 					string value9 = (string)propertyInfo.GetValue(data, null);
-					OperateResult operateResult17 = readWrite.Write(hslDeviceAddressAttribute.Address, value9);
+					OperateResult operateResult17 = readWrite.Write(attr.Address, value9);
 					if (!operateResult17.IsSuccess)
 					{
 						return operateResult17;
@@ -442,7 +440,7 @@ namespace Plcway.Communication.Reflection
 				else if (propertyType == typeof(byte[]))
 				{
 					byte[] value10 = (byte[])propertyInfo.GetValue(data, null);
-					OperateResult operateResult18 = readWrite.Write(hslDeviceAddressAttribute.Address, value10);
+					OperateResult operateResult18 = readWrite.Write(attr.Address, value10);
 					if (!operateResult18.IsSuccess)
 					{
 						return operateResult18;
@@ -451,7 +449,7 @@ namespace Plcway.Communication.Reflection
 				else if (propertyType == typeof(bool))
 				{
 					bool value11 = (bool)propertyInfo.GetValue(data, null);
-					OperateResult operateResult19 = readWrite.Write(hslDeviceAddressAttribute.Address, value11);
+					OperateResult operateResult19 = readWrite.Write(attr.Address, value11);
 					if (!operateResult19.IsSuccess)
 					{
 						return operateResult19;
@@ -460,7 +458,7 @@ namespace Plcway.Communication.Reflection
 				else if (propertyType == typeof(bool[]))
 				{
 					bool[] value12 = (bool[])propertyInfo.GetValue(data, null);
-					OperateResult operateResult20 = readWrite.Write(hslDeviceAddressAttribute.Address, value12);
+					OperateResult operateResult20 = readWrite.Write(attr.Address, value12);
 					if (!operateResult20.IsSuccess)
 					{
 						return operateResult20;
@@ -494,24 +492,23 @@ namespace Plcway.Communication.Reflection
 		public static async Task<OperateResult<T>> ReadAsync<T>(IReadWriteNet readWrite) where T : class, new()
 		{
 			Type type = typeof(T);
-			object obj = type.Assembly.CreateInstance(type.FullName);
+			var obj = new T();
 			var properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
-			var array = properties;
-			foreach (PropertyInfo property in array)
+			foreach (PropertyInfo property in properties)
 			{
-				var attributes = property.GetCustomAttributes<HslDeviceAddressAttribute>(false);
+				var attributes = property.GetCustomAttributes<DeviceAddressAttribute>(false);
 				if (!attributes.Any())
 				{
 					continue;
 				}
 
-				var hslAttribute = attributes.FirstOrDefault(s => s.DeviceType == readWrite.GetType()); ;
-				if (hslAttribute == null)
+				var attr = attributes.FirstOrDefault(s => s.DeviceType == readWrite.GetType()); ;
+				if (attr == null)
 				{
-					hslAttribute = attributes.FirstOrDefault(s => s.DeviceType == null);
+					attr = attributes.FirstOrDefault(s => s.DeviceType == null);
 				}
 
-				if (hslAttribute == null)
+				if (attr == null)
 				{
 					continue;
 				}
@@ -519,7 +516,7 @@ namespace Plcway.Communication.Reflection
 				Type propertyType = property.PropertyType;
 				if (propertyType == typeof(short))
 				{
-					OperateResult<short> valueResult8 = await readWrite.ReadInt16Async(hslAttribute.Address);
+					OperateResult<short> valueResult8 = await readWrite.ReadInt16Async(attr.Address);
 					if (!valueResult8.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(valueResult8);
@@ -528,7 +525,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(short[]))
 				{
-					OperateResult<short[]> valueResult9 = await readWrite.ReadInt16Async(hslAttribute.Address, (ushort)((hslAttribute.Length <= 0) ? 1u : ((uint)hslAttribute.Length)));
+					OperateResult<short[]> valueResult9 = await readWrite.ReadInt16Async(attr.Address, (ushort)((attr.Length <= 0) ? 1u : ((uint)attr.Length)));
 					if (!valueResult9.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(valueResult9);
@@ -537,7 +534,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(ushort))
 				{
-					OperateResult<ushort> valueResult12 = await readWrite.ReadUInt16Async(hslAttribute.Address);
+					OperateResult<ushort> valueResult12 = await readWrite.ReadUInt16Async(attr.Address);
 					if (!valueResult12.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(valueResult12);
@@ -546,7 +543,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(ushort[]))
 				{
-					OperateResult<ushort[]> valueResult13 = await readWrite.ReadUInt16Async(hslAttribute.Address, (ushort)((hslAttribute.Length <= 0) ? 1u : ((uint)hslAttribute.Length)));
+					OperateResult<ushort[]> valueResult13 = await readWrite.ReadUInt16Async(attr.Address, (ushort)((attr.Length <= 0) ? 1u : ((uint)attr.Length)));
 					if (!valueResult13.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(valueResult13);
@@ -555,7 +552,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(int))
 				{
-					OperateResult<int> valueResult14 = await readWrite.ReadInt32Async(hslAttribute.Address);
+					OperateResult<int> valueResult14 = await readWrite.ReadInt32Async(attr.Address);
 					if (!valueResult14.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(valueResult14);
@@ -564,7 +561,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(int[]))
 				{
-					OperateResult<int[]> valueResult17 = await readWrite.ReadInt32Async(hslAttribute.Address, (ushort)((hslAttribute.Length <= 0) ? 1u : ((uint)hslAttribute.Length)));
+					OperateResult<int[]> valueResult17 = await readWrite.ReadInt32Async(attr.Address, (ushort)((attr.Length <= 0) ? 1u : ((uint)attr.Length)));
 					if (!valueResult17.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(valueResult17);
@@ -573,7 +570,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(uint))
 				{
-					OperateResult<uint> valueResult18 = await readWrite.ReadUInt32Async(hslAttribute.Address);
+					OperateResult<uint> valueResult18 = await readWrite.ReadUInt32Async(attr.Address);
 					if (!valueResult18.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(valueResult18);
@@ -582,7 +579,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(uint[]))
 				{
-					OperateResult<uint[]> valueResult19 = await readWrite.ReadUInt32Async(hslAttribute.Address, (ushort)((hslAttribute.Length <= 0) ? 1u : ((uint)hslAttribute.Length)));
+					OperateResult<uint[]> valueResult19 = await readWrite.ReadUInt32Async(attr.Address, (ushort)((attr.Length <= 0) ? 1u : ((uint)attr.Length)));
 					if (!valueResult19.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(valueResult19);
@@ -591,7 +588,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(long))
 				{
-					OperateResult<long> valueResult20 = await readWrite.ReadInt64Async(hslAttribute.Address);
+					OperateResult<long> valueResult20 = await readWrite.ReadInt64Async(attr.Address);
 					if (!valueResult20.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(valueResult20);
@@ -600,7 +597,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(long[]))
 				{
-					OperateResult<long[]> valueResult16 = await readWrite.ReadInt64Async(hslAttribute.Address, (ushort)((hslAttribute.Length <= 0) ? 1u : ((uint)hslAttribute.Length)));
+					OperateResult<long[]> valueResult16 = await readWrite.ReadInt64Async(attr.Address, (ushort)((attr.Length <= 0) ? 1u : ((uint)attr.Length)));
 					if (!valueResult16.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(valueResult16);
@@ -609,7 +606,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(ulong))
 				{
-					OperateResult<ulong> valueResult15 = await readWrite.ReadUInt64Async(hslAttribute.Address);
+					OperateResult<ulong> valueResult15 = await readWrite.ReadUInt64Async(attr.Address);
 					if (!valueResult15.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(valueResult15);
@@ -618,7 +615,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(ulong[]))
 				{
-					OperateResult<ulong[]> valueResult11 = await readWrite.ReadUInt64Async(hslAttribute.Address, (ushort)((hslAttribute.Length <= 0) ? 1u : ((uint)hslAttribute.Length)));
+					OperateResult<ulong[]> valueResult11 = await readWrite.ReadUInt64Async(attr.Address, (ushort)((attr.Length <= 0) ? 1u : ((uint)attr.Length)));
 					if (!valueResult11.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(valueResult11);
@@ -627,7 +624,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(float))
 				{
-					OperateResult<float> valueResult10 = await readWrite.ReadFloatAsync(hslAttribute.Address);
+					OperateResult<float> valueResult10 = await readWrite.ReadFloatAsync(attr.Address);
 					if (!valueResult10.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(valueResult10);
@@ -636,7 +633,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(float[]))
 				{
-					OperateResult<float[]> valueResult7 = await readWrite.ReadFloatAsync(hslAttribute.Address, (ushort)((hslAttribute.Length <= 0) ? 1u : ((uint)hslAttribute.Length)));
+					OperateResult<float[]> valueResult7 = await readWrite.ReadFloatAsync(attr.Address, (ushort)((attr.Length <= 0) ? 1u : ((uint)attr.Length)));
 					if (!valueResult7.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(valueResult7);
@@ -645,7 +642,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(double))
 				{
-					OperateResult<double> valueResult6 = await readWrite.ReadDoubleAsync(hslAttribute.Address);
+					OperateResult<double> valueResult6 = await readWrite.ReadDoubleAsync(attr.Address);
 					if (!valueResult6.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(valueResult6);
@@ -654,7 +651,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(double[]))
 				{
-					OperateResult<double[]> valueResult5 = await readWrite.ReadDoubleAsync(hslAttribute.Address, (ushort)((hslAttribute.Length <= 0) ? 1u : ((uint)hslAttribute.Length)));
+					OperateResult<double[]> valueResult5 = await readWrite.ReadDoubleAsync(attr.Address, (ushort)((attr.Length <= 0) ? 1u : ((uint)attr.Length)));
 					if (!valueResult5.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(valueResult5);
@@ -663,7 +660,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(string))
 				{
-					OperateResult<string> valueResult4 = await readWrite.ReadStringAsync(hslAttribute.Address, (ushort)((hslAttribute.Length <= 0) ? 1u : ((uint)hslAttribute.Length)));
+					OperateResult<string> valueResult4 = await readWrite.ReadStringAsync(attr.Address, (ushort)((attr.Length <= 0) ? 1u : ((uint)attr.Length)));
 					if (!valueResult4.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(valueResult4);
@@ -672,7 +669,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(byte[]))
 				{
-					OperateResult<byte[]> valueResult3 = await readWrite.ReadAsync(hslAttribute.Address, (ushort)((hslAttribute.Length <= 0) ? 1u : ((uint)hslAttribute.Length)));
+					OperateResult<byte[]> valueResult3 = await readWrite.ReadAsync(attr.Address, (ushort)((attr.Length <= 0) ? 1u : ((uint)attr.Length)));
 					if (!valueResult3.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(valueResult3);
@@ -681,7 +678,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(bool))
 				{
-					OperateResult<bool> valueResult2 = await readWrite.ReadBoolAsync(hslAttribute.Address);
+					OperateResult<bool> valueResult2 = await readWrite.ReadBoolAsync(attr.Address);
 					if (!valueResult2.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(valueResult2);
@@ -690,7 +687,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(bool[]))
 				{
-					OperateResult<bool[]> valueResult = await readWrite.ReadBoolAsync(hslAttribute.Address, (ushort)((hslAttribute.Length <= 0) ? 1u : ((uint)hslAttribute.Length)));
+					OperateResult<bool[]> valueResult = await readWrite.ReadBoolAsync(attr.Address, (ushort)((attr.Length <= 0) ? 1u : ((uint)attr.Length)));
 					if (!valueResult.IsSuccess)
 					{
 						return OperateResult.CreateFailedResult<T>(valueResult);
@@ -702,7 +699,7 @@ namespace Plcway.Communication.Reflection
 		}
 
 		/// <summary>
-		/// 从设备里读取支持Hsl特性的数据内容，该特性为<see cref="HslDeviceAddressAttribute" />，详细参考论坛的操作说明。
+		/// 从设备里读取支持Hsl特性的数据内容，该特性为<see cref="DeviceAddressAttribute" />，详细参考论坛的操作说明。
 		/// </summary>
 		/// <typeparam name="T">自定义的数据类型对象</typeparam>
 		/// <param name="data">自定义的数据对象</param>
@@ -718,22 +715,21 @@ namespace Plcway.Communication.Reflection
 
 			Type type = typeof(T);
 			var properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
-			var array = properties;
-			foreach (PropertyInfo property in array)
+			foreach (PropertyInfo property in properties)
 			{
-				var attributes = property.GetCustomAttributes<HslDeviceAddressAttribute>(false);
+				var attributes = property.GetCustomAttributes<DeviceAddressAttribute>(false);
 				if (!attributes.Any())
 				{
 					continue;
 				}
 
-				var hslAttribute = attributes.FirstOrDefault(s => s.DeviceType == readWrite.GetType()); ;
-				if (hslAttribute == null)
+				var attr = attributes.FirstOrDefault(s => s.DeviceType == readWrite.GetType()); ;
+				if (attr == null)
 				{
-					hslAttribute = attributes.FirstOrDefault(s => s.DeviceType == null);
+					attr = attributes.FirstOrDefault(s => s.DeviceType == null);
 				}
 
-				if (hslAttribute == null)
+				if (attr == null)
 				{
 					continue;
 				}
@@ -741,7 +737,7 @@ namespace Plcway.Communication.Reflection
 				Type propertyType = property.PropertyType;
 				if (propertyType == typeof(short))
 				{
-					OperateResult writeResult20 = await readWrite.WriteAsync(value: (short)property.GetValue(data, null), address: hslAttribute.Address);
+					OperateResult writeResult20 = await readWrite.WriteAsync(value: (short)property.GetValue(data, null), address: attr.Address);
 					if (!writeResult20.IsSuccess)
 					{
 						return writeResult20;
@@ -749,7 +745,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(short[]))
 				{
-					OperateResult writeResult19 = await readWrite.WriteAsync(values: (short[])property.GetValue(data, null), address: hslAttribute.Address);
+					OperateResult writeResult19 = await readWrite.WriteAsync(values: (short[])property.GetValue(data, null), address: attr.Address);
 					if (!writeResult19.IsSuccess)
 					{
 						return writeResult19;
@@ -757,7 +753,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(ushort))
 				{
-					OperateResult writeResult18 = await readWrite.WriteAsync(value: (ushort)property.GetValue(data, null), address: hslAttribute.Address);
+					OperateResult writeResult18 = await readWrite.WriteAsync(value: (ushort)property.GetValue(data, null), address: attr.Address);
 					if (!writeResult18.IsSuccess)
 					{
 						return writeResult18;
@@ -765,7 +761,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(ushort[]))
 				{
-					OperateResult writeResult17 = await readWrite.WriteAsync(values: (ushort[])property.GetValue(data, null), address: hslAttribute.Address);
+					OperateResult writeResult17 = await readWrite.WriteAsync(values: (ushort[])property.GetValue(data, null), address: attr.Address);
 					if (!writeResult17.IsSuccess)
 					{
 						return writeResult17;
@@ -773,7 +769,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(int))
 				{
-					OperateResult writeResult16 = await readWrite.WriteAsync(value: (int)property.GetValue(data, null), address: hslAttribute.Address);
+					OperateResult writeResult16 = await readWrite.WriteAsync(value: (int)property.GetValue(data, null), address: attr.Address);
 					if (!writeResult16.IsSuccess)
 					{
 						return writeResult16;
@@ -781,7 +777,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(int[]))
 				{
-					OperateResult writeResult15 = await readWrite.WriteAsync(values: (int[])property.GetValue(data, null), address: hslAttribute.Address);
+					OperateResult writeResult15 = await readWrite.WriteAsync(values: (int[])property.GetValue(data, null), address: attr.Address);
 					if (!writeResult15.IsSuccess)
 					{
 						return writeResult15;
@@ -789,7 +785,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(uint))
 				{
-					OperateResult writeResult14 = await readWrite.WriteAsync(value: (uint)property.GetValue(data, null), address: hslAttribute.Address);
+					OperateResult writeResult14 = await readWrite.WriteAsync(value: (uint)property.GetValue(data, null), address: attr.Address);
 					if (!writeResult14.IsSuccess)
 					{
 						return writeResult14;
@@ -797,7 +793,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(uint[]))
 				{
-					OperateResult writeResult13 = await readWrite.WriteAsync(values: (uint[])property.GetValue(data, null), address: hslAttribute.Address);
+					OperateResult writeResult13 = await readWrite.WriteAsync(values: (uint[])property.GetValue(data, null), address: attr.Address);
 					if (!writeResult13.IsSuccess)
 					{
 						return writeResult13;
@@ -805,7 +801,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(long))
 				{
-					OperateResult writeResult12 = await readWrite.WriteAsync(value: (long)property.GetValue(data, null), address: hslAttribute.Address);
+					OperateResult writeResult12 = await readWrite.WriteAsync(value: (long)property.GetValue(data, null), address: attr.Address);
 					if (!writeResult12.IsSuccess)
 					{
 						return writeResult12;
@@ -813,7 +809,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(long[]))
 				{
-					OperateResult writeResult11 = await readWrite.WriteAsync(values: (long[])property.GetValue(data, null), address: hslAttribute.Address);
+					OperateResult writeResult11 = await readWrite.WriteAsync(values: (long[])property.GetValue(data, null), address: attr.Address);
 					if (!writeResult11.IsSuccess)
 					{
 						return writeResult11;
@@ -821,7 +817,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(ulong))
 				{
-					OperateResult writeResult10 = await readWrite.WriteAsync(value: (ulong)property.GetValue(data, null), address: hslAttribute.Address);
+					OperateResult writeResult10 = await readWrite.WriteAsync(value: (ulong)property.GetValue(data, null), address: attr.Address);
 					if (!writeResult10.IsSuccess)
 					{
 						return writeResult10;
@@ -829,7 +825,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(ulong[]))
 				{
-					OperateResult writeResult9 = await readWrite.WriteAsync(values: (ulong[])property.GetValue(data, null), address: hslAttribute.Address);
+					OperateResult writeResult9 = await readWrite.WriteAsync(values: (ulong[])property.GetValue(data, null), address: attr.Address);
 					if (!writeResult9.IsSuccess)
 					{
 						return writeResult9;
@@ -837,7 +833,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(float))
 				{
-					OperateResult writeResult8 = await readWrite.WriteAsync(value: (float)property.GetValue(data, null), address: hslAttribute.Address);
+					OperateResult writeResult8 = await readWrite.WriteAsync(value: (float)property.GetValue(data, null), address: attr.Address);
 					if (!writeResult8.IsSuccess)
 					{
 						return writeResult8;
@@ -845,7 +841,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(float[]))
 				{
-					OperateResult writeResult7 = await readWrite.WriteAsync(values: (float[])property.GetValue(data, null), address: hslAttribute.Address);
+					OperateResult writeResult7 = await readWrite.WriteAsync(values: (float[])property.GetValue(data, null), address: attr.Address);
 					if (!writeResult7.IsSuccess)
 					{
 						return writeResult7;
@@ -853,7 +849,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(double))
 				{
-					OperateResult writeResult6 = await readWrite.WriteAsync(value: (double)property.GetValue(data, null), address: hslAttribute.Address);
+					OperateResult writeResult6 = await readWrite.WriteAsync(value: (double)property.GetValue(data, null), address: attr.Address);
 					if (!writeResult6.IsSuccess)
 					{
 						return writeResult6;
@@ -861,7 +857,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(double[]))
 				{
-					OperateResult writeResult5 = await readWrite.WriteAsync(values: (double[])property.GetValue(data, null), address: hslAttribute.Address);
+					OperateResult writeResult5 = await readWrite.WriteAsync(values: (double[])property.GetValue(data, null), address: attr.Address);
 					if (!writeResult5.IsSuccess)
 					{
 						return writeResult5;
@@ -869,7 +865,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(string))
 				{
-					OperateResult writeResult4 = await readWrite.WriteAsync(value: (string)property.GetValue(data, null), address: hslAttribute.Address);
+					OperateResult writeResult4 = await readWrite.WriteAsync(value: (string)property.GetValue(data, null), address: attr.Address);
 					if (!writeResult4.IsSuccess)
 					{
 						return writeResult4;
@@ -877,7 +873,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(byte[]))
 				{
-					OperateResult writeResult3 = await readWrite.WriteAsync(value: (byte[])property.GetValue(data, null), address: hslAttribute.Address);
+					OperateResult writeResult3 = await readWrite.WriteAsync(value: (byte[])property.GetValue(data, null), address: attr.Address);
 					if (!writeResult3.IsSuccess)
 					{
 						return writeResult3;
@@ -885,7 +881,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(bool))
 				{
-					OperateResult writeResult2 = await readWrite.WriteAsync(value: (bool)property.GetValue(data, null), address: hslAttribute.Address);
+					OperateResult writeResult2 = await readWrite.WriteAsync(value: (bool)property.GetValue(data, null), address: attr.Address);
 					if (!writeResult2.IsSuccess)
 					{
 						return writeResult2;
@@ -893,7 +889,7 @@ namespace Plcway.Communication.Reflection
 				}
 				else if (propertyType == typeof(bool[]))
 				{
-					OperateResult writeResult = await readWrite.WriteAsync(value: (bool[])property.GetValue(data, null), address: hslAttribute.Address);
+					OperateResult writeResult = await readWrite.WriteAsync(value: (bool[])property.GetValue(data, null), address: attr.Address);
 					if (!writeResult.IsSuccess)
 					{
 						return writeResult;

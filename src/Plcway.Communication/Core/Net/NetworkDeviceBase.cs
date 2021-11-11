@@ -81,12 +81,12 @@ namespace Plcway.Communication.Core.Net
 
 		public virtual OperateResult<T> Read<T>() where T : class, new()
 		{
-			return HslReflectionHelper.Read<T>(this);
+			return ReflectionHelper.Read<T>(this);
 		}
 
 		public virtual OperateResult Write<T>(T data) where T : class, new()
 		{
-			return HslReflectionHelper.Write(data, this);
+			return ReflectionHelper.Write(data, this);
 		}
 
 		public OperateResult<short> ReadInt16(string address)
@@ -355,12 +355,12 @@ namespace Plcway.Communication.Core.Net
 
 		public virtual async Task<OperateResult<T>> ReadAsync<T>() where T : class, new()
 		{
-			return await HslReflectionHelper.ReadAsync<T>(this);
+			return await ReflectionHelper.ReadAsync<T>(this);
 		}
 
 		public virtual async Task<OperateResult> WriteAsync<T>(T data) where T : class, new()
 		{
-			return await HslReflectionHelper.WriteAsync(data, this);
+			return await ReflectionHelper.WriteAsync(data, this);
 		}
 
 		public async Task<OperateResult<short>> ReadInt16Async(string address)

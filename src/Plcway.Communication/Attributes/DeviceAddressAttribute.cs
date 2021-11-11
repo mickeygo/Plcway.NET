@@ -1,12 +1,12 @@
 using System;
 
-namespace Plcway.Communication.Reflection
+namespace Plcway.Communication.Attributes
 {
 	/// <summary>
 	/// 应用于组件库读取的动态地址解析，具体用法为创建一个类，创建数据属性，如果这个属性需要绑定PLC的真实数据，就在属性的特性上应用本特性。
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
-	public class HslDeviceAddressAttribute : Attribute
+	public class DeviceAddressAttribute : Attribute
 	{
 		/// <summary>
 		/// 设备的类型，如果指定了特殊的PLC，那么该地址就可以支持多种不同PLC
@@ -27,7 +27,7 @@ namespace Plcway.Communication.Reflection
 		/// 实例化一个地址特性，指定地址信息，用于单变量的数据
 		/// </summary>
 		/// <param name="address">真实的地址信息</param>
-		public HslDeviceAddressAttribute(string address)
+		public DeviceAddressAttribute(string address)
 		{
 			Address = address;
 			Length = -1;
@@ -39,7 +39,7 @@ namespace Plcway.Communication.Reflection
 		/// </summary>
 		/// <param name="address">真实的地址信息</param>
 		/// <param name="deviceType">设备的地址信息</param>
-		public HslDeviceAddressAttribute(string address, Type deviceType)
+		public DeviceAddressAttribute(string address, Type deviceType)
 		{
 			Address = address;
 			Length = -1;
@@ -51,7 +51,7 @@ namespace Plcway.Communication.Reflection
 		/// </summary>
 		/// <param name="address">真实的地址信息</param>
 		/// <param name="length">读取的数据长度</param>
-		public HslDeviceAddressAttribute(string address, int length)
+		public DeviceAddressAttribute(string address, int length)
 		{
 			Address = address;
 			Length = length;
@@ -64,7 +64,7 @@ namespace Plcway.Communication.Reflection
 		/// <param name="address">真实的地址信息</param>
 		/// <param name="length">读取的数据长度</param>
 		/// <param name="deviceType">设备类型</param>
-		public HslDeviceAddressAttribute(string address, int length, Type deviceType)
+		public DeviceAddressAttribute(string address, int length, Type deviceType)
 		{
 			Address = address;
 			Length = length;

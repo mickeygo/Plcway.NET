@@ -62,14 +62,13 @@ namespace Plcway.Communication.Core.Net
 			}
 		}
 
-		/// <inheritdoc />
 		public override string ToString()
 		{
-			StringBuilder stringBuilder = new StringBuilder();
-			stringBuilder.Append("DtuSession[" + DTU + "] [" + (IsStatusOk ? "Online" : "Offline") + "]");
+			StringBuilder stringBuilder = new();
+			stringBuilder.Append($"DtuSession[{DTU}] [{(IsStatusOk ? "Online" : "Offline")}]");
 			if (IsStatusOk)
 			{
-				stringBuilder.Append(" [" + SoftBasic.GetTimeSpanDescription(DateTime.Now - OnlineTime) + "]");
+				stringBuilder.Append($" [{SoftBasic.GetTimeSpanDescription(DateTime.Now - OnlineTime)}]");
 			}
 			else if (OfflineTime == DateTime.MinValue)
 			{
@@ -77,7 +76,7 @@ namespace Plcway.Communication.Core.Net
 			}
 			else
 			{
-				stringBuilder.Append(" [" + SoftBasic.GetTimeSpanDescription(DateTime.Now - OfflineTime) + "]");
+				stringBuilder.Append($" [{SoftBasic.GetTimeSpanDescription(DateTime.Now - OfflineTime)}]");
 			}
 			return stringBuilder.ToString();
 		}

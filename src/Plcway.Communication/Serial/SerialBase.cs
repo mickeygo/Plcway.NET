@@ -19,8 +19,7 @@ namespace Plcway.Communication.Serial
 		protected bool LogMsgFormatBinary = true;
 		private bool disposedValue = false;
 		private readonly SimpleHybirdLock hybirdLock;
-		private int receiveTimeout = 5000;
-		private int sleepTime = 20;
+        private int sleepTime = 20;
 		private bool isClearCacheBeforeRead = false;
 		private int connectErrorCount = 0;
 
@@ -46,25 +45,15 @@ namespace Plcway.Communication.Serial
 			}
 		}
 
-		/// <summary>
-		/// 接收数据的超时时间，默认5000ms
-		/// </summary>
-		public int ReceiveTimeout
-		{
-			get
-			{
-				return receiveTimeout;
-			}
-			set
-			{
-				receiveTimeout = value;
-			}
-		}
+        /// <summary>
+        /// 接收数据的超时时间，默认5000ms
+        /// </summary>
+        public int ReceiveTimeout { get; set; } = 5000;
 
-		/// <summary>
-		/// 连续串口缓冲数据检测的间隔时间，默认20ms，该值越小，通信速度越快，但是越不稳定。
-		/// </summary>
-		public int SleepTime
+        /// <summary>
+        /// 连续串口缓冲数据检测的间隔时间，默认20ms，该值越小，通信速度越快，但是越不稳定。
+        /// </summary>
+        public int SleepTime
 		{
 			get
 			{
@@ -117,9 +106,9 @@ namespace Plcway.Communication.Serial
 		/// 初始化串口信息，9600波特率，8位数据位，1位停止位，无奇偶校验
 		/// </summary>
 		/// <param name="portName">端口号信息，例如"COM3"</param>
-		public virtual void SerialPortInni(string portName)
+		public virtual void SerialPortInit(string portName)
 		{
-			SerialPortInni(portName, 9600);
+			SerialPortInit(portName, 9600);
 		}
 
 		/// <summary>
@@ -127,9 +116,9 @@ namespace Plcway.Communication.Serial
 		/// </summary>
 		/// <param name="portName">端口号信息，例如"COM3"</param>
 		/// <param name="baudRate">波特率</param>
-		public virtual void SerialPortInni(string portName, int baudRate)
+		public virtual void SerialPortInit(string portName, int baudRate)
 		{
-			SerialPortInni(portName, baudRate, 8, (StopBits)1, 0);
+			SerialPortInit(portName, baudRate, 8, (StopBits)1, 0);
 		}
 
 		/// <summary>
@@ -140,7 +129,7 @@ namespace Plcway.Communication.Serial
 		/// <param name="dataBits">数据位</param>
 		/// <param name="stopBits">停止位</param>
 		/// <param name="parity">奇偶校验</param>
-		public virtual void SerialPortInni(string portName, int baudRate, int dataBits, StopBits stopBits, Parity parity)
+		public virtual void SerialPortInit(string portName, int baudRate, int dataBits, StopBits stopBits, Parity parity)
 		{
 			if (!m_ReadData.IsOpen)
 			{
@@ -149,21 +138,6 @@ namespace Plcway.Communication.Serial
 				m_ReadData.DataBits = dataBits;
 				m_ReadData.StopBits = stopBits;
 				m_ReadData.Parity = parity;
-				PortName = m_ReadData.PortName;
-				BaudRate = m_ReadData.BaudRate;
-			}
-		}
-
-		/// <summary>
-		/// 根据自定义初始化方法进行初始化串口信息
-		/// </summary>
-		/// <param name="initi">初始化的委托方法</param>
-		public void SerialPortInni(Action<SerialPort> initi)
-		{
-			if (!m_ReadData.IsOpen)
-			{
-				SerialPortInni("COM1");
-				initi(m_ReadData);
 				PortName = m_ReadData.PortName;
 				BaudRate = m_ReadData.BaudRate;
 			}
@@ -280,7 +254,7 @@ namespace Plcway.Communication.Serial
 				return operateResult3;
 			}
 
-			Logger?.LogDebug($"{ToString()} Receive: " + (LogMsgFormatBinary ? operateResult3.Content.ToHexString(' ') : Encoding.ASCII.GetString(operateResult3.Content)));
+			Logger?.LogDebug($"{ToString()} Receive: {(LogMsgFormatBinary ? operateResult3.Content.ToHexString(' ') : Encoding.ASCII.GetString(operateResult3.Content))}");
 			return usePackAndUnpack ? UnpackResponseContent(array, operateResult3.Content) : operateResult3;
 		}
 

@@ -28,9 +28,9 @@ namespace Plcway.Communication.Core
 			{
 				if (disposing)
 				{
+					m_waiterLock.Value.Close();
+					disposedValue = true;
 				}
-				m_waiterLock.Value.Close();
-				disposedValue = true;
 			}
 		}
 
@@ -47,7 +47,7 @@ namespace Plcway.Communication.Core
 		/// </summary>
 		public void Enter()
 		{
-			int managedThreadId = Thread.CurrentThread.ManagedThreadId;
+			int managedThreadId = Environment.CurrentManagedThreadId;
 			if (managedThreadId == m_owningThreadId)
 			{
 				m_recursion++;
@@ -59,7 +59,7 @@ namespace Plcway.Communication.Core
 			{
 				if (Interlocked.CompareExchange(ref m_waiters, 1, 0) == 0)
 				{
-					m_owningThreadId = Thread.CurrentThread.ManagedThreadId;
+					m_owningThreadId = Environment.CurrentManagedThreadId;
 					m_recursion = 1;
 					return;
 				}
@@ -69,7 +69,7 @@ namespace Plcway.Communication.Core
 			{
 				m_waiterLock.Value.WaitOne();
 			}
-			m_owningThreadId = Thread.CurrentThread.ManagedThreadId;
+			m_owningThreadId = Environment.CurrentManagedThreadId;
 			m_recursion = 1;
 		}
 
@@ -78,7 +78,7 @@ namespace Plcway.Communication.Core
 		/// </summary>
 		public void Leave()
 		{
-			if (Thread.CurrentThread.ManagedThreadId != m_owningThreadId)
+			if (Environment.CurrentManagedThreadId != m_owningThreadId)
 			{
 				throw new SynchronizationLockException("Current Thread have not the owning thread.");
 			}

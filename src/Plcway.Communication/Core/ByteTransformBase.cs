@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.Contracts;
 using System.Text;
 using Plcway.Communication.Basic;
 
@@ -32,11 +33,15 @@ namespace Plcway.Communication.Core
 
 		public virtual bool TransBool(byte[] buffer, int index)
 		{
+			Contract.Requires(buffer != null);
+
 			return (buffer[index] & 1) == 1;
 		}
 
 		public bool[] TransBool(byte[] buffer, int index, int length)
 		{
+			Contract.Requires(buffer != null);
+
 			byte[] array = new byte[length];
 			Array.Copy(buffer, index, array, 0, length);
 			return SoftBasic.ByteToBoolArray(array, length * 8);
@@ -44,11 +49,15 @@ namespace Plcway.Communication.Core
 
 		public virtual byte TransByte(byte[] buffer, int index)
 		{
+			Contract.Requires(buffer != null);
+
 			return buffer[index];
 		}
 
 		public virtual byte[] TransByte(byte[] buffer, int index, int length)
 		{
+			Contract.Requires(buffer != null);
+
 			byte[] array = new byte[length];
 			Array.Copy(buffer, index, array, 0, length);
 			return array;
@@ -56,11 +65,15 @@ namespace Plcway.Communication.Core
 
 		public virtual short TransInt16(byte[] buffer, int index)
 		{
+			Contract.Requires(buffer != null);
+
 			return BitConverter.ToInt16(buffer, index);
 		}
 
 		public virtual short[] TransInt16(byte[] buffer, int index, int length)
 		{
+			Contract.Requires(buffer != null);
+
 			short[] array = new short[length];
 			for (int i = 0; i < length; i++)
 			{
@@ -71,16 +84,22 @@ namespace Plcway.Communication.Core
 
 		public short[,] TransInt16(byte[] buffer, int index, int row, int col)
 		{
+			Contract.Requires(buffer != null);
+
 			return HslHelper.CreateTwoArrayFromOneArray(TransInt16(buffer, index, row * col), row, col);
 		}
 
 		public virtual ushort TransUInt16(byte[] buffer, int index)
 		{
+			Contract.Requires(buffer != null);
+
 			return BitConverter.ToUInt16(buffer, index);
 		}
 
 		public virtual ushort[] TransUInt16(byte[] buffer, int index, int length)
 		{
+			Contract.Requires(buffer != null);
+
 			ushort[] array = new ushort[length];
 			for (int i = 0; i < length; i++)
 			{
@@ -91,16 +110,22 @@ namespace Plcway.Communication.Core
 
 		public ushort[,] TransUInt16(byte[] buffer, int index, int row, int col)
 		{
+			Contract.Requires(buffer != null);
+
 			return HslHelper.CreateTwoArrayFromOneArray(TransUInt16(buffer, index, row * col), row, col);
 		}
 
 		public virtual int TransInt32(byte[] buffer, int index)
 		{
+			Contract.Requires(buffer != null);
+
 			return BitConverter.ToInt32(ByteTransDataFormat4(buffer, index), 0);
 		}
 
 		public virtual int[] TransInt32(byte[] buffer, int index, int length)
 		{
+			Contract.Requires(buffer != null);
+
 			int[] array = new int[length];
 			for (int i = 0; i < length; i++)
 			{
@@ -111,6 +136,8 @@ namespace Plcway.Communication.Core
 
 		public int[,] TransInt32(byte[] buffer, int index, int row, int col)
 		{
+			Contract.Requires(buffer != null);
+
 			return HslHelper.CreateTwoArrayFromOneArray(TransInt32(buffer, index, row * col), row, col);
 		}
 
@@ -121,6 +148,8 @@ namespace Plcway.Communication.Core
 
 		public virtual uint[] TransUInt32(byte[] buffer, int index, int length)
 		{
+			Contract.Requires(buffer != null);
+
 			uint[] array = new uint[length];
 			for (int i = 0; i < length; i++)
 			{
@@ -131,16 +160,22 @@ namespace Plcway.Communication.Core
 
 		public uint[,] TransUInt32(byte[] buffer, int index, int row, int col)
 		{
+			Contract.Requires(buffer != null);
+
 			return HslHelper.CreateTwoArrayFromOneArray(TransUInt32(buffer, index, row * col), row, col);
 		}
 
 		public virtual long TransInt64(byte[] buffer, int index)
 		{
+			Contract.Requires(buffer != null);
+
 			return BitConverter.ToInt64(ByteTransDataFormat8(buffer, index), 0);
 		}
 
 		public virtual long[] TransInt64(byte[] buffer, int index, int length)
 		{
+			Contract.Requires(buffer != null);
+
 			long[] array = new long[length];
 			for (int i = 0; i < length; i++)
 			{
@@ -151,16 +186,22 @@ namespace Plcway.Communication.Core
 
 		public long[,] TransInt64(byte[] buffer, int index, int row, int col)
 		{
+			Contract.Requires(buffer != null);
+
 			return HslHelper.CreateTwoArrayFromOneArray(TransInt64(buffer, index, row * col), row, col);
 		}
 
 		public virtual ulong TransUInt64(byte[] buffer, int index)
 		{
+			Contract.Requires(buffer != null);
+
 			return BitConverter.ToUInt64(ByteTransDataFormat8(buffer, index), 0);
 		}
 
 		public virtual ulong[] TransUInt64(byte[] buffer, int index, int length)
 		{
+			Contract.Requires(buffer != null);
+
 			ulong[] array = new ulong[length];
 			for (int i = 0; i < length; i++)
 			{
@@ -171,16 +212,22 @@ namespace Plcway.Communication.Core
 
 		public ulong[,] TransUInt64(byte[] buffer, int index, int row, int col)
 		{
+			Contract.Requires(buffer != null);
+
 			return HslHelper.CreateTwoArrayFromOneArray(TransUInt64(buffer, index, row * col), row, col);
 		}
 
 		public virtual float TransSingle(byte[] buffer, int index)
 		{
+			Contract.Requires(buffer != null);
+
 			return BitConverter.ToSingle(ByteTransDataFormat4(buffer, index), 0);
 		}
 
 		public virtual float[] TransSingle(byte[] buffer, int index, int length)
 		{
+			Contract.Requires(buffer != null);
+
 			float[] array = new float[length];
 			for (int i = 0; i < length; i++)
 			{
@@ -191,16 +238,22 @@ namespace Plcway.Communication.Core
 
 		public float[,] TransSingle(byte[] buffer, int index, int row, int col)
 		{
+			Contract.Requires(buffer != null);
+
 			return HslHelper.CreateTwoArrayFromOneArray(TransSingle(buffer, index, row * col), row, col);
 		}
 
 		public virtual double TransDouble(byte[] buffer, int index)
 		{
+			Contract.Requires(buffer != null);
+
 			return BitConverter.ToDouble(ByteTransDataFormat8(buffer, index), 0);
 		}
 
 		public virtual double[] TransDouble(byte[] buffer, int index, int length)
 		{
+			Contract.Requires(buffer != null);
+
 			double[] array = new double[length];
 			for (int i = 0; i < length; i++)
 			{
@@ -211,11 +264,15 @@ namespace Plcway.Communication.Core
 
 		public double[,] TransDouble(byte[] buffer, int index, int row, int col)
 		{
+			Contract.Requires(buffer != null);
+
 			return HslHelper.CreateTwoArrayFromOneArray(TransDouble(buffer, index, row * col), row, col);
 		}
 
 		public virtual string TransString(byte[] buffer, int index, int length, Encoding encoding)
 		{
+			Contract.Requires(buffer != null);
+
 			byte[] array = TransByte(buffer, index, length);
 			if (IsStringReverseByteWord)
 			{
@@ -226,6 +283,8 @@ namespace Plcway.Communication.Core
 
 		public virtual string TransString(byte[] buffer, Encoding encoding)
 		{
+			Contract.Requires(buffer != null);
+
 			return encoding.GetString(buffer);
 		}
 
@@ -236,7 +295,8 @@ namespace Plcway.Communication.Core
 
 		public virtual byte[] TransByte(bool[] values)
 		{
-			//return (values == null) ? null : SoftBasic.BoolArrayToByte(values);
+			Contract.Requires(values != null);
+
 			return SoftBasic.BoolArrayToByte(values);
 		}
 
@@ -252,10 +312,7 @@ namespace Plcway.Communication.Core
 
 		public virtual byte[] TransByte(short[] values)
 		{
-			//if (values == null)
-			//{
-			//	return null;
-			//}
+			Contract.Requires(values != null);
 
 			byte[] array = new byte[values.Length * 2];
 			for (int i = 0; i < values.Length; i++)
@@ -272,10 +329,7 @@ namespace Plcway.Communication.Core
 
 		public virtual byte[] TransByte(ushort[] values)
 		{
-			//if (values == null)
-			//{
-			//	return null;
-			//}
+			Contract.Requires(values != null);
 
 			byte[] array = new byte[values.Length * 2];
 			for (int i = 0; i < values.Length; i++)
@@ -292,10 +346,7 @@ namespace Plcway.Communication.Core
 
 		public virtual byte[] TransByte(int[] values)
 		{
-			//if (values == null)
-			//{
-			//	return null;
-			//}
+			Contract.Requires(values != null);
 
 			byte[] array = new byte[values.Length * 4];
 			for (int i = 0; i < values.Length; i++)
@@ -312,10 +363,7 @@ namespace Plcway.Communication.Core
 
 		public virtual byte[] TransByte(uint[] values)
 		{
-			//if (values == null)
-			//{
-			//	return null;
-			//}
+			Contract.Requires(values != null);
 
 			byte[] array = new byte[values.Length * 4];
 			for (int i = 0; i < values.Length; i++)
@@ -332,10 +380,8 @@ namespace Plcway.Communication.Core
 
 		public virtual byte[] TransByte(long[] values)
 		{
-			//if (values == null)
-			//{
-			//	return null;
-			//}
+			Contract.Requires(values != null);
+
 			byte[] array = new byte[values.Length * 8];
 			for (int i = 0; i < values.Length; i++)
 			{
@@ -351,10 +397,8 @@ namespace Plcway.Communication.Core
 
 		public virtual byte[] TransByte(ulong[] values)
 		{
-			//if (values == null)
-			//{
-			//	return null;
-			//}
+			Contract.Requires(values != null);
+
 			byte[] array = new byte[values.Length * 8];
 			for (int i = 0; i < values.Length; i++)
 			{
@@ -370,10 +414,8 @@ namespace Plcway.Communication.Core
 
 		public virtual byte[] TransByte(float[] values)
 		{
-			//if (values == null)
-			//{
-			//	return null;
-			//}
+			Contract.Requires(values != null);
+
 			byte[] array = new byte[values.Length * 4];
 			for (int i = 0; i < values.Length; i++)
 			{
@@ -389,10 +431,8 @@ namespace Plcway.Communication.Core
 
 		public virtual byte[] TransByte(double[] values)
 		{
-			//if (values == null)
-			//{
-			//	return null;
-			//}
+			Contract.Requires(values != null);
+
 			byte[] array = new byte[values.Length * 8];
 			for (int i = 0; i < values.Length; i++)
 			{
@@ -403,20 +443,15 @@ namespace Plcway.Communication.Core
 
 		public virtual byte[] TransByte(string value, Encoding encoding)
 		{
-			//if (value == null)
-			//{
-			//	return null;
-			//}
+			Contract.Requires(value != null);
+
 			byte[] bytes = encoding.GetBytes(value);
 			return IsStringReverseByteWord ? SoftBasic.BytesReverseByWord(bytes) : bytes;
 		}
 
 		public virtual byte[] TransByte(string value, int length, Encoding encoding)
 		{
-			//if (value == null)
-			//{
-			//	return null;
-			//}
+			Contract.Requires(value != null);
 
 			byte[] bytes = encoding.GetBytes(value);
 			return IsStringReverseByteWord ? SoftBasic.ArrayExpandToLength(SoftBasic.BytesReverseByWord(bytes), length) : SoftBasic.ArrayExpandToLength(bytes, length);

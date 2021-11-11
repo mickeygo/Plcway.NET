@@ -23,7 +23,6 @@ namespace Plcway.Communication.Basic
 		/// </summary>
 		public int IncreaseTick { get; set; } = 1;
 
-
 		/// <summary>
 		/// 获取当前的计数器的最大的设置值。
 		/// </summary>
