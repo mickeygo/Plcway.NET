@@ -120,7 +120,7 @@ namespace Plcway.Communication.Tests.Ethernet.Profinet.Siemens
 
         static SiemensS7Net OpenAndConnectConn(bool useLongConnect = false)
         {
-            var s7 = new SiemensS7Net(SiemensPLCS.S1200, "10.1.0.181");
+            var s7 = new SiemensS7Net(SiemensPLCS.S1200, "10.1.0.61");
             if (useLongConnect)
             {
                 var ret = s7.ConnectServer(); // 使用长连接

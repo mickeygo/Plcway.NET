@@ -4,7 +4,8 @@ using System.Diagnostics.Contracts;
 namespace Plcway.Framework.Internal
 {
     /// <summary>
-    /// Service Local 模式
+    /// Service Local 模式。
+    /// 注：仅框架内部使用。
     /// </summary>
     internal sealed class InternalServiceProvider
     {

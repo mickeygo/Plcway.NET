@@ -3,7 +3,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Plcway.Communication.Handlers;
+using Plcway.Framework.Handlers;
+using Plcway.Framework.Internal;
 
 namespace Plcway.Framework.Transport.Channels
 {

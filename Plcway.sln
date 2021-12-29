@@ -21,7 +21,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plcway.Abstract.Tests", "te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plcway.Framework", "src\Plcway.Framework\Plcway.Framework.csproj", "{E0AE0400-9449-42C9-9881-1E1B8239F1FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plcway.Benchmarks", "tests\Plcway.Benchmarks\Plcway.Benchmarks.csproj", "{83CD88BB-3C5E-4DEF-9790-507D12140A6F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plcway.Benchmarks", "tests\Plcway.Benchmarks\Plcway.Benchmarks.csproj", "{83CD88BB-3C5E-4DEF-9790-507D12140A6F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "toos", "toos", "{42199C33-DD00-4D13-B689-1FED66642480}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plcway.ClientTool", "tools\Plcway.ClientTool\Plcway.ClientTool.csproj", "{13023250-894B-46EB-8F7F-2863707AA11A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +61,10 @@ Global
 		{83CD88BB-3C5E-4DEF-9790-507D12140A6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83CD88BB-3C5E-4DEF-9790-507D12140A6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{83CD88BB-3C5E-4DEF-9790-507D12140A6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13023250-894B-46EB-8F7F-2863707AA11A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13023250-894B-46EB-8F7F-2863707AA11A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13023250-894B-46EB-8F7F-2863707AA11A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13023250-894B-46EB-8F7F-2863707AA11A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -69,6 +77,7 @@ Global
 		{72230BDE-23E5-42E2-A56A-1798D8D0A7F8} = {DB84F4CB-A2DC-41CC-9DC0-C6E6BBF751F4}
 		{E0AE0400-9449-42C9-9881-1E1B8239F1FC} = {FBD8A4C9-ED02-4B8B-91BB-9B58EA81FF3D}
 		{83CD88BB-3C5E-4DEF-9790-507D12140A6F} = {DB84F4CB-A2DC-41CC-9DC0-C6E6BBF751F4}
+		{13023250-894B-46EB-8F7F-2863707AA11A} = {42199C33-DD00-4D13-B689-1FED66642480}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {ED47786F-9F3E-439F-A1AA-E1757B65F89D}

@@ -8,7 +8,7 @@ using Plcway.Framework.Transport.Hosting;
 namespace Plcway.Framework.Transport.BootStrapping
 {
     /// <summary>
-    /// 启动项基础类
+    /// 启动项基类
     /// </summary>
     public abstract class AbstractBootStrap
     {

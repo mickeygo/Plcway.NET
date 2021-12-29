@@ -7,7 +7,7 @@ using Plcway.Communication.Basic;
 namespace Plcway.Communication.Core
 {
 	/// <summary>
-	/// HslCommunication的一些静态辅助方法。
+	/// 一些静态辅助方法。
 	/// </summary>
 	public class HslHelper
 	{

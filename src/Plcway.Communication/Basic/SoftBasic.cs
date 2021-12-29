@@ -36,7 +36,7 @@ namespace Plcway.Communication.Basic
 		public static string CalculateStreamMD5(Stream stream)
 		{
 			byte[] array;
-			using (MD5 mD = new MD5CryptoServiceProvider())
+			using (MD5 mD = MD5.Create())
 			{
 				array = mD.ComputeHash(stream);
 			}
@@ -62,7 +62,7 @@ namespace Plcway.Communication.Basic
 		public static string CalculateStreamMD5(string data, Encoding encode)
 		{
 			string result;
-			using (MD5 mD = new MD5CryptoServiceProvider())
+			using (MD5 mD = MD5.Create())
 			{
 				byte[] array = mD.ComputeHash(encode.GetBytes(data));
 				result = BitConverter.ToString(array).Replace("-", "");
